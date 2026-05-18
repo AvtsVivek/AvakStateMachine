@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AvakStates Namespace="Avak.StateMachine.Core.Tests.StateManager.States">
+	<Triggers>
+	</Triggers>
+	<States>
+		<State Name="DifferentNamespaceTestAa" >
+		</State>
+		<State Name="DifferentNamespaceTestBb" Namespace="Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb"></State>
+		<State Name="DifferentNamespaceTestCc" Namespace="Avak.StateMachine.Core.Tests.StateManager.States.NamespaceCc">
+		</State>
+	</States>
+</AvakStates>
+

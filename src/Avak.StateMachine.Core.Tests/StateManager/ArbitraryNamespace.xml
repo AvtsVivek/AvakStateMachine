@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AvakStates Namespace="AribitratryDefaultNamespace">
+	<Triggers></Triggers>
+	<States Initial="Aa"  >
+		<State Name="Aa" Namespace="AribitratryNamespaceForAa" >
+		</State>
+		<State Name="Bb" Namespace="AribitratryNamespaceForBb"></State>
+		<State Name="Cc">
+		</State>
+	</States>
+</AvakStates>

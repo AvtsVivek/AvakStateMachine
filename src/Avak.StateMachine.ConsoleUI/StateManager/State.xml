@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AvakStates Namespace="Avak.StateMachine.ConsoleUI">
+	<Triggers>
+		<Trigger Name="EnterBbFromAa" Source="Event"/>
+		<Trigger Name="EnterCcFromAa" Source="Event"/>
+		<Trigger Name="EnterBbFromCc" Source="Event"/>
+	</Triggers>
+	<States Initial="Aa"  >
+		<State Name="Aa" >
+			<Transition Trigger="EnterBbFromAa" Target="Bb"/>
+			<Transition Trigger="EnterCcFromAa" Target="Cc"/>
+		</State>
+		<State Name="Bb" Namespace="Avak.StateMachine.ConsoleUI.StateManager.States" ></State>
+		<State Name="Cc" Namespace="Avak.StateMachine.ConsoleUI.StateManager">
+			<Transition Trigger="EnterBbFromCc" Target="Bb"/>
+		</State>
+	</States>
+</AvakStates>
+
