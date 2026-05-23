@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,14 +11,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Avak.StateMachine.WpfApp
+namespace Avak.StateMachine.WpfApp.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for UserControl2.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class UserControl2 : UserControl
     {
-        public MainWindow()
+        public UserControl2()
         {
             InitializeComponent();
         }

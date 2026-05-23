@@ -1,6 +1,6 @@
 ﻿using Avak.StateMachine.Core;
 
-namespace AribitratryDefaultNamespace
+namespace Avak.StateMachine.Core.Tests.StateManager.States.ArbitraryNamespace
 {
     internal class Cc : StateBase
     {

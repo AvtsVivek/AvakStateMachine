@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="Avak.StateMachine.CommToolKitWpfApp/Avak.StateMachine.CommToolKitWpfApp.csproj" />
   <Project Path="Avak.StateMachine.ConsoleUI/Avak.StateMachine.ConsoleUI.csproj" />
   <Project Path="Avak.StateMachine.Core.Tests/Avak.StateMachine.Core.Tests.csproj" Id="4dc998f5-5d4b-4532-83dd-5d346ff16cee" />
   <Project Path="Avak.StateMachine.Core/Avak.StateMachine.Core.csproj" />
