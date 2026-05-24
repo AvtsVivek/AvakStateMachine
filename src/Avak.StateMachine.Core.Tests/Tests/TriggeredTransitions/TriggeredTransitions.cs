@@ -36,7 +36,8 @@ namespace Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions
 			StateGraph stateGraph = stateMachineManager.GetStateGraph();
 			StateBase stateAa = stateMachineManager.CurrentState;
 			Trigger enterCcFromAa = stateGraph.TriggerList.First(t => t.Name == "EnterCcFromAa");
-			(bool, string) result = stateMachineManager.DoTriggeredTriansition(stateAa, enterCcFromAa);
+			(bool, string) result = stateMachineManager.IsTriggeredTriansitionValid(stateAa, enterCcFromAa);
+			stateMachineManager.DoTriggeredTriansition(stateAa, enterCcFromAa);
 
 			// Assert
 			Assert.IsTrue(loadResult);
@@ -64,10 +65,10 @@ namespace Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions
 			StateBase stateCc = stateMachineManager.StateGraph.StateList.First(s => s.Name == "Cc");
 
 			Trigger enterCcFromAa = stateGraph.TriggerList.First(t => t.Name == "EnterCcFromAa");
-			(bool, string) result1 = stateMachineManager.DoTriggeredTriansition(stateAa, enterCcFromAa);
+			stateMachineManager.DoTriggeredTriansition(stateAa, enterCcFromAa);
 
 			Trigger enterBbFromCc = stateGraph.TriggerList.First(t => t.Name == "EnterBbFromCc");
-			(bool, string) result2 = stateMachineManager.DoTriggeredTriansition(stateCc, enterBbFromCc);
+			stateMachineManager.DoTriggeredTriansition(stateCc, enterBbFromCc);
 
 			// Assert
 			Assert.IsTrue(stateMachineManager.CurrentState.Name == "Bb");

@@ -4,6 +4,20 @@ namespace Avak.StateMachine.CommToolKitWpfApp.StateManager.States
 {
 	public class Aa : StateBase
 	{
+		protected override void Init()
+		{
+
+		}
+
+		protected override void Enter()
+		{
+
+		}
+
+		protected override void Exit()
+		{
+
+		}
 	}
 
 	public class Bb : StateBase

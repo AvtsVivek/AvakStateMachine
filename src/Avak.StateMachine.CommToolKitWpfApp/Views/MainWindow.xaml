@@ -16,7 +16,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <ContentControl Grid.Row="0" Content="{Binding CurrentPageViewModel}" />
-        <TextBlock HorizontalAlignment="Center" Grid.Row="1" Text="{Binding FirstName}" />
+        <TextBlock HorizontalAlignment="Center" Grid.Row="1" Text="{Binding Message}" />
         <Border Grid.Row="2">
             <ItemsControl x:Name="ItemsControl">
                 <ItemsControl.ItemsPanel>

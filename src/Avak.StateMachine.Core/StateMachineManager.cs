@@ -43,7 +43,7 @@ namespace Avak.StateMachine.Core
 			return StateGraph;
 		}
 
-		public (bool success, string message) DoTriggeredTriansition(StateBase currentState, Trigger trigger)
+		public (bool success, string message) IsTriggeredTriansitionValid(StateBase currentState, Trigger trigger)
 		{
 			List<Transition> stateTransitions = GetTransitionsForState(currentState);
 
@@ -72,6 +72,16 @@ namespace Avak.StateMachine.Core
 				return (false, "The given trigger is not available on the state graph");
 			}
 
+			bool exists = currentState
+				.Transitions
+				.Where(transition => transition.Trigger == trigger)
+				.Any();
+
+			if (!exists)
+			{
+				return (false, $"The given trigger is not valid for the given state {currentState.Name}");
+			}
+
 			Transition stateTransition = currentState
 				.Transitions
 				.Where(transition => transition.Trigger == trigger)
@@ -90,11 +100,24 @@ namespace Avak.StateMachine.Core
 					$"with transition trigger {trigger.Name}" + Environment.NewLine + $"Target state is null {stateTransition.Target}");
 			}
 
+			return (true, "Success");
+		}
+
+		public void DoTriggeredTriansition(StateBase currentState, Trigger trigger)
+		{
+			var result = IsTriggeredTriansitionValid(currentState, trigger);
+
+			if (!result.success)
+			{
+				return;
+			}
+
+			StateBase targetState = currentState
+				.Transitions
+				.Where(transition => transition.Trigger == trigger)
+				.First().Target;
 
 			SetCurrentState(targetState);
-
-
-			return (true, "Transition successifull");
 		}
 
 		private void SetCurrentState(StateBase state)
@@ -104,10 +127,10 @@ namespace Avak.StateMachine.Core
 				return;
 			}
 
-			CurrentState.Exit();
+			CurrentState.InternalExit();
 			CurrentState = state;
-			CurrentState.Init();
-			CurrentState.Enter();
+			CurrentState.InternalInit();
+			CurrentState.InternalEnter();
 			StateStack.Push(state);
 		}
 

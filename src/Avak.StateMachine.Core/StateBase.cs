@@ -17,19 +17,34 @@
 			set { name = value; }
 		}
 
-		public virtual void Init()
+		protected virtual void Init()
 		{
 
 		}
 
-		public virtual void Enter()
+		internal void InternalInit()
+		{
+			Init();
+		}
+
+		protected virtual void Enter()
 		{
 
 		}
 
-		public virtual void Exit()
+		internal void InternalEnter()
+		{
+			Enter();
+		}
+
+		protected virtual void Exit()
 		{
 
+		}
+
+		internal void InternalExit()
+		{
+			Exit();
 		}
 
 		public List<Transition> Transitions { get; set; }

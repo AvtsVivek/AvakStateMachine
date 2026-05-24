@@ -13,16 +13,19 @@ namespace Avak.StateMachine.CommToolKitWpfApp.ViewModels
 		[ObservableProperty]
 		private IPageViewModel? _currentPageViewModel;
 
+		[ObservableProperty]
+		private string _message;
+
 		private readonly Dictionary<string, IPageViewModel>? _pageViewModels = [];
 
 		private StateMachineManager stateMachineManager = null!;
-
-		private StateBase currentState = null!;
 
 		private StateGraph stateGraph = null!;
 
 		public MainWindowViewModel()
 		{
+			_message = string.Empty;
+
 			_pageViewModels["Aa"] = new UserControl1ViewModel("Aa");
 
 			_pageViewModels["Bb"] = new UserControl2ViewModel("Bb");
@@ -35,9 +38,19 @@ namespace Avak.StateMachine.CommToolKitWpfApp.ViewModels
 		[RelayCommand()]
 		private void OnClick(string arg)
 		{
-			Trigger enterNextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
-			(bool, string) result = stateMachineManager
-				.DoTriggeredTriansition(stateMachineManager.CurrentState, enterNextStateTrigger);
+			Message = string.Empty;
+			Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
+
+			var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
+
+			if (!result.success)
+			{
+				Message = result.message;
+				return;
+			}
+
+			stateMachineManager
+				.DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
 
 			CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
 		}
@@ -57,8 +70,6 @@ namespace Avak.StateMachine.CommToolKitWpfApp.ViewModels
 			stateGraph = stateMachineManager.GetStateGraph();
 
 			List<StateBase> states = stateGraph.StateList;
-
-			// currentState = stateMachineManager.CurrentState;
 
 			CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
 
