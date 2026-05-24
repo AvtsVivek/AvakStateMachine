@@ -2,11 +2,8 @@
 
 namespace Avak.StateMachine.ConsoleUI
 {
-    public class Aa : StateBase
-    {
-        public Aa()
-        {
+	public class Aa : StateBase
+	{
 
-        }
-    }
+	}
 }

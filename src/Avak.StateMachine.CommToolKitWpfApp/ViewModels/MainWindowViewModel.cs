@@ -55,7 +55,6 @@ namespace Avak.StateMachine.CommToolKitWpfApp.ViewModels
 			stateMachineManager.SetStateFile(resourceStream);
 			bool loadResult = stateMachineManager.LoadStateFile();
 			stateGraph = stateMachineManager.GetStateGraph();
-			stateMachineManager.Initialize();
 
 			List<StateBase> states = stateGraph.StateList;
 
