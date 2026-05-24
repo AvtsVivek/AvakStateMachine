@@ -57,7 +57,7 @@ namespace Avak.StateMachine.Core.Tests.Tests
         //    bool loadResult = stateMachineManager.LoadStateFile();
         //    string rootNamespace = stateMachineManager.GetRootNamespace();
         //    // Assert
-        //    Assert.AreEqual("Avak.StateMachine.ConsoleUI", rootNamespace);
+        //    Assert.AreEqual("Avak.StateMachine.Sample.ConsoleUI", rootNamespace);
         //}
 
         // Read triggers from xml file

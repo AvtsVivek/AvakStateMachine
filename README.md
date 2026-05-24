@@ -20,7 +20,7 @@ Aaaryavart Vaigyanik Anusandhan Kendr
 
 ```xml
 <?xml version="1.0" encoding="utf-8" ?>
-<AvakStates Namespace="Avak.StateMachine.ConsoleUI">
+<AvakStates Namespace="Avak.StateMachine.Sample.ConsoleUI">
 	<Triggers>
 		<Trigger Name="EnterBbFromAa" Source="Event"/>
 		<Trigger Name="EnterCcFromAa" Source="Event"/>
@@ -31,8 +31,8 @@ Aaaryavart Vaigyanik Anusandhan Kendr
 			<Transition Trigger="EnterBbFromAa" Target="Bb"/>
 			<Transition Trigger="EnterCcFromAa" Target="Cc"/>
 		</State>
-		<State Name="Bb" Namespace="Avak.StateMachine.ConsoleUI.StateManager.States" ></State>
-		<State Name="Cc" Namespace="Avak.StateMachine.ConsoleUI.StateManager">
+		<State Name="Bb" Namespace="Avak.StateMachine.Sample.ConsoleUI.StateManager.States" ></State>
+		<State Name="Cc" Namespace="Avak.StateMachine.Sample.ConsoleUI.StateManager">
 			<Transition Trigger="EnterBbFromCc" Target="Bb"/>
 		</State>
 	</States>

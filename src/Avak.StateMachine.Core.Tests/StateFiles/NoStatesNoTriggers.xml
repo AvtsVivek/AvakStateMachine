@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<AvakStates Namespace="Avak.StateMachine.ConsoleUI">
+<AvakStates Namespace="Avak.StateMachine.Sample.ConsoleUI">
 	<Triggers></Triggers>
 	<States></States>
 </AvakStates>

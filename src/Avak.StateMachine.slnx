@@ -1,8 +1,8 @@
 <Solution>
   <Folder Name="/Samples/">
-    <Project Path="Samples/Avak.StateMachine.CommToolKitWpfApp/Avak.StateMachine.CommToolKitWpfApp.csproj" />
-    <Project Path="Samples/Avak.StateMachine.ConsoleUI/Avak.StateMachine.ConsoleUI.csproj" />
-    <Project Path="Samples/Avak.StateMachine.WpfApp/Avak.StateMachine.WpfApp.csproj" Id="d1d9200e-3f4d-4eed-934a-ae47ed3bb13f" />
+    <Project Path="Samples/Avak.StateMachine.Sample.ConsoleUI/Avak.StateMachine.Sample.ConsoleUI.csproj" />
+    <Project Path="Samples/Avak.StateMachine.Sample.CommToolKitWpfApp/Avak.StateMachine.Sample.CommToolKitWpfApp.csproj" />
+    <Project Path="Samples/Avak.StateMachine.Sample.WpfViewChanged/Avak.StateMachine.Sample.WpfViewChanged.csproj" Id="0eeade03-4e9b-4209-a4e6-0a788491fab1" />
   </Folder>
   <Project Path="Avak.StateMachine.Core.Tests/Avak.StateMachine.Core.Tests.csproj" Id="4dc998f5-5d4b-4532-83dd-5d346ff16cee" />
   <Project Path="Avak.StateMachine.Core/Avak.StateMachine.Core.csproj" />
