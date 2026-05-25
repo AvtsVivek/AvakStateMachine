@@ -8,5 +8,11 @@
         <DataTemplate DataType="{x:Type localVms:UserControl1ViewModel}">
             <localVs:UserControl1 />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type localVms:UserControl2ViewModel}">
+            <localVs:UserControl2 />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type localVms:UserControl3ViewModel}">
+            <localVs:UserControl3 />
+        </DataTemplate>
     </Application.Resources>
 </Application>

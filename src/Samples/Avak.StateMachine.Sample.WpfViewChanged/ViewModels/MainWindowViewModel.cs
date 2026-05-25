@@ -1,6 +1,6 @@
 ﻿using Avak.StateMachine.Core;
 using Avak.StateMachine.Core.Contracts;
-using Avak.StateMachine.Core.Implimentation;
+using Avak.StateMachine.Sample.WpfViewChanged.Infra;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.IO;
 using System.Reflection;
@@ -16,31 +16,61 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
 		private readonly IStateMachineManager stateMachineManager = null!;
 
+		// private StateDependencyProvider stateDependencyProvider;
+
 		private StateGraph stateGraph = null!;
 
-		public MainWindowViewModel(IStateMachineManager stateMachineManager)
+		public MainWindowViewModel(StateDependencyProvider stateDependencyProvider,
+			IStateMachineManager stateMachineManager)
 		{
 			this.stateMachineManager = stateMachineManager;
 
+			// this.stateDependencyProvider = stateDependencyProvider;
+
 			InitializeState();
 
-			_pageViewModels["Aa"] = new UserControl1ViewModel(stateMachineManager, "Aa");
-			_pageViewModels["Aa"].ViewChanged += (o, s) =>
-			{
-				CurrentPageViewModel = _pageViewModels[s.Value];
-			};
+			var stateList = stateGraph.StateList;
 
-			_pageViewModels["Bb"] = new UserControl2ViewModel(stateMachineManager, "Bb");
-			_pageViewModels["Bb"].ViewChanged += (o, s) =>
+			foreach (var state in stateList)
 			{
-				CurrentPageViewModel = _pageViewModels[s.Value];
-			};
+				IStateViewModel viewModel = state.GetStateViewModel();
+
+				IPageViewModel pageViewModel = (viewModel as IPageViewModel)!;
+
+				pageViewModel.ViewChanged += PageViewModel_ViewChanged;
+
+			}
+
+
+			//_pageViewModels["Aa"].ViewChanged += (o, s) =>
+			//{
+			//	CurrentPageViewModel = _pageViewModels[s.Value];
+			//};
+
+			//_pageViewModels["Bb"].ViewChanged += (o, s) =>
+			//{
+			//	CurrentPageViewModel = _pageViewModels[s.Value];
+			//};
+
+			//_pageViewModels["Cc"].ViewChanged += (o, s) =>
+			//{
+			//	CurrentPageViewModel = _pageViewModels[s.Value];
+			//};
 
 			//_pageViewModels["Bb"] = new UserControl2ViewModel("Bb");
 
 			// _pageViewModels["Cc"] = new UserControl3ViewModel("Cc");
 
-			CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
+			// CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
+
+			IStateViewModel vm = stateMachineManager.CurrentState.GetStateViewModel();
+
+			CurrentPageViewModel = vm as IPageViewModel;
+		}
+
+		private void PageViewModel_ViewChanged(object? sender, EventArgs<IPageViewModel> e)
+		{
+			CurrentPageViewModel = e.Value;
 		}
 
 		private void InitializeState()
@@ -49,7 +79,10 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 			string appStateFile = "Avak.StateMachine.Sample.WpfViewChanged.StateManager.BasicTransitions.xml";
 			Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
 
-			IXmlKeys constants = new XmlKeys();
+			//IXmlKeys constants = new XmlKeys();
+
+			//StateMachineManager stateMachineManager = new(constants,
+			//	this.stateDependencyProvider.StateDependencyTypeFinderImplimentation);
 
 			stateMachineManager.SetStateFile(resourceStream);
 			bool loadResult = stateMachineManager.LoadStateFile();
@@ -57,8 +90,7 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
 			List<StateBase> states = stateGraph.StateList;
 
-			// CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
-
+			// SendNotification(stateMachineManager.CurrentState, StateDependencyTypeFinderImplimentation);
 			resourceStream.Close();
 			resourceStream.Dispose();
 		}

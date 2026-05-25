@@ -1,5 +1,6 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.Implimentation;
+using Avak.StateMachine.Sample.WpfViewChanged.Infra;
 using Avak.StateMachine.Sample.WpfViewChanged.ViewModels;
 using Avak.StateMachine.Sample.WpfViewChanged.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,8 +20,23 @@ namespace Avak.StateMachine.Sample.WpfViewChanged
 			{
 				services.AddSingleton<MainWindow>();
 				services.AddSingleton<IXmlKeys, XmlKeys>();
+				services.AddSingleton<StateDependencyProvider>();
+
+				// 2. Register the delegate as a dependency
+				// Use the [IServiceProvider](https://microsoft.com) to resolve the service first
+				services.AddTransient<StateDependencyObjectFinder>(sp =>
+				{
+					var stateDependencyProvider = sp.GetRequiredService<StateDependencyProvider>();
+					return stateDependencyProvider.StateDependencyTypeFinderImplimentation; // Returns the method group
+				});
+
 				services.AddSingleton<IStateMachineManager, StateMachineManager>();
+				services.AddSingleton<StateDependencyProvider>();
 				services.AddSingleton<MainWindowViewModel>();
+				services.AddSingleton<UserControl1ViewModel>();
+				services.AddSingleton<UserControl2ViewModel>();
+				services.AddSingleton<UserControl3ViewModel>();
+
 			}).Build();
 		}
 		protected override async void OnStartup(StartupEventArgs e)

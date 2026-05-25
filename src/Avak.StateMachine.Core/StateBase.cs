@@ -1,4 +1,6 @@
-﻿namespace Avak.StateMachine.Core
+﻿using Avak.StateMachine.Core.Contracts;
+
+namespace Avak.StateMachine.Core
 {
 	public abstract class StateBase : IEquatable<StateBase>
 	{
@@ -15,36 +17,6 @@
 		{
 			get { return name; }
 			set { name = value; }
-		}
-
-		protected virtual void Init()
-		{
-
-		}
-
-		internal void InternalInit()
-		{
-			Init();
-		}
-
-		protected virtual void Enter()
-		{
-
-		}
-
-		internal void InternalEnter()
-		{
-			Enter();
-		}
-
-		protected virtual void Exit()
-		{
-
-		}
-
-		internal void InternalExit()
-		{
-			Exit();
 		}
 
 		public List<Transition> Transitions { get; set; }
@@ -77,5 +49,40 @@
 			return this.Id == other.Id
 				&& this.Name == other.Name;
 		}
+
+		protected virtual void Init()
+		{
+
+		}
+
+		internal void InternalInit()
+		{
+			Init();
+		}
+
+		protected virtual void Enter()
+		{
+
+		}
+
+		internal void InternalEnter()
+		{
+			Enter();
+		}
+
+		protected virtual void Exit()
+		{
+
+		}
+
+		internal void InternalExit()
+		{
+			Exit();
+		}
+
+		public abstract IStateViewModel GetStateViewModel();  //where T : IStateViewModel;
+															  //{
+															  //	return default!;
+															  //}
 	}
 }

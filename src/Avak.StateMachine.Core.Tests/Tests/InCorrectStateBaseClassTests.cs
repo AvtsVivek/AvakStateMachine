@@ -4,55 +4,55 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.Tests
 {
-    [TestClass]
-    public class StateClassTests
-    {
-        [TestInitialize]
-        public void Setup() { }
+	[TestClass]
+	public class StateClassTests
+	{
+		[TestInitialize]
+		public void Setup() { }
 
-        [TestCleanup]
-        public void Cleanup() { }
+		[TestCleanup]
+		public void Cleanup() { }
 
-        [TestMethod]
-        public void NoBaseClass_ThrowsException()
-        {
-            // Arrange
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectStateBaseClass.xml";
-            Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
-            IXmlKeys constants = new XmlKeys();
-            // IStateFileReader reader = new XmlStateFileReader(constants);
-            StateMachineManager stateMachineManager = new(constants);
-            stateMachineManager.SetStateFile(stream);
-            bool loadResult = stateMachineManager.LoadStateFile();
+		[TestMethod]
+		public void NoBaseClass_ThrowsException()
+		{
+			// Arrange
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectStateBaseClass.xml";
+			Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
+			IXmlKeys constants = new XmlKeys();
+			// IStateFileReader reader = new XmlStateFileReader(constants);
+			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+			stateMachineManager.SetStateFile(stream);
+			bool loadResult = stateMachineManager.LoadStateFile();
 
-            // Act
-            Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph().StateList);
+			// Act
+			Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph().StateList);
 
-            // Assert
-            string message = "Trying to create state object of type Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass. Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass must inherit StateBase";
-            Assert.AreEqual(message, ex.Message);
-        }
+			// Assert
+			string message = "Trying to create state object of type Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass. Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass must inherit StateBase";
+			Assert.AreEqual(message, ex.Message);
+		}
 
-        [TestMethod]
-        public void InCorrectTypeName_ThrowsException()
-        {
-            // Arrange
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectTypeName.xml";
-            Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
-            IXmlKeys constants = new XmlKeys();
-            //IStateFileReader reader = new XmlStateFileReader(constants);
-            StateMachineManager stateMachineManager = new(constants);
-            stateMachineManager.SetStateFile(stream);
-            bool loadResult = stateMachineManager.LoadStateFile();
+		[TestMethod]
+		public void InCorrectTypeName_ThrowsException()
+		{
+			// Arrange
+			Assembly assembly = Assembly.GetExecutingAssembly();
+			string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectTypeName.xml";
+			Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
+			IXmlKeys constants = new XmlKeys();
+			//IStateFileReader reader = new XmlStateFileReader(constants);
+			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+			stateMachineManager.SetStateFile(stream);
+			bool loadResult = stateMachineManager.LoadStateFile();
 
-            // Act
-            Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph().StateList);
+			// Act
+			Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph().StateList);
 
-            // Assert
-            string message = "The type DifferentNamespaceTestB with namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb is not found\r\nCheck the name of the type DifferentNamespaceTestB\r\nAlso Check the namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb";
-            Assert.AreEqual(message, ex.Message);
-        }
-    }
+			// Assert
+			string message = "The type DifferentNamespaceTestB with namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb is not found\r\nCheck the name of the type DifferentNamespaceTestB\r\nAlso Check the namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb";
+			Assert.AreEqual(message, ex.Message);
+		}
+	}
 }

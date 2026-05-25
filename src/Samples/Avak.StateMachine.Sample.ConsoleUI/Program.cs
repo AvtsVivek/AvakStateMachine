@@ -30,7 +30,7 @@ namespace Avak.StateMachine.Sample.ConsoleUI
 
 			IXmlKeys constants = new XmlKeys();
 
-			StateMachineManager stateMachineManager = new StateMachineManager(constants);
+			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
 			stateMachineManager.SetStateFile(stream);
 

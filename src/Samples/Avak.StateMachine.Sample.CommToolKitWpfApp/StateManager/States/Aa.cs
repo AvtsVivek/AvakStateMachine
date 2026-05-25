@@ -1,4 +1,5 @@
 ﻿using Avak.StateMachine.Core;
+using Avak.StateMachine.Core.Contracts;
 
 namespace Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.States
 {
@@ -18,13 +19,25 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.States
 		{
 
 		}
+		public override IStateViewModel GetStateViewModel()
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 	public class Bb : StateBase
 	{
+		public override IStateViewModel GetStateViewModel()
+		{
+			throw new NotImplementedException();
+		}
 	}
 
 	public class Cc : StateBase
 	{
+		public override IStateViewModel GetStateViewModel()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

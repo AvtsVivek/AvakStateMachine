@@ -10,10 +10,9 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 		public string PageId { get; set; }
 		public string Title { get; set; }
 
-		public event EventHandler<EventArgs<string>>? ViewChanged;
+		public event EventHandler<EventArgs<IPageViewModel>>? ViewChanged;
 		private IStateMachineManager stateMachineManager = null!;
-		private StateGraph stateGraph = null!;
-		public UserControl2ViewModel(IStateMachineManager stateMachineManager, string pageIndex = "Aa")
+		public UserControl2ViewModel(IStateMachineManager stateMachineManager, string pageIndex = "Bb")
 		{
 			if (stateMachineManager == null)
 			{
@@ -22,7 +21,9 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
 			this.stateMachineManager = stateMachineManager;
 
-			stateGraph = this.stateMachineManager.GetStateGraph();
+			// Calling this.stateMachineManager.GetStateGraph(); multiple times is a major issue.
+			// Need to address this.
+			// stateGraph = this.stateMachineManager.GetStateGraph();
 
 			PageId = pageIndex;
 			Title = "View Bb";
@@ -31,6 +32,7 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 		[RelayCommand()]
 		private void OnClick(string arg)
 		{
+			StateGraph stateGraph = stateMachineManager.GetStateGraph();
 			Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
 
 			var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
@@ -44,7 +46,9 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 			stateMachineManager
 				.DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
 
-			ViewChanged?.Invoke(this, new EventArgs<string>("Cc"));
+			IPageViewModel nextViewModel = (stateMachineManager.CurrentState.GetStateViewModel() as IPageViewModel)!;
+
+			ViewChanged?.Invoke(this, new EventArgs<IPageViewModel>(nextViewModel));
 		}
 	}
 }

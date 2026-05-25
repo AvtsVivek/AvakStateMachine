@@ -27,7 +27,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions
 			string appStateFile = "Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions.BasicTransitions.xml";
 			Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
 			IXmlKeys constants = new XmlKeys();
-			StateMachineManager stateMachineManager = new(constants);
+			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 			stateMachineManager.SetStateFile(resourceStream);
 			bool loadResult = stateMachineManager.LoadStateFile();
 
@@ -54,7 +54,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions
 			string appStateFile = "Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions.BasicTransitions.xml";
 			Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
 			IXmlKeys constants = new XmlKeys();
-			StateMachineManager stateMachineManager = new(constants);
+			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 			stateMachineManager.SetStateFile(resourceStream);
 			bool loadResult = stateMachineManager.LoadStateFile();
 

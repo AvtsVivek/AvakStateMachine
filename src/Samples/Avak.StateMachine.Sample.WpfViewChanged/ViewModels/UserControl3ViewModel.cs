@@ -5,14 +5,14 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 {
-	public partial class UserControl1ViewModel : IPageViewModel
+	public partial class UserControl3ViewModel : IPageViewModel
 	{
 		public string PageId { get; set; }
 		public string Title { get; set; }
+
 		public event EventHandler<EventArgs<IPageViewModel>>? ViewChanged;
 		private IStateMachineManager stateMachineManager = null!;
-		private StateGraph stateGraph = null!;
-		public UserControl1ViewModel(IStateMachineManager stateMachineManager, string pageIndex = "Aa")
+		public UserControl3ViewModel(IStateMachineManager stateMachineManager, string pageIndex = "Cc")
 		{
 			if (stateMachineManager == null)
 			{
@@ -21,10 +21,12 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
 			this.stateMachineManager = stateMachineManager;
 
+			// Calling this.stateMachineManager.GetStateGraph(); multiple times is a major issue.
+			// Need to address this.
 			// stateGraph = this.stateMachineManager.GetStateGraph();
 
 			PageId = pageIndex;
-			Title = "View Aa";
+			Title = "View Cc";
 		}
 
 		[RelayCommand()]

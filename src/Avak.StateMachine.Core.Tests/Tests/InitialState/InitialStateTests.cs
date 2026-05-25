@@ -27,7 +27,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.InitialState
 			string appStateFile = "Avak.StateMachine.Core.Tests.Tests.InitialState.NoInitialStateSpecified.xml";
 			Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
 			IXmlKeys constants = new XmlKeys();
-			StateMachineManager stateMachineManager = new(constants);
+			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 			stateMachineManager.SetStateFile(resourceStream);
 			bool loadResult = stateMachineManager.LoadStateFile();
 
@@ -50,7 +50,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.InitialState
 			string appStateFile = "Avak.StateMachine.Core.Tests.Tests.InitialState.InitialStateSpecified.xml";
 			Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
 			IXmlKeys constants = new XmlKeys();
-			StateMachineManager stateMachineManager = new(constants);
+			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 			stateMachineManager.SetStateFile(resourceStream);
 			bool loadResult = stateMachineManager.LoadStateFile();
 

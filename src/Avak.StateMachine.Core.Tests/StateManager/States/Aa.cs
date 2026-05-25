@@ -1,14 +1,28 @@
-﻿namespace Avak.StateMachine.Core.Tests.StateManager.States
+﻿using Avak.StateMachine.Core.Contracts;
+
+namespace Avak.StateMachine.Core.Tests.StateManager.States
 {
-    public class Aa : StateBase
-    {
-    }
+	public class Aa : StateBase
+	{
+		public override IStateViewModel GetStateViewModel()
+		{
+			throw new NotImplementedException();
+		}
+	}
 
-    public class Bb : StateBase
-    {
-    }
+	public class Bb : StateBase
+	{
+		public override IStateViewModel GetStateViewModel()
+		{
+			throw new NotImplementedException();
+		}
+	}
 
-    public class Cc : StateBase
-    {
-    }
+	public class Cc : StateBase
+	{
+		public override IStateViewModel GetStateViewModel()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

@@ -7,6 +7,8 @@ namespace Avak.StateMachine.Core.Implimentation
 	{
 		public StateGraph StateGraph { get; private set; }
 		private IStateFileReader stateFileReader;
+		private StateDependencyObjectFinder stateDependencyObjectFinderDelegate;
+
 		public StateBase CurrentState
 		{
 			get
@@ -17,8 +19,22 @@ namespace Avak.StateMachine.Core.Implimentation
 		private StateBase _currentState;
 		private Stack<StateBase> StateStack;
 
-		public StateMachineManager(IXmlKeys constants)
+		public StateMachineManager(IXmlKeys constants, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
 		{
+			if (constants == null)
+			{
+				throw new ArgumentNullException(nameof(constants));
+			}
+
+			if (stateDependencyObjectFinderDelegate == null)
+			{
+				string message = $"The argument/parameter to the constructor of the type {typeof(StateMachineManager).FullName}, {nameof(StateMachineManager.stateDependencyObjectFinderDelegate)} of type {typeof(StateDependencyObjectFinder).FullName} cannot be null." +
+						$"If your states do not have any dependencies, then pass the default {StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation}";
+				throw new ArgumentNullException(message);
+			}
+
+			this.stateDependencyObjectFinderDelegate = stateDependencyObjectFinderDelegate;
+
 			StateGraph = null!;
 			_currentState = null!;
 			StateStack = new();
@@ -42,7 +58,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
 		public StateGraph GetStateGraph()
 		{
-			StateGraph = stateFileReader.GetStateGraph();
+			StateGraph = stateFileReader.GetStateGraph(stateDependencyObjectFinderDelegate);
 			if (CurrentState == null)
 			{
 				_currentState = StateGraph.InitialState;
@@ -122,22 +138,23 @@ namespace Avak.StateMachine.Core.Implimentation
 			StateBase targetState = currentState
 				.Transitions
 				.Where(transition => transition.Trigger == trigger)
-				.First().Target;
+				.First()
+				.Target;
 
 			SetCurrentState(targetState);
 		}
 
 		private void SetCurrentState(StateBase state)
 		{
-			if (CurrentState == state)
+			if (_currentState == state)
 			{
 				return;
 			}
 
-			CurrentState.InternalExit();
+			_currentState.InternalExit();
 			_currentState = state;
-			CurrentState.InternalInit();
-			CurrentState.InternalEnter();
+			_currentState.InternalInit();
+			_currentState.InternalEnter();
 			StateStack.Push(state);
 		}
 
