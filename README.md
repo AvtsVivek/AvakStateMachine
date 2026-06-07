@@ -44,3 +44,9 @@ Triggers and Transitions will not have corresponding namespaces, because the use
 On the other hand, for states, framework will define a base class, and the users will define their own state classes by deriving from the base class. The namespace corrospnding to the state elements in the xml file will determine where those classes will be defined.
 
 
+https://learn.microsoft.com/en-us/visualstudio/debugger/create-custom-visualizers-of-data
+?view=visualstudio
+
+
+
+
