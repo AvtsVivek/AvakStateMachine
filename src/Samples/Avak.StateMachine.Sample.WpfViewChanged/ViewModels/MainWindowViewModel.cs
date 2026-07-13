@@ -1,5 +1,6 @@
 ﻿using Avak.StateMachine.Core;
 using Avak.StateMachine.Core.Contracts;
+using Avak.StateMachine.Core.States;
 using Avak.StateMachine.Sample.WpfViewChanged.Infra;
 using CommunityToolkit.Mvvm.ComponentModel;
 using System.IO;

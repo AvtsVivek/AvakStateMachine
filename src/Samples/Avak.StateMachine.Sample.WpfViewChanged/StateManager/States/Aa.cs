@@ -1,4 +1,4 @@
-﻿using Avak.StateMachine.Core;
+﻿using Avak.StateMachine.Core.States;
 
 namespace Avak.StateMachine.Sample.WpfViewChanged.StateManager.States
 {

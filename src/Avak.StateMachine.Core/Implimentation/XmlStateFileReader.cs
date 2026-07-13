@@ -1,4 +1,5 @@
 ﻿using Avak.StateMachine.Core.Contracts;
+using Avak.StateMachine.Core.States;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;

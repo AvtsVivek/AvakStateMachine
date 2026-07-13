@@ -1,6 +1,6 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 
-namespace Avak.StateMachine.Core
+namespace Avak.StateMachine.Core.States
 {
     public abstract class StateBase : IEquatable<StateBase>
     {

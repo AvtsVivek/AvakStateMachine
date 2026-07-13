@@ -1,5 +1,5 @@
-﻿using Avak.StateMachine.Core;
-using Avak.StateMachine.Core.Contracts;
+﻿using Avak.StateMachine.Core.Contracts;
+using Avak.StateMachine.Core.States;
 
 namespace Avak.StateMachine.Sample.ConsoleUI.StateManager.States
 {

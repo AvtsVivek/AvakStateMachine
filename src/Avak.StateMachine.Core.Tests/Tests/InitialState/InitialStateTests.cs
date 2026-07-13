@@ -1,5 +1,6 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.Implimentation;
+using Avak.StateMachine.Core.States;
 using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.Tests.InitialState

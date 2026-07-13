@@ -1,4 +1,6 @@
-﻿namespace Avak.StateMachine.Core.Contracts
+﻿using Avak.StateMachine.Core.States;
+
+namespace Avak.StateMachine.Core.Contracts
 {
 	public interface IStateMachineManager
 	{

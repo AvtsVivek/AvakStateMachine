@@ -1,4 +1,6 @@
-﻿namespace Avak.StateMachine.Core
+﻿using Avak.StateMachine.Core.States;
+
+namespace Avak.StateMachine.Core
 {
     public class Transition
     {
