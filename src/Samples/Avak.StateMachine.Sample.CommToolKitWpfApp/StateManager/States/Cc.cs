@@ -3,22 +3,8 @@ using Avak.StateMachine.Core.Contracts;
 
 namespace Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.States
 {
-    public class Aa : StateBase
+    public class Cc : StateBase
     {
-        protected override void Init()
-        {
-
-        }
-
-        protected override void Enter()
-        {
-
-        }
-
-        protected override void Exit()
-        {
-
-        }
         public override IStateViewModel GetStateViewModel()
         {
             throw new NotImplementedException();
