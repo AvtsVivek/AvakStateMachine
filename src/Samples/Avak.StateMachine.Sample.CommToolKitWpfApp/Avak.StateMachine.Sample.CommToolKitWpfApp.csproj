@@ -22,9 +22,8 @@
 </ItemGroup>
 
 <ItemGroup>
-  <ProjectReference Include="..\..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
+  <ProjectReference Include="..\..\Framework\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
 </ItemGroup>
 
-	
 
 </Project>

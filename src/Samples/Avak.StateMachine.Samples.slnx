@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Avak.StateMachine.Sample.CommToolKitWpfApp/Avak.StateMachine.Sample.CommToolKitWpfApp.csproj" />
+  <Project Path="Avak.StateMachine.Sample.ConsoleUI/Avak.StateMachine.Sample.ConsoleUI.csproj" />
+  <Project Path="Avak.StateMachine.Sample.WpfViewChanged/Avak.StateMachine.Sample.WpfViewChanged.csproj" />
+</Solution>
+
