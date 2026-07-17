@@ -242,8 +242,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
                     Transition transition = state
                         .Transitions
-                        .Where(transition => transition.Trigger.Name == triggerAttribute!.Value)
-                        .First();
+                        .First(transition => transition.Trigger.Name == triggerAttribute!.Value);
 
                     transition.Target = targetState;
                 }
