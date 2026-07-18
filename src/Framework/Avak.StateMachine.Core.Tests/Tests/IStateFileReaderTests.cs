@@ -32,7 +32,6 @@ namespace Avak.StateMachine.Core.Tests.Tests
         {
             // Arrange
             IXmlKeys constants = new XmlKeys();
-            // IStateFileReader reader = new XmlStateFileReader(constants);
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
             stateMachineManager.SetStateFile(FileStream);
 
@@ -49,7 +48,6 @@ namespace Avak.StateMachine.Core.Tests.Tests
         {
             // Arrange
             IXmlKeys constants = new XmlKeys();
-            // IStateFileReader reader = new XmlStateFileReader(constants);
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
             stateMachineManager.SetStateFile(FileStream);
             bool loadResult = stateMachineManager.LoadStateFile();

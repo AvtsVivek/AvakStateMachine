@@ -6,8 +6,8 @@ using System.Reflection;
 namespace Avak.StateMachine.Core.Tests.Tests
 {
     /// <summary>
-    /// If no Initial State is specified, then the very first one will be treated as initial state.
-    /// If initial state is specified, then that state will be taken as the initial.
+    /// If no Initial attribute is specified for a state element, then the very first one will be treated as initial state.
+    /// If initial state is specified for a state, then that state will be taken as the initial.
     /// </summary>
     [TestClass]
     public class InitialStateTests

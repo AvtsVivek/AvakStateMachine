@@ -88,6 +88,7 @@ namespace Avak.StateMachine.Core.Implimentation
             catch (XmlException ex)
             {
                 // Log the exception message ex.Message
+                // todo need logging.
                 isStateFileValidAndLoaded = false;
             }
 
@@ -119,9 +120,14 @@ namespace Avak.StateMachine.Core.Implimentation
             if (triggers == null)
                 ReadTriggers();
 
-            XElement stateCollectionElement = XResourceDoc
+            XElement? stateCollectionElement = XResourceDoc
                 .Descendants(constants.StateFileStateCollectionElementName)
-                .First();
+                .FirstOrDefault();
+
+            if (stateCollectionElement == null)
+            {
+                throw new XmlException("States element must be present in the state xml file.");
+            }
 
             ReadStates(stateCollectionElement, stateDependencyObjectFinderDelegate);
 
@@ -324,13 +330,12 @@ namespace Avak.StateMachine.Core.Implimentation
                 throw new Exception($"Trigger Attribute missing in the file {XResourceDoc.BaseUri} for state {stateAttribute.Value}");
             }
 
-            Trigger triggerForTransition = triggers
-                .Where(trigger => trigger.Name == triggerAttribute.Value)
-                .First();
+            Trigger? triggerForTransition = triggers
+                .FirstOrDefault(trigger => trigger.Name == triggerAttribute.Value);
 
             if (triggerForTransition == null)
             {
-                string errorMessage = $"Trigger with name {triggerAttribute.Value} not found in the transition for the state {stateElement.Attribute(constants.StateFileStateNameAttributeName)!}";
+                string errorMessage = $"Trigger with name {triggerAttribute.Value} not found for the transition of the state {stateElement.Attribute(constants.StateFileStateNameAttributeName)!}";
 
                 throw new Exception(errorMessage);
             }
@@ -448,7 +453,7 @@ namespace Avak.StateMachine.Core.Implimentation
                 }
                 catch (Exception ex)
                 {
-
+                    // to do need logging.
                     // logger.Error(ex, $"Error creating state {stateName} in namespace {statesNamespace}.");
                     throw;
                 }

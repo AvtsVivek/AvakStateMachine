@@ -5,8 +5,32 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.Tests
 {
+    // Some references
+    // https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-writing-tests-lifecycle
+
+    /*
+[MethodName]_[Scenario]_[ExpectedBehavior]: This is the most common standard recommended by Microsoft Learn.
+Example: Add_TwoPositiveNumbers_ReturnsSum
+Should_[ExpectedBehavior]_When_[StateUnderTest]: This pattern creates a readable sentence that focuses on behavior.
+Example: Should_ThrowException_When_AgeLessThan18
+Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Development (BDD) style that is highly descriptive but can result in very long names.
+    
+            [TestInitialize]
+        public void Setup()
+        {
+            // Runs before each test
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            // Runs after each test (clean up files, database connections, etc.)
+        }
+     
+     */
+
     /// <summary>
-    /// The State type Cc will be in the namespace AribitratryDefaultNamespace. No name space is specified. The default is taken.
+    /// The State type Cc will be in the namespace AribitratryDefaultNamespace. No name space is specified for Cc. The default is taken.
     /// The state type Aa will be in the namespace AribitratryNamespaceForAa.
     /// We do not assert specifically on the namespace because the fact that the state is instanciated proves that the namespaces are correct.
     /// </summary>

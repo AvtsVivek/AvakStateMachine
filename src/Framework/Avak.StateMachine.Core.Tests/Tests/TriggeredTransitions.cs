@@ -5,6 +5,7 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.Tests
 {
+    // Ensures basic transitions work.
     [TestClass]
     public class TriggeredTransitions
     {
