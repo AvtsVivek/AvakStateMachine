@@ -5,50 +5,53 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.Tests
 {
-	[TestClass]
-	public class ArbitraryNamespaceTests
-	{
-		private Stream fileStream = null!;
-		[TestInitialize]
-		public void Setup()
-		{
-			var assembly = Assembly.GetExecutingAssembly();
-			string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.ArbitraryNamespace.xml";
-			fileStream = assembly.GetManifestResourceStream(appStateFile)!;
-		}
+    /// <summary>
+    /// The State type Cc will be in the namespace AribitratryDefaultNamespace. No name space is specified. The default is taken.
+    /// The state type Aa will be in the namespace AribitratryNamespaceForAa.
+    /// We do not assert specifically on the namespace because the fact that the state is instanciated proves that the namespaces are correct.
+    /// </summary>
+    [TestClass]
+    public class ArbitraryNamespaceTests
+    {
+        private Stream FileStream = null!;
+        [TestInitialize]
+        public void Setup()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.ArbitraryNamespace.xml";
+            FileStream = assembly.GetManifestResourceStream(appStateFile)!;
+        }
 
-		[TestCleanup]
-		public void Cleanup()
-		{
-			// Runs after each test (clean up files, database connections, etc.)
+        [TestCleanup]
+        public void Cleanup()
+        {
+            // Runs after each test (clean up files, database connections, etc.)
 
-			// Close the stream.
-			fileStream.Close();
-			fileStream.Dispose();
-		}
+            // Close the stream.
+            FileStream.Close();
+            FileStream.Dispose();
+        }
 
-		[TestMethod]
-		public void GetArbitraryStates_Has3Count_InitialSet()
-		{
-			// Arrange
-			IXmlKeys constants = new XmlKeys();
+        [TestMethod]
+        public void GetArbitraryStates_Has3Count_InitialSet()
+        {
+            // Arrange
+            IXmlKeys constants = new XmlKeys();
 
-			// IStateFileReader reader = new XmlStateFileReader(constants);
+            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
-			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            stateMachineManager.SetStateFile(FileStream);
 
-			stateMachineManager.SetStateFile(fileStream);
+            bool loadResult = stateMachineManager.LoadStateFile();
 
-			bool loadResult = stateMachineManager.LoadStateFile();
+            // Act
+            List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
 
-			// Act
-			List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
-
-			// Assert
-			Assert.HasCount(3, states);
-			Assert.IsTrue(states[0].IsInitial);
-			Assert.IsFalse(states[1].IsInitial);
-			Assert.IsFalse(states[2].IsInitial);
-		}
-	}
+            // Assert
+            Assert.HasCount(3, states);
+            Assert.IsTrue(states[0].IsInitial);
+            Assert.IsFalse(states[1].IsInitial);
+            Assert.IsFalse(states[2].IsInitial);
+        }
+    }
 }
