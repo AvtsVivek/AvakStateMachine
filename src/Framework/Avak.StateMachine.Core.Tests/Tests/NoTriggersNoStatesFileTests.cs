@@ -40,7 +40,7 @@ namespace Avak.StateMachine.Core.Tests.Tests
 
 			// Act
 			List<Trigger> triggers = stateMachineManager.GetStateGraph().TriggerList;
-			List<StateBase> states = stateMachineManager.GetStateGraph().StateList;
+			List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
 
 			// Assert
 			Assert.IsTrue(loadResult);

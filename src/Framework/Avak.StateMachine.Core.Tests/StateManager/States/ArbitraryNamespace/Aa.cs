@@ -3,33 +3,33 @@ using Avak.StateMachine.Core.States;
 
 namespace AribitratryDefaultNamespace
 {
-	internal class Cc : StateBase
-	{
-		public override IStateViewModel GetStateViewModel()
-		{
-			throw new NotImplementedException();
-		}
-	}
+    internal class Cc : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 
 namespace AribitratryNamespaceForAa
 {
-	internal class Aa : StateBase
-	{
-		public override IStateViewModel GetStateViewModel()
-		{
-			throw new NotImplementedException();
-		}
-	}
+    internal class Aa : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
 
 namespace AribitratryNamespaceForBb
 {
-	internal class Bb : StateBase
-	{
-		public override IStateViewModel GetStateViewModel()
-		{
-			throw new NotImplementedException();
-		}
-	}
+    internal class Bb : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
