@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.Tests
+namespace Avak.StateMachine.Core.Tests.MasterStateTests
 {
     /// <summary>
     /// If no Initial attribute is specified for a state element, then the very first one will be treated as initial state.
