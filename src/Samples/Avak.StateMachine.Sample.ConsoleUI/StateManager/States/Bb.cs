@@ -3,11 +3,11 @@ using Avak.StateMachine.Core.States;
 
 namespace Avak.StateMachine.Sample.ConsoleUI.StateManager.States
 {
-	internal class Bb : StateBase
-	{
-		public override IStateViewModel GetStateViewModel()
-		{
-			throw new NotImplementedException();
-		}
-	}
+    internal class Bb : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

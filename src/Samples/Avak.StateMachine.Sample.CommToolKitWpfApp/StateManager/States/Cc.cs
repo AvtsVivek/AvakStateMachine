@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.States;
 
 namespace Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.States
 {
-    public class Cc : StateBase
+    public class Cc : MasterStateBase
     {
         public override IStateViewModel GetStateViewModel()
         {

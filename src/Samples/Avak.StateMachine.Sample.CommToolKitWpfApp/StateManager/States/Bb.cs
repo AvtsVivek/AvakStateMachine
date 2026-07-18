@@ -3,11 +3,11 @@ using Avak.StateMachine.Core.States;
 
 namespace Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.States
 {
-    public class Bb : StateBase
-	{
-		public override IStateViewModel GetStateViewModel()
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public class Bb : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
