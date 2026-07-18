@@ -3,10 +3,10 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.Tests
+namespace Avak.StateMachine.Core.Tests.MasterStateTests
 {
     [TestClass]
-    public class NoTriggersNoStatesFileTests
+    public class WithTriggerAndTwoStatesTests
     {
         private Stream FileStream = null!;
         [TestInitialize]
@@ -14,7 +14,7 @@ namespace Avak.StateMachine.Core.Tests.Tests
         {
             // Runs before each test
             var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.NoStatesNoTriggers.xml";
+            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.WithTriggersTagAndTwoStatesStateFile.xml";
             FileStream = assembly.GetManifestResourceStream(appStateFile)!;
         }
 
@@ -28,24 +28,26 @@ namespace Avak.StateMachine.Core.Tests.Tests
             FileStream.Dispose();
         }
 
-        // Read triggers from xml file
         [TestMethod]
-        public void GetTriggers_AndStates_WithCountZero()
+        public void GetStates_WithCountTwo_StatesFound()
         {
             // Arrange
             IXmlKeys constants = new XmlKeys();
+            // IStateFileReader reader = new XmlStateFileReader(constants);
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
             stateMachineManager.SetStateFile(FileStream);
             bool loadResult = stateMachineManager.LoadStateFile();
 
             // Act
             List<Trigger> triggers = stateMachineManager.GetStateGraph().TriggerList;
-            List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
+            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            List<MasterStateBase> states = stateGraph.StateList;
+            StateBase zerothState = states[0];
 
             // Assert
-            Assert.IsTrue(loadResult);
-            Assert.IsEmpty(triggers);
-            Assert.IsEmpty(states);
+            Assert.HasCount(2, states);
+            Assert.AreEqual(zerothState, stateGraph.InitialState);
+            Assert.IsTrue(stateGraph.InitialState.IsInitial);
         }
     }
 }

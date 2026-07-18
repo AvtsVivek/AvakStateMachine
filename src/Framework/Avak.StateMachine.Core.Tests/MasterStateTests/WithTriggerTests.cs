@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.Tests
+namespace Avak.StateMachine.Core.Tests.MasterStateTests
 {
     [TestClass]
     public class WithTriggerTests

@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.Tests
+namespace Avak.StateMachine.Core.Tests.MasterStateTests
 {
     // Verifies the Transitions are read from the state file and set to the state objs.
     [TestClass]
