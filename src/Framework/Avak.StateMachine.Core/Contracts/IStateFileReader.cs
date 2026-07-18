@@ -1,17 +1,17 @@
 ﻿namespace Avak.StateMachine.Core.Contracts
 {
-	internal interface IStateFileReader
-	{
-		void SetStateFile(Stream stream);
+    internal interface IStateFileReader
+    {
+        void SetStateFile(Stream stream);
 
-		void SetStateFilePath(string filePath);
+        void SetStateFilePath(string filePath);
 
-		bool LoadStateFile();
+        bool LoadStateFile();
 
-		string GetRootNamespace();
+        string GetRootNamespace();
 
-		List<Trigger> GetTriggers();
+        List<Trigger> GetTriggers();
 
-		StateGraph GetStateGraph(StateDependencyObjectFinder stateDependencyObjectFinderDelegate);
-	}
+        IStateGraph GetStateGraph(StateDependencyObjectFinder stateDependencyObjectFinderDelegate);
+    }
 }

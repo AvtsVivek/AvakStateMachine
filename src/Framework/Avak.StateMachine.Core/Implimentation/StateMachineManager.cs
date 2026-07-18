@@ -6,7 +6,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
     public class StateMachineManager : IStateMachineManager
     {
-        public StateGraph StateGraph { get; private set; }
+        public IStateGraph StateGraph { get; private set; }
         private IStateFileReader stateFileReader;
         private StateDependencyObjectFinder stateDependencyObjectFinderDelegate;
 
@@ -57,7 +57,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return stateFileReader.LoadStateFile();
         }
 
-        public StateGraph GetStateGraph()
+        public IStateGraph GetStateGraph()
         {
             StateGraph = stateFileReader.GetStateGraph(stateDependencyObjectFinderDelegate);
             if (CurrentState == null)
@@ -173,7 +173,7 @@ namespace Avak.StateMachine.Core.Implimentation
                 throw new InvalidOperationException("State Graph is null. Check the state file is valid");
             }
 
-            List<StateBase> states = StateGraph.StateList;
+            List<MasterStateBase> states = StateGraph.StateList;
             if (!states.Contains(state))
             {
                 throw new ArgumentException($"The state passed to the method {nameof(GetTransitionsForState)} is invalid. ");
