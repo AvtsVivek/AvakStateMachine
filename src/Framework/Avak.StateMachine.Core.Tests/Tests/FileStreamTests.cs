@@ -34,7 +34,7 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
         {
             // Arrange
             var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateFiles.TestStateFile.xml";
+            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.TestStateFile.xml";
 
             // Act
             using Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
