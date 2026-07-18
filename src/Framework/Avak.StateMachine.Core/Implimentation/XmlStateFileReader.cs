@@ -19,7 +19,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         private List<Trigger> triggers;
 
-        private List<StateBase> states;
+        private List<MasterStateBase> states;
 
         private StateGraph stateGraph;
 
@@ -88,6 +88,7 @@ namespace Avak.StateMachine.Core.Implimentation
             catch (XmlException ex)
             {
                 // Log the exception message ex.Message
+                // todo need logging.
                 isStateFileValidAndLoaded = false;
             }
 
@@ -106,7 +107,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return triggers;
         }
 
-        public StateGraph GetStateGraph(StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        public IStateGraph GetStateGraph(StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
         {
             if (stateGraph != null)
             {
@@ -119,13 +120,18 @@ namespace Avak.StateMachine.Core.Implimentation
             if (triggers == null)
                 ReadTriggers();
 
-            XElement stateCollectionElement = XResourceDoc
+            XElement? stateCollectionElement = XResourceDoc
                 .Descendants(constants.StateFileStateCollectionElementName)
-                .First();
+                .FirstOrDefault();
+
+            if (stateCollectionElement == null)
+            {
+                throw new XmlException("States element must be present in the state xml file.");
+            }
 
             ReadStates(stateCollectionElement, stateDependencyObjectFinderDelegate);
 
-            StateBase? initialState = SetInitialState(stateCollectionElement);
+            MasterStateBase? initialState = SetInitialState(stateCollectionElement);
 
             stateGraph = new StateGraph(states, triggers!, initialState!);
 
@@ -133,7 +139,7 @@ namespace Avak.StateMachine.Core.Implimentation
         }
 
 
-        private StateBase? SetInitialState(XElement stateCollectionElement)
+        private MasterStateBase? SetInitialState(XElement stateCollectionElement)
         {
             if (states.Count == 0)
             {
@@ -159,7 +165,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             string initialStateName = initialAttribute.Value;
 
-            StateBase? initialState = states.Where(state => state.Name == initialStateName).First();
+            MasterStateBase? initialState = states.FirstOrDefault(state => state.Name == initialStateName);
 
             if (initialState == null)
             {
@@ -199,7 +205,7 @@ namespace Avak.StateMachine.Core.Implimentation
             AddTargetStateToStateTransitions(stateElements, states);
         }
 
-        private void AddTargetStateToStateTransitions(List<XElement> stateElements, List<StateBase> states)
+        private void AddTargetStateToStateTransitions(List<XElement> stateElements, List<MasterStateBase> states)
         {
             foreach (XElement stateElement in stateElements)
             {
@@ -229,7 +235,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
                     // The target attribute name should match a state
 
-                    StateBase targetState = states.First(state => state.Name == targetAttribute!.Value);
+                    MasterStateBase targetState = states.First(state => state.Name == targetAttribute!.Value);
 
                     if (targetState == null)
                     {
@@ -249,9 +255,9 @@ namespace Avak.StateMachine.Core.Implimentation
             }
         }
 
-        private List<StateBase> GetStates(List<XElement> stateElements, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        private List<MasterStateBase> GetStates(List<XElement> stateElements, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
         {
-            List<StateBase> states = [];
+            List<MasterStateBase> states = [];
 
             foreach (XElement stateElement in stateElements)
             {
@@ -277,7 +283,7 @@ namespace Avak.StateMachine.Core.Implimentation
                     stateNamespace = stateNamespaceAttribute.Value;
                 }
 
-                StateBase state = CreateState(stateName, stateNamespace, stateDependencyObjectFinderDelegate);
+                MasterStateBase state = CreateState(stateName, stateNamespace, stateDependencyObjectFinderDelegate);
 
                 List<Transition> transitionsForState = GetTransitionsForState(stateElement);
 
@@ -324,13 +330,12 @@ namespace Avak.StateMachine.Core.Implimentation
                 throw new Exception($"Trigger Attribute missing in the file {XResourceDoc.BaseUri} for state {stateAttribute.Value}");
             }
 
-            Trigger triggerForTransition = triggers
-                .Where(trigger => trigger.Name == triggerAttribute.Value)
-                .First();
+            Trigger? triggerForTransition = triggers
+                .FirstOrDefault(trigger => trigger.Name == triggerAttribute.Value);
 
             if (triggerForTransition == null)
             {
-                string errorMessage = $"Trigger with name {triggerAttribute.Value} not found in the transition for the state {stateElement.Attribute(constants.StateFileStateNameAttributeName)!}";
+                string errorMessage = $"Trigger with name {triggerAttribute.Value} not found for the transition of the state {stateElement.Attribute(constants.StateFileStateNameAttributeName)!}";
 
                 throw new Exception(errorMessage);
             }
@@ -340,9 +345,9 @@ namespace Avak.StateMachine.Core.Implimentation
             return transition;
         }
 
-        private StateBase CreateState(string stateName, string statesNamespace, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        private MasterStateBase CreateState(string stateName, string statesNamespace, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
         {
-            StateBase stateBase = null!;
+            MasterStateBase stateBase = null!;
 
             string typeFullName = statesNamespace + "." + stateName;
 
@@ -438,7 +443,7 @@ namespace Avak.StateMachine.Core.Implimentation
                             $"Instanciation of the type {ctype} failed. ");
                     }
 
-                    stateBase = (stateObject as StateBase)!;
+                    stateBase = (stateObject as MasterStateBase)!;
 
                     if (stateBase is null)
                     {
@@ -448,7 +453,7 @@ namespace Avak.StateMachine.Core.Implimentation
                 }
                 catch (Exception ex)
                 {
-
+                    // to do need logging.
                     // logger.Error(ex, $"Error creating state {stateName} in namespace {statesNamespace}.");
                     throw;
                 }

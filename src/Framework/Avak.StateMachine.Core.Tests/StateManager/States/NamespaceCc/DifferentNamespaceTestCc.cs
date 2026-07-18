@@ -3,11 +3,11 @@ using Avak.StateMachine.Core.States;
 
 namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceCc
 {
-	public class DifferentNamespaceTestCc : StateBase
-	{
-		public override IStateViewModel GetStateViewModel()
-		{
-			throw new NotImplementedException();
-		}
-	}
+    public class DifferentNamespaceTestCc : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

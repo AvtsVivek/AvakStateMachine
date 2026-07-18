@@ -5,44 +5,44 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Sample.ConsoleUI
 {
-	internal class Program
-	{
-		static void Main(string[] args)
-		{
-			Console.WriteLine("Hello, World!");
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello, World!");
 
-			PopulateStateListUsingFileStream();
+            PopulateStateListUsingFileStream();
 
-		}
+        }
 
-		private static void PopulateStateListUsingFileStream()
-		{
-			var assembly = Assembly.GetExecutingAssembly();
+        private static void PopulateStateListUsingFileStream()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
 
-			string appStateTable = "Avak.StateMachine.Sample.ConsoleUI.StateManager.State.xml";
+            string appStateTable = "Avak.StateMachine.Sample.ConsoleUI.StateManager.State.xml";
 
-			using Stream stream = assembly.GetManifestResourceStream(appStateTable)!;
+            using Stream stream = assembly.GetManifestResourceStream(appStateTable)!;
 
-			if (stream == null)
-			{
-				return;
-			}
+            if (stream == null)
+            {
+                return;
+            }
 
-			IXmlKeys constants = new XmlKeys();
+            IXmlKeys constants = new XmlKeys();
 
-			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
-			stateMachineManager.SetStateFile(stream);
+            stateMachineManager.SetStateFile(stream);
 
-			bool isLoaded = stateMachineManager.LoadStateFile();
+            bool isLoaded = stateMachineManager.LoadStateFile();
 
-			StateGraph stateGraph = stateMachineManager.GetStateGraph();
+            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
 
-			List<Trigger> triggers = stateMachineManager.StateGraph.TriggerList;
+            List<Trigger> triggers = stateMachineManager.StateGraph.TriggerList;
 
-			Console.WriteLine($"The number of Triggers in the state file are {triggers.Count}");
+            Console.WriteLine($"The number of Triggers in the state file are {triggers.Count}");
 
-			Console.WriteLine($"The number of states in the state file are {stateGraph.StateList.Count}");
-		}
-	}
+            Console.WriteLine($"The number of states in the state file are {stateGraph.StateList.Count}");
+        }
+    }
 }

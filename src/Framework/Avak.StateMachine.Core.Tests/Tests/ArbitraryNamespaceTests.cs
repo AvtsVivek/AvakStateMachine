@@ -5,50 +5,77 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.Tests
 {
-	[TestClass]
-	public class ArbitraryNamespaceTests
-	{
-		private Stream fileStream = null!;
-		[TestInitialize]
-		public void Setup()
-		{
-			var assembly = Assembly.GetExecutingAssembly();
-			string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.ArbitraryNamespace.xml";
-			fileStream = assembly.GetManifestResourceStream(appStateFile)!;
-		}
+    // Some references
+    // https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-writing-tests-lifecycle
 
-		[TestCleanup]
-		public void Cleanup()
-		{
-			// Runs after each test (clean up files, database connections, etc.)
+    /*
+[MethodName]_[Scenario]_[ExpectedBehavior]: This is the most common standard recommended by Microsoft Learn.
+Example: Add_TwoPositiveNumbers_ReturnsSum
+Should_[ExpectedBehavior]_When_[StateUnderTest]: This pattern creates a readable sentence that focuses on behavior.
+Example: Should_ThrowException_When_AgeLessThan18
+Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Development (BDD) style that is highly descriptive but can result in very long names.
+    
+            [TestInitialize]
+        public void Setup()
+        {
+            // Runs before each test
+        }
 
-			// Close the stream.
-			fileStream.Close();
-			fileStream.Dispose();
-		}
+        [TestCleanup]
+        public void Cleanup()
+        {
+            // Runs after each test (clean up files, database connections, etc.)
+        }
+     
+     */
 
-		[TestMethod]
-		public void GetArbitraryStates_Has3Count_InitialSet()
-		{
-			// Arrange
-			IXmlKeys constants = new XmlKeys();
+    /// <summary>
+    /// The State type Cc will be in the namespace AribitratryDefaultNamespace. No name space is specified for Cc. The default is taken.
+    /// The state type Aa will be in the namespace AribitratryNamespaceForAa.
+    /// We do not assert specifically on the namespace because the fact that the state is instanciated proves that the namespaces are correct.
+    /// </summary>
+    [TestClass]
+    public class ArbitraryNamespaceTests
+    {
+        private Stream FileStream = null!;
+        [TestInitialize]
+        public void Setup()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.ArbitraryNamespace.xml";
+            FileStream = assembly.GetManifestResourceStream(appStateFile)!;
+        }
 
-			// IStateFileReader reader = new XmlStateFileReader(constants);
+        [TestCleanup]
+        public void Cleanup()
+        {
+            // Runs after each test (clean up files, database connections, etc.)
 
-			StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            // Close the stream.
+            FileStream.Close();
+            FileStream.Dispose();
+        }
 
-			stateMachineManager.SetStateFile(fileStream);
+        [TestMethod]
+        public void GetArbitraryStates_Has3Count_InitialSet()
+        {
+            // Arrange
+            IXmlKeys constants = new XmlKeys();
 
-			bool loadResult = stateMachineManager.LoadStateFile();
+            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
-			// Act
-			List<StateBase> states = stateMachineManager.GetStateGraph().StateList;
+            stateMachineManager.SetStateFile(FileStream);
 
-			// Assert
-			Assert.HasCount(3, states);
-			Assert.IsTrue(states[0].IsInitial);
-			Assert.IsFalse(states[1].IsInitial);
-			Assert.IsFalse(states[2].IsInitial);
-		}
-	}
+            bool loadResult = stateMachineManager.LoadStateFile();
+
+            // Act
+            List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
+
+            // Assert
+            Assert.HasCount(3, states);
+            Assert.IsTrue(states[0].IsInitial);
+            Assert.IsFalse(states[1].IsInitial);
+            Assert.IsFalse(states[2].IsInitial);
+        }
+    }
 }

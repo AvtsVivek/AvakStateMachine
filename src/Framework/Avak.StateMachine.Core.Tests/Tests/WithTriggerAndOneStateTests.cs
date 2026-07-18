@@ -42,7 +42,7 @@ namespace Avak.StateMachine.Core.Tests.Tests
 			// string stateNamespace = stateMachineManager.GetRootNamespace();
 			// string stateNamespace = "Need to take a look";
 			List<Trigger> triggers = stateMachineManager.GetStateGraph().TriggerList;
-			List<StateBase> states = stateMachineManager.GetStateGraph().StateList;
+			List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
 			StateBase zerothState = states[0];
 
 			// Assert

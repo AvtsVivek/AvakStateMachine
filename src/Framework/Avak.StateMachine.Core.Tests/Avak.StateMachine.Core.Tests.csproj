@@ -9,36 +9,24 @@
 
   <ItemGroup>
     <None Remove="NoStatesNoTriggers.xml" />
-    <None Remove="StateFiles\WithTriggersAndStatesStateFile.xml" />
-    <None Remove="StateFiles\WithTriggersStateFile.xml" />
     <None Remove="StateManager\ArbitraryNamespace.xml" />
     <None Remove="StateManager\IncorrectStateBaseClass.xml" />
     <None Remove="StateManager\IncorrectTypeName.xml" />
     <None Remove="TestStateFile.xml" />
-    <None Remove="Tests\InitialState\InitialStateSpecified.xml" />
-    <None Remove="Tests\InitialState\NoInitialStateSpecified.xml" />
-    <None Remove="Tests\TriggeredTransitions\BasicTransitions.xml" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="StateFiles\TestStateFile.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="StateManager\TestStateFile.xml" />
     <EmbeddedResource Include="StateManager\ArbitraryNamespace.xml" />
     <EmbeddedResource Include="StateManager\DifferentNamespaces.xml" />
     <EmbeddedResource Include="StateManager\IncorrectStateBaseClass.xml" />
     <EmbeddedResource Include="StateManager\IncorrectTypeName.xml" />
     <EmbeddedResource Include="StateManager\BasicTransitions.xml" />
     <EmbeddedResource Include="StateManager\WithTriggersTagAndOneStateStateFile.xml" />
-    <EmbeddedResource Include="StateManager\WithTriggersTagAndTwoStatesStateFile.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="StateFiles\WithTriggersStateFile.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Tests\InitialState\InitialStateSpecified.xml" />
-    <EmbeddedResource Include="Tests\InitialState\NoInitialStateSpecified.xml" />
-    <EmbeddedResource Include="Tests\TriggeredTransitions\BasicTransitions.xml" />
+    <EmbeddedResource Include="StateManager\WithTriggersTagAndTwoStatesStateFile.xml" />    
+    <EmbeddedResource Include="StateManager\WithTriggersStateFile.xml" />
+    <EmbeddedResource Include="StateManager\InitialStateSpecified.xml" />
+    <EmbeddedResource Include="StateManager\NoInitialStateSpecified.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -50,7 +38,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="StateFiles\NoStatesNoTriggers.xml">
+    <EmbeddedResource Include="StateManager\NoStatesNoTriggers.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
@@ -60,7 +48,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="StateFiles\NoEmbeddedJustCopiedResource.xml">
+    <None Update="StateManager\NoEmbeddedJustCopiedResource.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

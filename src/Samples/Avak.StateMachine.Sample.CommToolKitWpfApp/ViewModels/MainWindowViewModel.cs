@@ -9,74 +9,74 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
 {
-	public partial class MainWindowViewModel : ObservableObject
-	{
-		[ObservableProperty]
-		private IPageViewModel? _currentPageViewModel;
+    public partial class MainWindowViewModel : ObservableObject
+    {
+        [ObservableProperty]
+        private IPageViewModel? _currentPageViewModel;
 
-		[ObservableProperty]
-		private string _message;
+        [ObservableProperty]
+        private string _message;
 
-		private readonly Dictionary<string, IPageViewModel>? _pageViewModels = [];
+        private readonly Dictionary<string, IPageViewModel>? _pageViewModels = [];
 
-		private StateMachineManager stateMachineManager = null!;
+        private StateMachineManager stateMachineManager = null!;
 
-		private StateGraph stateGraph = null!;
+        private IStateGraph stateGraph = null!;
 
-		public MainWindowViewModel()
-		{
-			_message = string.Empty;
+        public MainWindowViewModel()
+        {
+            _message = string.Empty;
 
-			_pageViewModels["Aa"] = new UserControl1ViewModel("Aa");
+            _pageViewModels["Aa"] = new UserControl1ViewModel("Aa");
 
-			_pageViewModels["Bb"] = new UserControl2ViewModel("Bb");
+            _pageViewModels["Bb"] = new UserControl2ViewModel("Bb");
 
-			_pageViewModels["Cc"] = new UserControl3ViewModel("Cc");
+            _pageViewModels["Cc"] = new UserControl3ViewModel("Cc");
 
-			InitializeState();
+            InitializeState();
 
-			CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
-		}
+            CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
+        }
 
-		[RelayCommand()]
-		private void OnClick(string arg)
-		{
-			Message = string.Empty;
-			Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
+        [RelayCommand()]
+        private void OnClick(string arg)
+        {
+            Message = string.Empty;
+            Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
 
-			var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
+            var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
 
-			if (!result.success)
-			{
-				Message = result.message;
-				return;
-			}
+            if (!result.success)
+            {
+                Message = result.message;
+                return;
+            }
 
-			stateMachineManager
-				.DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
+            stateMachineManager
+                .DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
 
-			CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
-		}
+            CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
+        }
 
-		private void InitializeState()
-		{
-			var assembly = Assembly.GetExecutingAssembly();
-			string appStateFile = "Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.BasicTransitions.xml";
-			Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
+        private void InitializeState()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            string appStateFile = "Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.BasicTransitions.xml";
+            Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
 
-			IXmlKeys constants = new XmlKeys();
-			stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            IXmlKeys constants = new XmlKeys();
+            stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
-			stateMachineManager.SetStateFile(resourceStream);
-			bool loadResult = stateMachineManager.LoadStateFile();
-			stateGraph = stateMachineManager.GetStateGraph();
+            stateMachineManager.SetStateFile(resourceStream);
+            bool loadResult = stateMachineManager.LoadStateFile();
+            stateGraph = stateMachineManager.GetStateGraph();
 
-			List<StateBase> states = stateGraph.StateList;
+            List<MasterStateBase> states = stateGraph.StateList;
 
-			// 
+            // 
 
-			resourceStream.Close();
-			resourceStream.Dispose();
-		}
-	}
+            resourceStream.Close();
+            resourceStream.Dispose();
+        }
+    }
 }
