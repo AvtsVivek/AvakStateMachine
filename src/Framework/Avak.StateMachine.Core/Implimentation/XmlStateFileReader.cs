@@ -448,7 +448,7 @@ namespace Avak.StateMachine.Core.Implimentation
                     if (stateBase is null)
                     {
                         throw new Exception($"Trying to create state object of type {ctype}. " +
-                            $"{ctype} must inherit {nameof(StateBase)}");
+                            $"{ctype} must inherit {nameof(MasterStateBase)}");
                     }
                 }
                 catch (Exception ex)
