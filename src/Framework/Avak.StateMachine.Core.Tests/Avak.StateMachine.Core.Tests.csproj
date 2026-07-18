@@ -15,9 +15,6 @@
     <None Remove="StateManager\IncorrectStateBaseClass.xml" />
     <None Remove="StateManager\IncorrectTypeName.xml" />
     <None Remove="TestStateFile.xml" />
-    <None Remove="Tests\InitialState\InitialStateSpecified.xml" />
-    <None Remove="Tests\InitialState\NoInitialStateSpecified.xml" />
-    <None Remove="Tests\TriggeredTransitions\BasicTransitions.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,9 +33,8 @@
     <EmbeddedResource Include="StateFiles\WithTriggersStateFile.xml">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Tests\InitialState\InitialStateSpecified.xml" />
-    <EmbeddedResource Include="Tests\InitialState\NoInitialStateSpecified.xml" />
-    <EmbeddedResource Include="Tests\TriggeredTransitions\BasicTransitions.xml" />
+    <EmbeddedResource Include="StateManager\InitialStateSpecified.xml" />
+    <EmbeddedResource Include="StateManager\NoInitialStateSpecified.xml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="StateFiles\NoEmbeddedJustCopiedResource.xml">
+    <None Update="StateManager\NoEmbeddedJustCopiedResource.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

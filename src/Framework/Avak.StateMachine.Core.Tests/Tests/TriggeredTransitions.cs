@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions
+namespace Avak.StateMachine.Core.Tests.Tests
 {
     [TestClass]
     public class TriggeredTransitions
@@ -25,7 +25,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions
         {
             // Arrange
             var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions.BasicTransitions.xml";
+            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.BasicTransitions.xml";
             Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
@@ -52,7 +52,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions
         {
             // Arrange
             var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.Tests.TriggeredTransitions.BasicTransitions.xml";
+            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.BasicTransitions.xml";
             Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);

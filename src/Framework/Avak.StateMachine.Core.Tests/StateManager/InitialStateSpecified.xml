@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <AvakStates Namespace="Avak.StateMachine.Core.Tests.StateManager.States">
 	<Triggers></Triggers>
-	<States>
+	<States Initial="Bb">
+		<State Name="Aa"></State>
 		<State Name="Bb"></State>
 	</States>
 </AvakStates>

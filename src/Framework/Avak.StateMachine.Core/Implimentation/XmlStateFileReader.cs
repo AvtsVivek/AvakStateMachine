@@ -159,7 +159,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             string initialStateName = initialAttribute.Value;
 
-            MasterStateBase? initialState = states.First(state => state.Name == initialStateName);
+            MasterStateBase? initialState = states.FirstOrDefault(state => state.Name == initialStateName);
 
             if (initialState == null)
             {

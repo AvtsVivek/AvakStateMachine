@@ -3,8 +3,12 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.Tests.InitialState
+namespace Avak.StateMachine.Core.Tests.Tests
 {
+    /// <summary>
+    /// If no Initial State is specified, then the very first one will be treated as initial state.
+    /// If initial state is specified, then that state will be taken as the initial.
+    /// </summary>
     [TestClass]
     public class InitialStateTests
     {
@@ -25,7 +29,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.InitialState
         {
             // Arrange
             var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.Tests.InitialState.NoInitialStateSpecified.xml";
+            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.NoInitialStateSpecified.xml";
             Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
@@ -34,7 +38,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.InitialState
 
             // Act 
             IStateGraph stateGraph = stateMachineManager.GetStateGraph();
-            StateBase stateBb = stateGraph.StateList.Where(state => state.Name == "Bb").FirstOrDefault()!;
+            StateBase stateBb = stateGraph.StateList.FirstOrDefault(state => state.Name == "Bb")!;
 
             // Assert
             Assert.IsNotNull(stateBb);
@@ -48,7 +52,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.InitialState
         {
             // Arrange
             var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.Tests.InitialState.InitialStateSpecified.xml";
+            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.InitialStateSpecified.xml";
             Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
@@ -58,7 +62,7 @@ namespace Avak.StateMachine.Core.Tests.Tests.InitialState
             // Act 
             IStateGraph stateGraph = stateMachineManager.GetStateGraph();
             // stateMachineManager.Initialize();
-            StateBase stateBb = stateGraph.StateList.Where(state => state.Name == "Bb").FirstOrDefault()!;
+            StateBase stateBb = stateGraph.StateList.FirstOrDefault(state => state.Name == "Bb")!;
 
             // Assert
             Assert.IsNotNull(stateBb);
