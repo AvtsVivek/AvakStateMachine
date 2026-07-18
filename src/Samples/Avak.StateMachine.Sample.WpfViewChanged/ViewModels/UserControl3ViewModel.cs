@@ -5,50 +5,50 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 {
-	public partial class UserControl3ViewModel : IPageViewModel
-	{
-		public string PageId { get; set; }
-		public string Title { get; set; }
+    public partial class UserControl3ViewModel : IPageViewModel
+    {
+        public string PageId { get; set; }
+        public string Title { get; set; }
 
-		public event EventHandler<EventArgs<IPageViewModel>>? ViewChanged;
-		private IStateMachineManager stateMachineManager = null!;
-		public UserControl3ViewModel(IStateMachineManager stateMachineManager, string pageIndex = "Cc")
-		{
-			if (stateMachineManager == null)
-			{
-				throw new ArgumentNullException(nameof(stateMachineManager));
-			}
+        public event EventHandler<EventArgs<IPageViewModel>>? ViewChanged;
+        private IStateMachineManager stateMachineManager = null!;
+        public UserControl3ViewModel(IStateMachineManager stateMachineManager, string pageIndex = "Cc")
+        {
+            if (stateMachineManager == null)
+            {
+                throw new ArgumentNullException(nameof(stateMachineManager));
+            }
 
-			this.stateMachineManager = stateMachineManager;
+            this.stateMachineManager = stateMachineManager;
 
-			// Calling this.stateMachineManager.GetStateGraph(); multiple times is a major issue.
-			// Need to address this.
-			// stateGraph = this.stateMachineManager.GetStateGraph();
+            // Calling this.stateMachineManager.GetStateGraph(); multiple times is a major issue.
+            // Need to address this.
+            // stateGraph = this.stateMachineManager.GetStateGraph();
 
-			PageId = pageIndex;
-			Title = "View Cc";
-		}
+            PageId = pageIndex;
+            Title = "View Cc";
+        }
 
-		[RelayCommand()]
-		private void OnClick(string arg)
-		{
-			StateGraph stateGraph = stateMachineManager.GetStateGraph();
-			Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
+        [RelayCommand()]
+        private void OnClick(string arg)
+        {
+            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
 
-			var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
+            var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
 
-			if (!result.success)
-			{
-				// Message = result.message;
-				return;
-			}
+            if (!result.success)
+            {
+                // Message = result.message;
+                return;
+            }
 
-			stateMachineManager
-				.DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
+            stateMachineManager
+                .DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
 
-			IPageViewModel nextViewModel = (stateMachineManager.CurrentState.GetStateViewModel() as IPageViewModel)!;
+            IPageViewModel nextViewModel = (stateMachineManager.CurrentState.GetStateViewModel() as IPageViewModel)!;
 
-			ViewChanged?.Invoke(this, new EventArgs<IPageViewModel>(nextViewModel));
-		}
-	}
+            ViewChanged?.Invoke(this, new EventArgs<IPageViewModel>(nextViewModel));
+        }
+    }
 }
