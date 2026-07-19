@@ -22,7 +22,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectStateBaseClass.xml";
             Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
             IXmlKeys constants = new XmlKeys();
-            // IStateFileReader reader = new XmlStateFileReader(constants);
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
             stateMachineManager.SetStateFile(stream);
             bool loadResult = stateMachineManager.LoadStateFile();
