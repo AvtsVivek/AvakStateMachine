@@ -23,8 +23,8 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetStateFile(stream);
-            bool loadResult = stateMachineManager.LoadStateFile();
+            stateMachineManager.SetMasterStateFile(stream);
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph().StateList);
@@ -44,8 +44,8 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             IXmlKeys constants = new XmlKeys();
             //IStateFileReader reader = new XmlStateFileReader(constants);
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetStateFile(stream);
-            bool loadResult = stateMachineManager.LoadStateFile();
+            stateMachineManager.SetMasterStateFile(stream);
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph().StateList);

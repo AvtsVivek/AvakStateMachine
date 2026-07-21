@@ -64,9 +64,9 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
 
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
-            stateMachineManager.SetStateFile(FileStream);
+            stateMachineManager.SetMasterStateFile(FileStream);
 
-            bool loadResult = stateMachineManager.LoadStateFile();
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;

@@ -32,9 +32,9 @@ namespace Avak.StateMachine.Sample.ConsoleUI
 
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
-            stateMachineManager.SetStateFile(stream);
+            stateMachineManager.SetMasterStateFile(stream);
 
-            bool isLoaded = stateMachineManager.LoadStateFile();
+            bool isLoaded = stateMachineManager.LoadMasterStateFile();
 
             IStateGraph stateGraph = stateMachineManager.GetStateGraph();
 

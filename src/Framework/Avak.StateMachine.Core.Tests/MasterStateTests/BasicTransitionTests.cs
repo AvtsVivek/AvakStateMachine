@@ -34,8 +34,8 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             // Arrange
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetStateFile(fileStream);
-            bool loadResult = stateMachineManager.LoadStateFile();
+            stateMachineManager.SetMasterStateFile(fileStream);
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;

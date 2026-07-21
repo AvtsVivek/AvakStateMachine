@@ -16,16 +16,12 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
         private readonly IStateMachineManager stateMachineManager = null!;
 
-        // private StateDependencyProvider stateDependencyProvider;
-
         private IStateGraph stateGraph = null!;
 
         public MainWindowViewModel(StateDependencyProvider stateDependencyProvider,
             IStateMachineManager stateMachineManager)
         {
             this.stateMachineManager = stateMachineManager;
-
-            // this.stateDependencyProvider = stateDependencyProvider;
 
             InitializeState();
 
@@ -40,28 +36,6 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
                 pageViewModel.ViewChanged += PageViewModel_ViewChanged;
 
             }
-
-
-            //_pageViewModels["Aa"].ViewChanged += (o, s) =>
-            //{
-            //	CurrentPageViewModel = _pageViewModels[s.Value];
-            //};
-
-            //_pageViewModels["Bb"].ViewChanged += (o, s) =>
-            //{
-            //	CurrentPageViewModel = _pageViewModels[s.Value];
-            //};
-
-            //_pageViewModels["Cc"].ViewChanged += (o, s) =>
-            //{
-            //	CurrentPageViewModel = _pageViewModels[s.Value];
-            //};
-
-            //_pageViewModels["Bb"] = new UserControl2ViewModel("Bb");
-
-            // _pageViewModels["Cc"] = new UserControl3ViewModel("Cc");
-
-            // CurrentPageViewModel = _pageViewModels![stateMachineManager.CurrentState.Name];
 
             IStateViewModel vm = stateMachineManager.CurrentState.GetStateViewModel();
 
@@ -79,18 +53,12 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
             string appStateFile = "Avak.StateMachine.Sample.WpfViewChanged.StateManager.BasicTransitions.xml";
             Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
 
-            //IXmlKeys constants = new XmlKeys();
-
-            //StateMachineManager stateMachineManager = new(constants,
-            //	this.stateDependencyProvider.StateDependencyTypeFinderImplimentation);
-
-            stateMachineManager.SetStateFile(resourceStream);
-            bool loadResult = stateMachineManager.LoadStateFile();
+            stateMachineManager.SetMasterStateFile(resourceStream);
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
             stateGraph = stateMachineManager.GetStateGraph();
 
             List<MasterStateBase> states = stateGraph.StateList;
 
-            // SendNotification(stateMachineManager.CurrentState, StateDependencyTypeFinderImplimentation);
             resourceStream.Close();
             resourceStream.Dispose();
         }

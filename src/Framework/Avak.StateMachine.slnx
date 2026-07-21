@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="Avak.StateMachine.Core.Tests.SubStateModuleOne/Avak.StateMachine.Core.Tests.SubStateModuleOne.csproj" />
   <Project Path="Avak.StateMachine.Core.Tests/Avak.StateMachine.Core.Tests.csproj" />
   <Project Path="Avak.StateMachine.Core/Avak.StateMachine.Core.csproj" />
 </Solution>

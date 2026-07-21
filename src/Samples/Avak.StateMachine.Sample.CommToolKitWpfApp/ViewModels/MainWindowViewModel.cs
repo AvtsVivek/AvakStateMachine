@@ -1,7 +1,6 @@
 ﻿using Avak.StateMachine.Core;
 using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.Implimentation;
-using Avak.StateMachine.Core.States;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.IO;
@@ -42,7 +41,8 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
         private void OnClick(string arg)
         {
             Message = string.Empty;
-            Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
+
+            Trigger nextStateTrigger = stateMachineManager.GetTriggers().First(t => t.Name == arg);
 
             var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
 
@@ -67,14 +67,12 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
             IXmlKeys constants = new XmlKeys();
             stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
-            stateMachineManager.SetStateFile(resourceStream);
-            bool loadResult = stateMachineManager.LoadStateFile();
-            stateGraph = stateMachineManager.GetStateGraph();
-
-            List<MasterStateBase> states = stateGraph.StateList;
-
-            // 
-
+            stateMachineManager.SetMasterStateFile(resourceStream);
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            // var t = stateMachineManager.CurrentState.Name;
+            stateMachineManager.SetInitialState();
+            var t2 = stateMachineManager.CurrentState.Name;
+            // stateGraph = stateMachineManager.GetStateGraph();
             resourceStream.Close();
             resourceStream.Dispose();
         }

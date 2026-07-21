@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AvakStates Namespace="Avak.StateMachine.Core.Tests.StateManager.States">
+	<Triggers>
+		<Trigger Name="EnterBbFromAa" Source="Event"/>
+		<Trigger Name="EnterCcFromAa" Source="Event"/>
+		<Trigger Name="EnterBbFromCc" Source="Event"/>
+		<Trigger Name="EnterCcFromDd" Source="Event"/>
+	</Triggers>
+	<States Initial="Aa" >
+		<State Name="Aa" SubStateAssembly="Avak.StateMachine.Core.Tests.SubStateModuleOne" SubStateXmlFile="SubStateXmlFileOne.xml" >
+			<Transition Trigger="EnterBbFromAa" Target="Bb"/>
+			<Transition Trigger="EnterCcFromAa" Target="Cc"/>
+		</State>
+		<State Name="Bb"></State>
+		<State Name="Cc">
+			<Transition Trigger="EnterBbFromCc" Target="Bb"/>
+		</State>
+		<State Name="Dd" SubStateAssembly="Avak.StateMachine.Core.Tests.SubStateModuleFour" SubStateXmlFile="SubStateXmlFileFour.xml" >
+			<Transition Trigger="EnterCcFromDd" Target="Dd"/>
+		</State>
+	</States>
+</AvakStates>
+

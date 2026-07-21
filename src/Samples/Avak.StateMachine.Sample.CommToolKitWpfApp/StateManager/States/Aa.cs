@@ -5,6 +5,10 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.States
 {
     public class Aa : MasterStateBase
     {
+        public Aa()
+        {
+
+        }
         protected override void Init()
         {
 

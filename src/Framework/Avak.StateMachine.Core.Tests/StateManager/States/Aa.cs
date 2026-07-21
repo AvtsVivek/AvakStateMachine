@@ -26,4 +26,12 @@ namespace Avak.StateMachine.Core.Tests.StateManager.States
             throw new NotImplementedException();
         }
     }
+
+    public class Dd : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
