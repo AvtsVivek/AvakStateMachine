@@ -43,11 +43,13 @@ namespace Avak.StateMachine.Core.Implimentation
 
         private readonly Lazy<List<XElement>> _triggerElements;
 
+        public event EventHandler<StateBase>? StateCreated;
+
         private List<XElement> triggerElements => _triggerElements.Value;
 
         IReadOnlyList<MasterStateBase> IStateFileReader.States => States;
 
-        public XmlStateFileReader(IXmlKeys constants)
+        internal XmlStateFileReader(IXmlKeys constants)
         {
             if (constants == null)
             {
@@ -737,7 +739,10 @@ namespace Avak.StateMachine.Core.Implimentation
                 return;
 
             if (!States.Contains(state))
+            {
                 _states.Add(state);
+                StateCreated?.Invoke(this, state);
+            }
         }
 
         private TriggerSource GetTriggerSource(XElement triggerElement)

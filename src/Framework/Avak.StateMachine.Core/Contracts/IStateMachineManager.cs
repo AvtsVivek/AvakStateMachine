@@ -4,6 +4,7 @@ namespace Avak.StateMachine.Core.Contracts
 {
     public interface IStateMachineManager
     {
+        event EventHandler<StateBase> StateCreated;
         public StateBase CurrentState { get; }
         void SetMasterStateFile(Stream stream);
         void SetMasterStateFilePath(string filePath);

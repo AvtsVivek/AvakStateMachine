@@ -23,23 +23,21 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
         {
             this.stateMachineManager = stateMachineManager;
 
+            this.stateMachineManager.StateCreated += StateMachineManager_StateCreated;
+
             InitializeState();
 
-            var stateList = stateGraph.StateList;
+            IStateViewModel viewModel = stateMachineManager.CurrentState.GetStateViewModel();
+            CurrentPageViewModel = viewModel as IPageViewModel;
+        }
 
-            foreach (var state in stateList)
-            {
-                IStateViewModel viewModel = state.GetStateViewModel();
+        private void StateMachineManager_StateCreated(object? sender, StateBase state)
+        {
+            IStateViewModel viewModel = state.GetStateViewModel();
 
-                IPageViewModel pageViewModel = (viewModel as IPageViewModel)!;
+            IPageViewModel pageViewModel = (viewModel as IPageViewModel)!;
 
-                pageViewModel.ViewChanged += PageViewModel_ViewChanged;
-
-            }
-
-            IStateViewModel vm = stateMachineManager.CurrentState.GetStateViewModel();
-
-            CurrentPageViewModel = vm as IPageViewModel;
+            pageViewModel.ViewChanged += PageViewModel_ViewChanged;
         }
 
         private void PageViewModel_ViewChanged(object? sender, EventArgs<IPageViewModel> e)
@@ -56,9 +54,7 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
             stateMachineManager.SetMasterStateFile(resourceStream);
             bool loadResult = stateMachineManager.LoadMasterStateFile();
             stateGraph = stateMachineManager.GetStateGraph();
-
-            List<MasterStateBase> states = stateGraph.StateList;
-
+            List<MasterStateBase> stateList = stateGraph.StateList;
             resourceStream.Close();
             resourceStream.Dispose();
         }

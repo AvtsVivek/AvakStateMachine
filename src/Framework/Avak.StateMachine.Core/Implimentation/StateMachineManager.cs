@@ -9,6 +9,7 @@ namespace Avak.StateMachine.Core.Implimentation
         public IStateGraph StateGraph { get; private set; }
         private IStateFileReader stateFileReader;
         private StateDependencyObjectFinder stateDependencyObjectFinderDelegate;
+        public event EventHandler<StateBase>? StateCreated;
 
         public StateBase CurrentState
         {
@@ -40,6 +41,12 @@ namespace Avak.StateMachine.Core.Implimentation
             _currentState = null!;
             StateStack = new();
             stateFileReader = new XmlStateFileReader(constants);
+            stateFileReader.StateCreated += StateFileReader_StateCreated;
+        }
+
+        private void StateFileReader_StateCreated(object? sender, StateBase stateCreated)
+        {
+            StateCreated?.Invoke(this, stateCreated);
         }
 
         public void SetMasterStateFile(Stream stream)

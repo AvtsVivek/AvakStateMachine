@@ -14,5 +14,8 @@
         <DataTemplate DataType="{x:Type localVms:UserControl3ViewModel}">
             <localVs:UserControl3 />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type localVms:UserControl4ViewModel}">
+            <localVs:UserControl4 />
+        </DataTemplate>
     </Application.Resources>
 </Application>
