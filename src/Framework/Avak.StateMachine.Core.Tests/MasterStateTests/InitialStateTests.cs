@@ -61,7 +61,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             // Act 
             IStateGraph stateGraph = stateMachineManager.GetStateGraph();
-            // stateMachineManager.Initialize();
+
             StateBase stateBb = stateGraph.StateList.FirstOrDefault(state => state.Name == "Bb")!;
 
             // Assert

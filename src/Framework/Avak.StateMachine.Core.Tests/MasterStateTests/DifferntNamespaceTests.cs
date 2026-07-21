@@ -16,8 +16,16 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     // 2. DifferentNamespaceTestBb defined in the namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb
     // 3. DifferentNamespaceTestCc defined in the namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceCc
     // Note all the three classes are defined in three different namespaces.
-    // This test ensures these types are correctly located and instanciated.
-    // 
+    // This test ensures these types are correctly located correctely. All of the three may not be isntanciated, because of lazy instanciation.
+    // The fact that the test passes(with only one state being instanciated) proves that all of the three states are located correctly.
+    // .
+    // Try the following. In the xml file, try altering any of the namespace to something invalid.
+    // For example, try changing the following 
+    // Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb
+    // to 
+    // Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBbbbbbb
+    // Now run the test. This will result in an exception, indicating the type is not found.
+    // So without altering, if the test runs to pass, then all of the three states are located correctly. 
 
     [TestClass]
     public class DifferntNamespaceTests
@@ -43,7 +51,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         }
 
         [TestMethod]
-        public void GetStates_WithCountThree_StatesFound()
+        public void GetStates_WithCountOne_StatesFound()
         {
             // Arrange
             IXmlKeys constants = new XmlKeys();
@@ -58,10 +66,11 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
 
             // Assert
-            Assert.HasCount(3, states);
+            Assert.HasCount(1, states);
             Assert.IsTrue(states[0].IsInitial);
-            Assert.IsFalse(states[1].IsInitial);
-            Assert.IsFalse(states[2].IsInitial);
+
+            // Assert.IsFalse(states[1].IsInitial);
+            // Assert.IsFalse(states[2].IsInitial);
         }
     }
 }

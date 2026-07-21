@@ -56,7 +56,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph());
 
             // Assert
-            Assert.AreEqual("Triggers not present in the state file. Add <Triggers></Triggers> if you intend to define just states without triggers.", ex.Message);
+            Assert.AreEqual("Triggers not present in the state file. Add <Triggers></Triggers> element.", ex.Message);
         }
     }
 }

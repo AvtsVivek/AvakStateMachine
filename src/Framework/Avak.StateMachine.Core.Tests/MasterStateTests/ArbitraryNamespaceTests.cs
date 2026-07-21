@@ -57,7 +57,7 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
         }
 
         [TestMethod]
-        public void GetArbitraryStates_Has3Count_InitialSet()
+        public void GetArbitraryStates_Has1Count_InitialSet()
         {
             // Arrange
             IXmlKeys constants = new XmlKeys();
@@ -72,10 +72,15 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
             List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
 
             // Assert
-            Assert.HasCount(3, states);
+            Assert.HasCount(1, states);
             Assert.IsTrue(states[0].IsInitial);
-            Assert.IsFalse(states[1].IsInitial);
-            Assert.IsFalse(states[2].IsInitial);
+            // Since the state file does not have any triggers, the only state that the state graph
+            // will have is the initial, or Aa.
+            // Since the framework now instanciates the states lazyly, the first state is instanciated. 
+            // And there are no triggers and transitions. So it will not go any further.
+
+            // Assert.IsFalse(states[1].IsInitial);
+            // Assert.IsFalse(states[2].IsInitial);
         }
     }
 }

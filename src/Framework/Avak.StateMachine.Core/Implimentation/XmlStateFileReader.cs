@@ -94,10 +94,7 @@ namespace Avak.StateMachine.Core.Implimentation
                     throw new Exception(message);
                 }
                 List<XElement> elementList = [.. triggerCollectionElement!.Descendants(constants.StateFileTriggerElementName)];
-                if (elementList.Count == 0)
-                {
-                    throw new XmlException($"{constants.StateFileTriggerCollectionElementName} element is empty. It must contain some state elements. Verify the state xml file.");
-                }
+
 
                 return elementList;
             });
@@ -241,14 +238,16 @@ namespace Avak.StateMachine.Core.Implimentation
             XAttribute? initialAttribute = stateCollectionElement!
                 .Attribute(constants.StateFileStateCollectionInitialAttributeName);
 
-            if (string.IsNullOrWhiteSpace(initialAttribute!.Value))
+            if (initialAttribute != null && string.IsNullOrWhiteSpace(initialAttribute?.Value))
             {
-                throw new XmlException($"{constants.StateFileStateCollectionInitialAttributeName} on {constants.StateFileStateCollectionElementName} must be set to a valid state");
+                throw new XmlException($"The {constants.StateFileStateCollectionInitialAttributeName} " +
+                    $"attribute on {constants.StateFileStateCollectionElementName} element must be set to a valid state. " +
+                    $"Its currently an invalid empty string");
             }
 
             XElement initialStateElement = null!;
             XAttribute? initialStateNameAttribute = null!;
-            if (initialAttribute == null)
+            if (initialAttribute == null || string.IsNullOrWhiteSpace(initialAttribute?.Value))
             {
                 // Pick the very first state element
                 initialStateElement = stateElements[0];
@@ -282,14 +281,14 @@ namespace Avak.StateMachine.Core.Implimentation
             MasterStateBase initialState = CreateState(initialStateName, stateNamespace);
 
             // Now set the transitions and targets for this state.
-            SetTransactionsAndTargetsForState(initialState);
+            SetTransitionsAndTargetsForState(initialState);
 
             initialState.IsInitial = true;
 
             return initialState;
         }
 
-        public void SetTransactionsAndTargetsForState(StateBase state)
+        public void SetTransitionsAndTargetsForState(StateBase state)
         {
             XElement stateElement = GetStateElement(state.Name)!;
 

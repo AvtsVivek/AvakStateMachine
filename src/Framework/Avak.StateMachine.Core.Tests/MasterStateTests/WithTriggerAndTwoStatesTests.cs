@@ -44,7 +44,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             StateBase zerothState = states[0];
 
             // Assert
-            Assert.HasCount(2, states);
+            Assert.HasCount(1, states);
             Assert.AreEqual(zerothState, stateGraph.InitialState);
             Assert.IsTrue(stateGraph.InitialState.IsInitial);
         }

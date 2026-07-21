@@ -25,8 +25,7 @@
     <EmbeddedResource Include="StateManager\IncorrectTypeName.xml" />
     <EmbeddedResource Include="StateManager\BasicTransitions.xml" />
     <EmbeddedResource Include="StateManager\WithTriggersTagAndOneStateStateFile.xml" />
-    <EmbeddedResource Include="StateManager\WithTriggersTagAndTwoStatesStateFile.xml" />    
-    <EmbeddedResource Include="StateManager\WithTriggersStateFile.xml" />
+    <EmbeddedResource Include="StateManager\WithTriggersTagAndTwoStatesStateFile.xml" />
     <EmbeddedResource Include="StateManager\InitialStateSpecified.xml" />
     <EmbeddedResource Include="StateManager\NoInitialStateSpecified.xml" />
 
@@ -38,12 +37,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="StateManager\NoStatesNoTriggers.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

@@ -142,7 +142,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             SetCurrentState(targetState);
 
-            stateFileReader.SetTransactionsAndTargetsForState(targetState);
+            stateFileReader.SetTransitionsAndTargetsForState(targetState);
         }
 
         private void SetCurrentState(StateBase state)

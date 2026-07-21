@@ -48,7 +48,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             Assert.IsEmpty(triggers);
             Assert.HasCount(1, states);
             Assert.AreEqual("Aa", zerothState.Name);
-            Assert.AreEqual("Aa", zerothState.Id);
+            Assert.AreEqual("Avak.StateMachine.Core.Tests.StateManager.States.Aa", zerothState.Id);
             Assert.AreEqual("Avak.StateMachine.Core.Tests.StateManager.States.Aa", zerothState.GetType().FullName);
         }
     }
