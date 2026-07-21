@@ -1,14 +1,16 @@
 ﻿using Avak.StateMachine.Core.Contracts;
+using System.Diagnostics;
 
 namespace Avak.StateMachine.Core.States
 {
+    [DebuggerDisplay("Name: {Name}")]
     public abstract class StateBase : IEquatable<StateBase>
     {
         public bool IsInitial { get; set; } = false;
 
         public string Id
         {
-            get => this.GetType().Name;
+            get => this.GetType().FullName!;
         }
 
         private string name;
@@ -30,7 +32,7 @@ namespace Avak.StateMachine.Core.States
         public override string ToString()
         {
             // This needs to be improved.
-            return Id + " " + Name;
+            return Id;
         }
 
         public bool Equals(StateBase? other)
@@ -48,6 +50,11 @@ namespace Avak.StateMachine.Core.States
             // Compare properties for equality
             return this.Id == other.Id
                 && this.Name == other.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, Name);
         }
 
         protected virtual void Init()

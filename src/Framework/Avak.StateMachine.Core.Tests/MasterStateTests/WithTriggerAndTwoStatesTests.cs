@@ -34,8 +34,8 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             // Arrange
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetStateFile(FileStream);
-            bool loadResult = stateMachineManager.LoadStateFile();
+            stateMachineManager.SetMasterStateFile(FileStream);
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<Trigger> triggers = stateMachineManager.GetStateGraph().TriggerList;
@@ -44,7 +44,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             StateBase zerothState = states[0];
 
             // Assert
-            Assert.HasCount(2, states);
+            Assert.HasCount(1, states);
             Assert.AreEqual(zerothState, stateGraph.InitialState);
             Assert.IsTrue(stateGraph.InitialState.IsInitial);
         }

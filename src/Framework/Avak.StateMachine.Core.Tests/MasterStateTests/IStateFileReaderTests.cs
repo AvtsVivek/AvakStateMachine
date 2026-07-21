@@ -33,10 +33,10 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             // Arrange
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetStateFile(FileStream);
+            stateMachineManager.SetMasterStateFile(FileStream);
 
             // Act
-            bool loadResult = stateMachineManager.LoadStateFile();
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Assert
             Assert.IsTrue(loadResult);
@@ -49,14 +49,14 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             // Arrange
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetStateFile(FileStream);
-            bool loadResult = stateMachineManager.LoadStateFile();
+            stateMachineManager.SetMasterStateFile(FileStream);
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph());
 
             // Assert
-            Assert.AreEqual("Triggers not present in the state file. Add <Triggers></Triggers> if you intend to define just states without triggers.", ex.Message);
+            Assert.AreEqual("Triggers not present in the state file. Add <Triggers></Triggers> element.", ex.Message);
         }
     }
 }

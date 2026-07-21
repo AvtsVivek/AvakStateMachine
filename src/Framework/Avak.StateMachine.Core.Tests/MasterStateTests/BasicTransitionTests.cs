@@ -34,11 +34,11 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             // Arrange
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetStateFile(fileStream);
-            bool loadResult = stateMachineManager.LoadStateFile();
-
+            stateMachineManager.SetMasterStateFile(fileStream);
+            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
             // Act
-            List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
+            List<MasterStateBase> states = stateGraph.StateList;
 
             // Assert
             Assert.HasCount(3, states);
@@ -47,6 +47,15 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             List<Transition> firstStateTransitions = states[1].Transitions;
             Assert.IsEmpty(firstStateTransitions);
+
+
+            Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == "EnterCcFromAa");
+
+            var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
+
+
+            stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
+
 
             List<Transition> secondStateTransitions = states[2].Transitions;
             Assert.HasCount(1, secondStateTransitions);

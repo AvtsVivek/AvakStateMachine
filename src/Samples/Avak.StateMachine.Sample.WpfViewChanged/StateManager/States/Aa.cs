@@ -55,4 +55,22 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.StateManager.States
             return pageViewModel;
         }
     }
+
+    public class Dd : MasterStateBase
+    {
+        private IPageViewModel pageViewModel;
+        public Dd(IPageViewModel pageViewModel)
+        {
+            if (pageViewModel == null)
+            {
+                throw new ArgumentNullException(nameof(pageViewModel));
+            }
+
+            this.pageViewModel = pageViewModel;
+        }
+        public override IPageViewModel GetStateViewModel()
+        {
+            return pageViewModel;
+        }
+    }
 }

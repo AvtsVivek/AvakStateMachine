@@ -12,10 +12,12 @@
     <None Remove="StateManager\ArbitraryNamespace.xml" />
     <None Remove="StateManager\IncorrectStateBaseClass.xml" />
     <None Remove="StateManager\IncorrectTypeName.xml" />
+    <None Remove="StateManager\MasterStateXmlFileWithSubStateXmlFileRefs.xml" />
     <None Remove="TestStateFile.xml" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="StateManager\MasterStateXmlFileWithSubStateXmlFileRefs.xml" />
     <EmbeddedResource Include="StateManager\TestStateFile.xml" />
     <EmbeddedResource Include="StateManager\ArbitraryNamespace.xml" />
     <EmbeddedResource Include="StateManager\DifferentNamespaces.xml" />
@@ -23,10 +25,10 @@
     <EmbeddedResource Include="StateManager\IncorrectTypeName.xml" />
     <EmbeddedResource Include="StateManager\BasicTransitions.xml" />
     <EmbeddedResource Include="StateManager\WithTriggersTagAndOneStateStateFile.xml" />
-    <EmbeddedResource Include="StateManager\WithTriggersTagAndTwoStatesStateFile.xml" />    
-    <EmbeddedResource Include="StateManager\WithTriggersStateFile.xml" />
+    <EmbeddedResource Include="StateManager\WithTriggersTagAndTwoStatesStateFile.xml" />
     <EmbeddedResource Include="StateManager\InitialStateSpecified.xml" />
     <EmbeddedResource Include="StateManager\NoInitialStateSpecified.xml" />
+
   </ItemGroup>
 
   <ItemGroup>
@@ -35,12 +37,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="StateManager\NoStatesNoTriggers.xml">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>

@@ -9,6 +9,7 @@ namespace Avak.StateMachine.Core.Implimentation
         public IStateGraph StateGraph { get; private set; }
         private IStateFileReader stateFileReader;
         private StateDependencyObjectFinder stateDependencyObjectFinderDelegate;
+        public event EventHandler<StateBase>? StateCreated;
 
         public StateBase CurrentState
         {
@@ -40,21 +41,37 @@ namespace Avak.StateMachine.Core.Implimentation
             _currentState = null!;
             StateStack = new();
             stateFileReader = new XmlStateFileReader(constants);
+            stateFileReader.StateCreated += StateFileReader_StateCreated;
         }
 
-        public void SetStateFile(Stream stream)
+        private void StateFileReader_StateCreated(object? sender, StateBase stateCreated)
         {
-            stateFileReader.SetStateFile(stream);
+            StateCreated?.Invoke(this, stateCreated);
         }
 
-        public void SetStateFilePath(string filePath)
+        public void SetMasterStateFile(Stream stream)
         {
-            stateFileReader.SetStateFilePath(filePath);
+            stateFileReader.SetMasterStateFile(stream);
         }
 
-        public bool LoadStateFile()
+        public void SetMasterStateFilePath(string filePath)
         {
-            return stateFileReader.LoadStateFile();
+            stateFileReader.SetMasterStateFilePath(filePath);
+        }
+
+        public bool LoadMasterStateFile()
+        {
+            return stateFileReader.LoadMasterStateFile();
+        }
+
+        public List<Trigger> GetTriggers()
+        {
+            return stateFileReader.GetTriggers();
+        }
+
+        public bool PopulateStateXmlFileTree()
+        {
+            return true;
         }
 
         public IStateGraph GetStateGraph()
@@ -65,6 +82,12 @@ namespace Avak.StateMachine.Core.Implimentation
                 _currentState = StateGraph.InitialState;
             }
             return StateGraph;
+        }
+
+        public void SetInitialState()
+        {
+            MasterStateBase? initialState = stateFileReader.SetInitialState(stateDependencyObjectFinderDelegate);
+            this._currentState = initialState!;
         }
 
         public (bool success, string message) IsTriggeredTriansitionValid(StateBase currentState, Trigger trigger)
@@ -79,21 +102,6 @@ namespace Avak.StateMachine.Core.Implimentation
             if (trigger == null)
             {
                 return (false, "Trigger argument is null.");
-            }
-
-            if (StateGraph.TriggerList is null)
-            {
-                return (false, "No triggers are available on the state graph");
-            }
-
-            if (StateGraph.TriggerList.Count == 0)
-            {
-                return (false, "No triggers are not available on the state graph");
-            }
-
-            if (!StateGraph.TriggerList.Contains(trigger))
-            {
-                return (false, "The given trigger is not available on the state graph");
             }
 
             bool exists = currentState
@@ -140,6 +148,8 @@ namespace Avak.StateMachine.Core.Implimentation
                 .Target;
 
             SetCurrentState(targetState);
+
+            stateFileReader.SetTransitionsAndTargetsForState(targetState);
         }
 
         private void SetCurrentState(StateBase state)
@@ -161,22 +171,6 @@ namespace Avak.StateMachine.Core.Implimentation
             if (state == null)
             {
                 throw new ArgumentNullException($"{nameof(state)} in {nameof(GetTransitionsForState)}");
-            }
-
-            if (StateGraph == null)
-            {
-                GetStateGraph();
-            }
-
-            if (StateGraph == null)
-            {
-                throw new InvalidOperationException("State Graph is null. Check the state file is valid");
-            }
-
-            List<MasterStateBase> states = StateGraph.StateList;
-            if (!states.Contains(state))
-            {
-                throw new ArgumentException($"The state passed to the method {nameof(GetTransitionsForState)} is invalid. ");
             }
 
             return state.Transitions;

@@ -5,6 +5,10 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.States
 {
     public class Bb : MasterStateBase
     {
+        public Bb()
+        {
+
+        }
         public override IStateViewModel GetStateViewModel()
         {
             throw new NotImplementedException();
