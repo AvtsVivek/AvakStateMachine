@@ -4,16 +4,22 @@
 		<Trigger Name="EnterBbFromAa" Source="Event"/>
 		<Trigger Name="EnterCcFromAa" Source="Event"/>
 		<Trigger Name="EnterBbFromCc" Source="Event"/>
+		<Trigger Name="EnterDdFromBb" Source="Event"/>
 	</Triggers>
 	<States Initial="Aa"  >
 		<State Name="Aa" >
 			<Transition Trigger="EnterBbFromAa" Target="Bb"/>
 			<Transition Trigger="EnterCcFromAa" Target="Cc"/>
 		</State>
-		<State Name="Bb"></State>
+		<State Name="Bb">
+			<Transition Trigger="EnterDdFromBb" Target="Dd"/>
+		</State>
 		<State Name="Cc">
 			<Transition Trigger="EnterBbFromCc" Target="Bb"/>
 		</State>
+		<State Name="Dd"></State>
+		<State Name="Ee"></State>
+		<State Name="Ff"></State>
 	</States>
 </AvakStates>
 

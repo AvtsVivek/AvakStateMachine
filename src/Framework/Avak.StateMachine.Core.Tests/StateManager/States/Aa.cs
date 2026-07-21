@@ -34,4 +34,18 @@ namespace Avak.StateMachine.Core.Tests.StateManager.States
             throw new NotImplementedException();
         }
     }
+    public class Ee : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class Ff : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

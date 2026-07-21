@@ -74,7 +74,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             // Assert
             Assert.IsTrue(stateMachineManager.CurrentState.Name == "Bb");
-            Assert.IsEmpty(stateMachineManager.CurrentState.Transitions);
+            Assert.AreEqual(1, stateMachineManager.CurrentState.Transitions.Count);
         }
     }
 }

@@ -32,11 +32,24 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         public void GetStates_LookForTransitions_AndTriggers()
         {
             // Arrange
+            int numberOfStateObjectsCreated = 0;
+            string nameOfStateJustCreated = string.Empty;
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            stateMachineManager.StateCreated += (sender, state) =>
+            {
+                numberOfStateObjectsCreated++;
+                nameOfStateJustCreated = state.Name;
+            };
             stateMachineManager.SetMasterStateFile(fileStream);
             bool loadResult = stateMachineManager.LoadMasterStateFile();
+
+            Assert.IsTrue(loadResult);
+            Assert.AreEqual(0, numberOfStateObjectsCreated);
+            Assert.AreEqual("", nameOfStateJustCreated);
             IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            Assert.AreEqual("Cc", nameOfStateJustCreated);
+            Assert.AreEqual(3, numberOfStateObjectsCreated);
             // Act
             List<MasterStateBase> states = stateGraph.StateList;
 
@@ -48,19 +61,21 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             List<Transition> firstStateTransitions = states[1].Transitions;
             Assert.IsEmpty(firstStateTransitions);
 
-
             Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == "EnterCcFromAa");
 
             var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
-
-
+            Assert.AreEqual("Aa", stateMachineManager.CurrentState.Name);
             stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
-
-
+            Assert.AreEqual("Cc", stateMachineManager.CurrentState.Name);
+            Assert.AreEqual("Cc", nameOfStateJustCreated);
+            Assert.AreEqual(3, numberOfStateObjectsCreated);
             List<Transition> secondStateTransitions = states[2].Transitions;
             Assert.HasCount(1, secondStateTransitions);
-
             Assert.AreEqual(states[1].Name, secondStateTransitions[0].Target.Name);
+            stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, stateMachineManager.CurrentState.Transitions[0].Trigger);
+            Assert.AreEqual("Bb", stateMachineManager.CurrentState.Name);
+            Assert.AreEqual("Dd", nameOfStateJustCreated);
+            Assert.AreEqual(4, numberOfStateObjectsCreated);
         }
     }
 }
