@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="Avak.StateMachine.Sample.WpfViewChanged.Views.UserControl3"
+﻿<UserControl x:Class="Avak.StateMachine.Sample.WpfViewChanged.Views.UserControl4"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:localVms="clr-namespace:Avak.StateMachine.Sample.WpfViewChanged.ViewModels"
-             d:DataContext="{d:DesignInstance Type=localVms:UserControl3ViewModel}"
+             d:DataContext="{d:DesignInstance Type=localVms:UserControl4ViewModel"
              xmlns:local="clr-namespace:Avak.StateMachine.Sample.WpfViewChanged.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -24,6 +24,6 @@
         Canvas.Left="10" Canvas.Top="10" 
         FontSize="14" FontFamily="Georgia"
         FontWeight="Bold"/>
-        <Button Grid.Row="2" Content="Go to View Dd" Command="{Binding ClickCommand}" CommandParameter="EnterDdFromCc" Width="90" Height="30" Margin="0,10" />            
+        <Button Grid.Row="2" Content="Go to View Aa" Command="{Binding ClickCommand}" CommandParameter="EnterAaFromDd" Width="90" Height="30" Margin="0,10" />            
     </Grid>
 </UserControl>
