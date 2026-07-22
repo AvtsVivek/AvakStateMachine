@@ -164,18 +164,6 @@ namespace Avak.StateMachine.Core.Implimentation
             return rootNamespace;
         }
 
-        public List<Trigger> GetTriggers()
-        {
-            if (triggers.Count != 0)
-            {
-                return triggers;
-            }
-
-            ReadTriggers();
-
-            return triggers;
-        }
-
         public MasterStateBase SetInitialState(StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
         {
             // First ensure root name space is read.

@@ -38,8 +38,8 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
-            List<Trigger> triggers = stateMachineManager.GetStateGraph().TriggerList;
-            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            List<Trigger> triggers = stateMachineManager.GetCurrentStateGraph().TriggerList;
+            IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
             List<MasterStateBase> states = stateGraph.StateList;
             StateBase zerothState = states[0];
 

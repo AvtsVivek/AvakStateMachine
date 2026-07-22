@@ -42,7 +42,15 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
         {
             Message = string.Empty;
 
-            Trigger nextStateTrigger = stateMachineManager.GetTriggers().First(t => t.Name == arg);
+            Transition? nextTransition = stateMachineManager.CurrentState.Transitions.FirstOrDefault(transition => transition.Trigger.Name == arg);
+
+            if (nextTransition == null)
+            {
+                Message = "No transition possible.";
+                return;
+            }
+
+            Trigger nextStateTrigger = nextTransition.Trigger;
 
             var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
 
@@ -69,10 +77,8 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
 
             stateMachineManager.SetMasterStateFile(resourceStream);
             bool loadResult = stateMachineManager.LoadMasterStateFile();
-            // var t = stateMachineManager.CurrentState.Name;
             stateMachineManager.SetInitialState();
             var t2 = stateMachineManager.CurrentState.Name;
-            // stateGraph = stateMachineManager.GetStateGraph();
             resourceStream.Close();
             resourceStream.Dispose();
         }

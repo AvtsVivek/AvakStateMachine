@@ -21,7 +21,7 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
             this.stateMachineManager = stateMachineManager;
 
-            // stateGraph = this.stateMachineManager.GetStateGraph();
+            // stateGraph = this.stateMachineManager.GetCurrentStateGraph();
 
             PageId = pageIndex;
             Title = "View Aa";
@@ -30,7 +30,7 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
         [RelayCommand()]
         private void OnClick(string arg)
         {
-            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
             Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == arg);
 
             var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);

@@ -53,7 +53,7 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
             stateMachineManager.SetMasterStateFile(resourceStream);
             bool loadResult = stateMachineManager.LoadMasterStateFile();
-            stateGraph = stateMachineManager.GetStateGraph();
+            stateGraph = stateMachineManager.GetCurrentStateGraph();
             List<MasterStateBase> stateList = stateGraph.StateList;
             resourceStream.Close();
             resourceStream.Dispose();

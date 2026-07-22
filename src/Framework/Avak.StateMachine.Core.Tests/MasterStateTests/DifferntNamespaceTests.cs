@@ -63,7 +63,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
-            List<MasterStateBase> states = stateMachineManager.GetStateGraph().StateList;
+            List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;
 
             // Assert
             Assert.HasCount(1, states);

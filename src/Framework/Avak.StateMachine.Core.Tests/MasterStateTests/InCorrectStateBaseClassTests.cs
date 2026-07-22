@@ -27,7 +27,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
-            Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph().StateList);
+            Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetCurrentStateGraph().StateList);
 
             // Assert
             string message = "Trying to create state object of type Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass. Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass must inherit MasterStateBase";
@@ -48,7 +48,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
-            Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph().StateList);
+            Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetCurrentStateGraph().StateList);
 
             // Assert
             string message = "The type DifferentNamespaceTestB with namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb is not found\r\nCheck the name of the type DifferentNamespaceTestB\r\nAlso Check the namespace Avak.StateMachine.Core.Tests.StateManager.States.NamespaceBb";

@@ -64,17 +64,13 @@ namespace Avak.StateMachine.Core.Implimentation
             return stateFileReader.LoadMasterStateFile();
         }
 
-        public List<Trigger> GetTriggers()
-        {
-            return stateFileReader.GetTriggers();
-        }
-
         public bool PopulateStateXmlFileTree()
         {
             return true;
         }
 
-        public IStateGraph GetStateGraph()
+        // Gets the current state graph, not the full state graph. 
+        public IStateGraph GetCurrentStateGraph()
         {
             StateGraph = stateFileReader.GetStateGraph(stateDependencyObjectFinderDelegate);
             if (CurrentState == null)
@@ -90,7 +86,7 @@ namespace Avak.StateMachine.Core.Implimentation
             this._currentState = initialState!;
         }
 
-        public (bool success, string message) IsTriggeredTriansitionValid(StateBase currentState, Trigger trigger)
+        public (bool success, string message) IsTriggeredTriansitionValid(StateBase currentState, Trigger? trigger)
         {
             List<Transition> stateTransitions = GetTransitionsForState(currentState);
 
@@ -133,13 +129,13 @@ namespace Avak.StateMachine.Core.Implimentation
             return (true, "Success");
         }
 
-        public void DoTriggeredTriansition(StateBase currentState, Trigger trigger)
+        public bool DoTriggeredTriansition(StateBase currentState, Trigger trigger)
         {
             var result = IsTriggeredTriansitionValid(currentState, trigger);
 
             if (!result.success)
             {
-                return;
+                return false;
             }
 
             StateBase targetState = currentState
@@ -150,6 +146,8 @@ namespace Avak.StateMachine.Core.Implimentation
             SetCurrentState(targetState);
 
             stateFileReader.SetTransitionsAndTargetsForState(targetState);
+
+            return true;
         }
 
         private void SetCurrentState(StateBase state)

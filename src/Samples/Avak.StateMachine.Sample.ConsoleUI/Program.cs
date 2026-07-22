@@ -36,7 +36,7 @@ namespace Avak.StateMachine.Sample.ConsoleUI
 
             bool isLoaded = stateMachineManager.LoadMasterStateFile();
 
-            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
 
             List<Trigger> triggers = stateMachineManager.StateGraph.TriggerList;
 

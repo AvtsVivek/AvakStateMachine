@@ -10,10 +10,9 @@ namespace Avak.StateMachine.Core.Contracts
         void SetMasterStateFilePath(string filePath);
         bool LoadMasterStateFile();
         bool PopulateStateXmlFileTree();
-        IStateGraph GetStateGraph();
-        List<Trigger> GetTriggers();
+        IStateGraph GetCurrentStateGraph();
         void SetInitialState();
-        (bool success, string message) IsTriggeredTriansitionValid(StateBase currentState, Trigger trigger);
-        void DoTriggeredTriansition(StateBase currentState, Trigger trigger);
+        (bool success, string message) IsTriggeredTriansitionValid(StateBase currentState, Trigger? trigger);
+        bool DoTriggeredTriansition(StateBase currentState, Trigger trigger);
     }
 }

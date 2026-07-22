@@ -37,7 +37,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act 
-            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
             StateBase stateBb = stateGraph.StateList.FirstOrDefault(state => state.Name == "Bb")!;
 
             // Assert
@@ -60,7 +60,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act 
-            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
 
             StateBase stateBb = stateGraph.StateList.FirstOrDefault(state => state.Name == "Bb")!;
 

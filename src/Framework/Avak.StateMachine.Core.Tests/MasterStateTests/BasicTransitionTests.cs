@@ -51,7 +51,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             Assert.IsTrue(loadResult);
             Assert.AreEqual(0, numberOfStateObjectsCreated);
             Assert.AreEqual("", nameOfStateJustCreated);
-            IStateGraph stateGraph = stateMachineManager.GetStateGraph();
+            IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
             Assert.AreEqual("Cc", nameOfStateJustCreated);
             Assert.AreEqual(3, numberOfStateObjectsCreated);
             // Act
@@ -68,7 +68,9 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             Trigger enterCcFromAa = stateMachineManager.CurrentState.Transitions[1].Trigger;
             Assert.AreEqual("Aa", stateMachineManager.CurrentState.Name);
             (bool, string) result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, enterCcFromAa);
-            stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, enterCcFromAa);
+            bool success = stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, enterCcFromAa);
+
+            Assert.IsTrue(success);
 
             Assert.HasCount(1, stateMachineManager.CurrentState.Transitions);
 
@@ -78,7 +80,8 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             List<Transition> secondStateTransitions = states[2].Transitions;
             Assert.HasCount(1, secondStateTransitions);
             Assert.AreEqual(states[1].Name, secondStateTransitions[0].Target.Name);
-            stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, stateMachineManager.CurrentState.Transitions[0].Trigger);
+            success = stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, stateMachineManager.CurrentState.Transitions[0].Trigger);
+            Assert.IsTrue(success);
             Assert.AreEqual("Bb", stateMachineManager.CurrentState.Name);
             Assert.AreEqual("Dd", nameOfStateJustCreated);
             Assert.AreEqual(4, numberOfStateObjectsCreated);

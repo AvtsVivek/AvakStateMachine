@@ -53,7 +53,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             // Act
-            Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetStateGraph());
+            Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetCurrentStateGraph());
 
             // Assert
             Assert.AreEqual("Triggers not present in the state file. Add <Triggers></Triggers> element.", ex.Message);

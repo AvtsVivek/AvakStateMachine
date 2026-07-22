@@ -1,4 +1,5 @@
 ﻿namespace Avak.StateMachine.Core.Contracts
 {
-	public delegate List<object?>? StateDependencyObjectFinder(Type stateType);
+    // For more undertanding of the following look at the sample WpfViewChanged
+    public delegate List<object?>? StateDependencyObjectFinder(Type stateType);
 }

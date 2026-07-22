@@ -17,8 +17,6 @@ namespace Avak.StateMachine.Core.Contracts
 
         string GetRootNamespace();
 
-        List<Trigger> GetTriggers();
-
         void SetTransitionsAndTargetsForState(StateBase state);
 
         MasterStateBase SetInitialState(StateDependencyObjectFinder stateDependencyObjectFinderDelegate);
