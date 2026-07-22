@@ -36,12 +36,16 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             string nameOfStateJustCreated = string.Empty;
             IXmlKeys constants = new XmlKeys();
             StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+
+            // Tests the state created event on state machine manager.
+
             stateMachineManager.StateCreated += (sender, state) =>
             {
                 numberOfStateObjectsCreated++;
                 nameOfStateJustCreated = state.Name;
             };
             stateMachineManager.SetMasterStateFile(fileStream);
+
             bool loadResult = stateMachineManager.LoadMasterStateFile();
 
             Assert.IsTrue(loadResult);
@@ -61,11 +65,13 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             List<Transition> firstStateTransitions = states[1].Transitions;
             Assert.IsEmpty(firstStateTransitions);
 
-            Trigger nextStateTrigger = stateGraph.TriggerList.First(t => t.Name == "EnterCcFromAa");
-
-            var result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, nextStateTrigger);
+            Trigger enterCcFromAa = stateMachineManager.CurrentState.Transitions[1].Trigger;
             Assert.AreEqual("Aa", stateMachineManager.CurrentState.Name);
-            stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, nextStateTrigger);
+            (bool, string) result = stateMachineManager.IsTriggeredTriansitionValid(stateMachineManager.CurrentState, enterCcFromAa);
+            stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, enterCcFromAa);
+
+            Assert.HasCount(1, stateMachineManager.CurrentState.Transitions);
+
             Assert.AreEqual("Cc", stateMachineManager.CurrentState.Name);
             Assert.AreEqual("Cc", nameOfStateJustCreated);
             Assert.AreEqual(3, numberOfStateObjectsCreated);
