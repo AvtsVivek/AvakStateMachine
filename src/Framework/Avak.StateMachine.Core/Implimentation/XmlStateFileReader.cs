@@ -174,7 +174,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return rootNamespace;
         }
 
-        public MasterStateBase SetInitialState(StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver)
+        public MasterStateBase SetInitialState(StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
         {
             // First ensure root name space is read.
             ReadRootStateNamespace();
@@ -189,7 +189,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return initialState;
         }
 
-        public IStateGraph GetStateGraph(StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver)
+        public IStateGraph GetStateGraph(StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
         {
             if (stateGraph != null)
             {
@@ -201,7 +201,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             ReadTriggers();
 
-            MasterStateBase? initialState = SetInitialState(stateDependencyTypeFinderDelegate, resolver);
+            MasterStateBase? initialState = SetInitialState(stateDependencyTypeFinderDelegate);
 
             stateGraph = new StateGraph(States.ToList(), triggers!, initialState!);
 
@@ -278,17 +278,17 @@ namespace Avak.StateMachine.Core.Implimentation
 
             string stateNamespace = GetStateNamespaceForElement(initialStateElement);
 
-            MasterStateBase initialState = CreateState(initialStateName, stateNamespace, resolver);
+            MasterStateBase initialState = CreateState(initialStateName, stateNamespace);
 
             // Now set the transitions and targets for this state.
-            SetTransitionsAndTargetsForState(initialState, resolver);
+            SetTransitionsAndTargetsForState(initialState);
 
             initialState.IsInitial = true;
 
             return initialState;
         }
 
-        public void SetTransitionsAndTargetsForState(StateBase state, StateDependencyResolver resolver)
+        public void SetTransitionsAndTargetsForState(StateBase state)
         {
             XElement stateElement = GetStateElement(state.Name)!;
 
@@ -339,7 +339,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 string targetStateNamespace = GetStateNamespaceForElement(targetStateElement);
 
-                MasterStateBase targetState = CreateState(targetStateName, targetStateNamespace, resolver);
+                MasterStateBase targetState = CreateState(targetStateName, targetStateNamespace);
 
                 transition.Target = targetState;
             }
@@ -479,7 +479,7 @@ namespace Avak.StateMachine.Core.Implimentation
             }
         }
 
-        private List<MasterStateBase> GetStates(StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver)
+        private List<MasterStateBase> GetStates(StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
         {
             List<MasterStateBase> states = [];
 
@@ -494,7 +494,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 CreateStateTypeConstructorInfoObject(stateName, stateNamespace, stateDependencyTypeFinderDelegate);
 
-                MasterStateBase state = CreateState(stateName, stateNamespace, resolver);
+                MasterStateBase state = CreateState(stateName, stateNamespace);
 
                 List<Transition> transitionsForState = GetTransitionsForState(stateElement);
 
@@ -670,7 +670,7 @@ namespace Avak.StateMachine.Core.Implimentation
             }
         }
 
-        private MasterStateBase CreateState(string stateName, string statesNamespace, StateDependencyResolver resolver)
+        private MasterStateBase CreateState(string stateName, string statesNamespace)
         {
             MasterStateBase stateBase = null!;
 
@@ -700,7 +700,6 @@ namespace Avak.StateMachine.Core.Implimentation
             List<Type?>? stateDependencyTypes = ctorInfoTuple.Value.DependencieTypes;
 
             // Need to get the objects from the types.
-            // List<object?>? stateDependencyObjectss = ctorInfoTuple.Value.DependencieTypes?.Select(type => resolver.Invoke(type));
 
             List<object?>? stateDependencyObjects = [];
 

@@ -83,7 +83,7 @@ namespace Avak.StateMachine.Core.Implimentation
         // Gets the current state graph, not the full state graph. 
         public IStateGraph GetCurrentStateGraph()
         {
-            StateGraph = stateFileReader.GetStateGraph(stateDependencyTypeFinderDelegate, resolver);
+            StateGraph = stateFileReader.GetStateGraph(stateDependencyTypeFinderDelegate);
             if (CurrentState == null)
             {
                 _currentState = StateGraph.InitialState;
@@ -93,7 +93,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public void SetInitialState()
         {
-            MasterStateBase? initialState = stateFileReader.SetInitialState(stateDependencyTypeFinderDelegate, resolver);
+            MasterStateBase? initialState = stateFileReader.SetInitialState(stateDependencyTypeFinderDelegate);
             this._currentState = initialState!;
         }
 
@@ -156,7 +156,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             SetCurrentState(targetState);
 
-            stateFileReader.SetTransitionsAndTargetsForState(targetState, resolver);
+            stateFileReader.SetTransitionsAndTargetsForState(targetState);
 
             return true;
         }

@@ -17,10 +17,10 @@ namespace Avak.StateMachine.Core.Contracts
 
         string GetRootNamespace();
 
-        void SetTransitionsAndTargetsForState(StateBase state, StateDependencyResolver resolver);
+        void SetTransitionsAndTargetsForState(StateBase state);
 
-        MasterStateBase SetInitialState(StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver);
+        MasterStateBase SetInitialState(StateDependencyTypeFinder stateDependencyTypeFinderDelegate);
 
-        IStateGraph GetStateGraph(StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver);
+        IStateGraph GetStateGraph(StateDependencyTypeFinder stateDependencyTypeFinderDelegate);
     }
 }
