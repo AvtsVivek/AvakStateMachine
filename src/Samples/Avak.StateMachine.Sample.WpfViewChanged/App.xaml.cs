@@ -20,13 +20,12 @@ namespace Avak.StateMachine.Sample.WpfViewChanged
             {
                 services.AddSingleton<MainWindow>();
                 services.AddSingleton<IXmlKeys, XmlKeys>();
-                services.AddSingleton<StateDependencyProvider>();
 
                 // 2. Register the delegate as a dependency
                 // Use the [IServiceProvider](https://microsoft.com) to resolve the service first
-                services.AddTransient<StateDependencyObjectFinder>(sp =>
+                services.AddTransient<StateDependencyObjectFinder>(serviceProvider =>
                 {
-                    var stateDependencyProvider = sp.GetRequiredService<StateDependencyProvider>();
+                    StateDependencyProvider stateDependencyProvider = serviceProvider.GetRequiredService<StateDependencyProvider>();
                     return stateDependencyProvider.StateDependencyTypeFinderImplimentation; // Returns the method group
                 });
 
