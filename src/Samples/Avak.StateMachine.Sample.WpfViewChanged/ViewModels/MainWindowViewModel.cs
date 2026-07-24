@@ -18,7 +18,7 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
         private IStateGraph stateGraph = null!;
 
-        public MainWindowViewModel(StateDependencyProvider stateDependencyProvider,
+        public MainWindowViewModel(StateDependencyObjectProvider stateDependencyProvider,
             IStateMachineManager stateMachineManager)
         {
             this.stateMachineManager = stateMachineManager;

@@ -4,15 +4,15 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Avak.StateMachine.Sample.WpfViewChanged.Infra
 {
-    public class StateDependencyProvider
+    public class StateDependencyObjectProvider
     {
         private IServiceProvider serviceProvider;
-        public StateDependencyProvider(IServiceProvider serviceProvider)
+        public StateDependencyObjectProvider(IServiceProvider serviceProvider)
         {
             this.serviceProvider = serviceProvider;
         }
 
-        public List<object?>? StateDependencyTypeFinderImplimentation(Type stateType)
+        public List<object?>? StateDependencyObjectFinderImplimentation(Type stateType)
         {
             List<object?>? dependencies = [];
             object viewModel = null!;

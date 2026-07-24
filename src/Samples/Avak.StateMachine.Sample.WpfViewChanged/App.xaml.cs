@@ -25,12 +25,12 @@ namespace Avak.StateMachine.Sample.WpfViewChanged
                 // Use the [IServiceProvider](https://microsoft.com) to resolve the service first
                 services.AddTransient<StateDependencyObjectFinder>(serviceProvider =>
                 {
-                    StateDependencyProvider stateDependencyProvider = serviceProvider.GetRequiredService<StateDependencyProvider>();
-                    return stateDependencyProvider.StateDependencyTypeFinderImplimentation; // Returns the method group
+                    StateDependencyObjectProvider stateDependencyProvider = serviceProvider.GetRequiredService<StateDependencyObjectProvider>();
+                    return stateDependencyProvider.StateDependencyObjectFinderImplimentation; // Returns the method group
                 });
 
                 services.AddSingleton<IStateMachineManager, StateMachineManager>();
-                services.AddSingleton<StateDependencyProvider>();
+                services.AddSingleton<StateDependencyObjectProvider>();
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<UserControl1ViewModel>();
                 services.AddSingleton<UserControl2ViewModel>();

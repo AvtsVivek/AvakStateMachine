@@ -8,5 +8,11 @@
             List<object?>? dependencies = [];
             return dependencies;
         }
+
+        public static List<Type?>? StateDependencyTypeFinderDefaultImplimentation(Type stateType)
+        {
+            List<Type?>? dependencies = [];
+            return dependencies;
+        }
     }
 }

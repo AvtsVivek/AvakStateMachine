@@ -2,4 +2,5 @@
 {
     // For more undertanding of the following look at the sample WpfViewChanged
     public delegate List<object?>? StateDependencyObjectFinder(Type stateType);
+    public delegate List<object?>? StateDependencyTypeFinder(Type stateType);
 }
