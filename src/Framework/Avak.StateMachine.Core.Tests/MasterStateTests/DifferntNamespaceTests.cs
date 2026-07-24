@@ -56,7 +56,9 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             // Arrange
             IXmlKeys constants = new XmlKeys();
 
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
             stateMachineManager.SetMasterStateFile(FileStream);
 

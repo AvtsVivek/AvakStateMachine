@@ -62,7 +62,9 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
             // Arrange
             IXmlKeys constants = new XmlKeys();
 
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
             stateMachineManager.SetMasterStateFile(FileStream);
 

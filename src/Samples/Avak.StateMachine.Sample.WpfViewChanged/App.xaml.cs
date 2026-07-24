@@ -23,14 +23,21 @@ namespace Avak.StateMachine.Sample.WpfViewChanged
 
                 // 2. Register the delegate as a dependency
                 // Use the [IServiceProvider](https://microsoft.com) to resolve the service first
-                services.AddTransient<StateDependencyObjectFinder>(serviceProvider =>
+                services.AddTransient<StateDependencyTypeFinder>(serviceProvider =>
                 {
-                    StateDependencyObjectProvider stateDependencyProvider = serviceProvider.GetRequiredService<StateDependencyObjectProvider>();
-                    return stateDependencyProvider.StateDependencyObjectFinderImplimentation; // Returns the method group
+                    StateDependencyTypeProvider stateDependencyProvider = serviceProvider.GetRequiredService<StateDependencyTypeProvider>();
+                    return stateDependencyProvider.StateDependencyTypeFinderImplimentation; // Returns the method group
+                });
+
+                services.AddTransient<StateDependencyResolver>(serviceProvider =>
+                {
+                    StateDependencyResolverProvider stateDependencyProvider = serviceProvider.GetRequiredService<StateDependencyResolverProvider>();
+                    return stateDependencyProvider.StateDependencyResolverImplimentation; // Returns the method group
                 });
 
                 services.AddSingleton<IStateMachineManager, StateMachineManager>();
-                services.AddSingleton<StateDependencyObjectProvider>();
+                services.AddSingleton<StateDependencyTypeProvider>();
+                services.AddSingleton<StateDependencyResolverProvider>();
                 services.AddSingleton<MainWindowViewModel>();
                 services.AddSingleton<UserControl1ViewModel>();
                 services.AddSingleton<UserControl2ViewModel>();

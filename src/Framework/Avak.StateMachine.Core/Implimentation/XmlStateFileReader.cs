@@ -30,7 +30,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         private ITypeFinder typeFinder;
 
-        private List<(ConstructorInfo CtorInfo, List<object?>? Dependencies)> stateCtorInfoWithDependenciesList = [];
+        private List<(ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)> stateCtorInfoWithDependenciesList = [];
 
         // 1. Declare the field without initializing it here
         private readonly Lazy<XElement?> _stateCollectionElement;
@@ -49,8 +49,18 @@ namespace Avak.StateMachine.Core.Implimentation
 
         IReadOnlyList<MasterStateBase> IStateFileReader.States => States;
 
-        internal XmlStateFileReader(IXmlKeys constants)
+        private StateDependencyResolver resolver;
+
+        internal XmlStateFileReader(IXmlKeys constants, StateDependencyResolver resolver)
         {
+            if (resolver == null)
+            {
+                // Todo. Need elaborate messages and logging here
+                throw new ArgumentNullException(nameof(resolver));
+            }
+
+            this.resolver = resolver;
+
             if (constants == null)
             {
                 throw new ArgumentNullException(nameof(constants));
@@ -164,7 +174,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return rootNamespace;
         }
 
-        public MasterStateBase SetInitialState(StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        public MasterStateBase SetInitialState(StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver)
         {
             // First ensure root name space is read.
             ReadRootStateNamespace();
@@ -172,14 +182,14 @@ namespace Avak.StateMachine.Core.Implimentation
             // Next triggers
             ReadTriggers();
 
-            PopulateStateTypeCtorInfoObject(stateDependencyObjectFinderDelegate);
+            PopulateStateTypeCtorInfoObject(stateDependencyTypeFinderDelegate);
 
-            MasterStateBase initialState = SetInitialState();
+            MasterStateBase initialState = SetInitialState(resolver);
 
             return initialState;
         }
 
-        public IStateGraph GetStateGraph(StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        public IStateGraph GetStateGraph(StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver)
         {
             if (stateGraph != null)
             {
@@ -191,7 +201,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             ReadTriggers();
 
-            MasterStateBase? initialState = SetInitialState(stateDependencyObjectFinderDelegate);
+            MasterStateBase? initialState = SetInitialState(stateDependencyTypeFinderDelegate, resolver);
 
             stateGraph = new StateGraph(States.ToList(), triggers!, initialState!);
 
@@ -223,7 +233,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return stateElementFound;
         }
 
-        private MasterStateBase SetInitialState()
+        private MasterStateBase SetInitialState(StateDependencyResolver resolver)
         {
             XAttribute? initialAttribute = stateCollectionElement!
                 .Attribute(constants.StateFileStateCollectionInitialAttributeName);
@@ -268,17 +278,17 @@ namespace Avak.StateMachine.Core.Implimentation
 
             string stateNamespace = GetStateNamespaceForElement(initialStateElement);
 
-            MasterStateBase initialState = CreateState(initialStateName, stateNamespace);
+            MasterStateBase initialState = CreateState(initialStateName, stateNamespace, resolver);
 
             // Now set the transitions and targets for this state.
-            SetTransitionsAndTargetsForState(initialState);
+            SetTransitionsAndTargetsForState(initialState, resolver);
 
             initialState.IsInitial = true;
 
             return initialState;
         }
 
-        public void SetTransitionsAndTargetsForState(StateBase state)
+        public void SetTransitionsAndTargetsForState(StateBase state, StateDependencyResolver resolver)
         {
             XElement stateElement = GetStateElement(state.Name)!;
 
@@ -329,7 +339,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 string targetStateNamespace = GetStateNamespaceForElement(targetStateElement);
 
-                MasterStateBase targetState = CreateState(targetStateName, targetStateNamespace);
+                MasterStateBase targetState = CreateState(targetStateName, targetStateNamespace, resolver);
 
                 transition.Target = targetState;
             }
@@ -373,7 +383,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return initialState;
         }
 
-        private void ReadStates(XElement stateCollectionElement, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        private void ReadStates(XElement stateCollectionElement, StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
         {
             if (stateCollectionElement == null)
             {
@@ -381,7 +391,7 @@ namespace Avak.StateMachine.Core.Implimentation
             }
 
             // PopulateStates(stateElements, stateDependencyObjectFinderDelegate);
-            PopulateStateTypeCtorInfoObject(stateDependencyObjectFinderDelegate);
+            PopulateStateTypeCtorInfoObject(stateDependencyTypeFinderDelegate);
 
             // states = GetStates(stateElements, stateDependencyObjectFinderDelegate);
 
@@ -438,7 +448,7 @@ namespace Avak.StateMachine.Core.Implimentation
             }
         }
 
-        private void PopulateStateTypeCtorInfoObject(StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        private void PopulateStateTypeCtorInfoObject(StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
         {
             List<string> uniqueStateNameList = []; // Used to check state names are unique in the state file.
 
@@ -465,11 +475,11 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 string stateNamespace = GetStateNamespaceForElement(stateElement);
 
-                CreateStateTypeConstructorInfoObject(stateName, stateNamespace, stateDependencyObjectFinderDelegate);
+                CreateStateTypeConstructorInfoObject(stateName, stateNamespace, stateDependencyTypeFinderDelegate);
             }
         }
 
-        private List<MasterStateBase> GetStates(StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        private List<MasterStateBase> GetStates(StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver)
         {
             List<MasterStateBase> states = [];
 
@@ -482,9 +492,9 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 string stateNamespace = GetStateNamespaceForElement(stateElement);
 
-                CreateStateTypeConstructorInfoObject(stateName, stateNamespace, stateDependencyObjectFinderDelegate);
+                CreateStateTypeConstructorInfoObject(stateName, stateNamespace, stateDependencyTypeFinderDelegate);
 
-                MasterStateBase state = CreateState(stateName, stateNamespace);
+                MasterStateBase state = CreateState(stateName, stateNamespace, resolver);
 
                 List<Transition> transitionsForState = GetTransitionsForState(stateElement);
 
@@ -568,7 +578,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return transition;
         }
 
-        private void CreateStateTypeConstructorInfoObject(string stateName, string statesNamespace, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        private void CreateStateTypeConstructorInfoObject(string stateName, string statesNamespace, StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
         {
             string typeFullName = statesNamespace + "." + stateName;
 
@@ -591,11 +601,11 @@ namespace Avak.StateMachine.Core.Implimentation
             {
                 try
                 {
-                    List<object?>? stateDependencyObjects = stateDependencyObjectFinderDelegate.Invoke(ctype);
-
+                    // List<object?>? stateDependencyObjects = stateDependencyObjectFinderDelegate.Invoke(ctype);
+                    List<Type?>? stateDependencyTypes = stateDependencyTypeFinderDelegate.Invoke(ctype);
                     ConstructorInfo ctorInfo = null!;
 
-                    if (stateDependencyObjects == null || stateDependencyObjects.Count == 0)
+                    if (stateDependencyTypes == null || stateDependencyTypes.Count == 0)
                     {
                         ctorInfo = ctype.GetConstructor(Type.EmptyTypes)!;
                         if (ctorInfo == null)
@@ -603,8 +613,8 @@ namespace Avak.StateMachine.Core.Implimentation
                             string exceptionMessage = $"A parameterless Constructor could not be found for the type {ctype.FullName}" + Environment.NewLine;
                             exceptionMessage = exceptionMessage + $"If this type has any dependencies, then ensure you provide them in your provider" + Environment.NewLine;
                             exceptionMessage = exceptionMessage + $"Take a close look at the followng, you defined." + Environment.NewLine;
-                            exceptionMessage = exceptionMessage + $"Method name: {stateDependencyObjectFinderDelegate.Method.Name}" + Environment.NewLine;
-                            exceptionMessage = exceptionMessage + $"Declaring Type: {stateDependencyObjectFinderDelegate.Method.DeclaringType}" + Environment.NewLine;
+                            exceptionMessage = exceptionMessage + $"Method name: {stateDependencyTypeFinderDelegate.Method.Name}" + Environment.NewLine;
+                            exceptionMessage = exceptionMessage + $"Declaring Type: {stateDependencyTypeFinderDelegate.Method.DeclaringType}" + Environment.NewLine;
 
                             throw new Exception(exceptionMessage);
                         }
@@ -612,9 +622,9 @@ namespace Avak.StateMachine.Core.Implimentation
                     else
                     {
 
-                        List<object?>? nullStateDependencyObjects = stateDependencyObjects.Where(obj => obj == null).ToList();
-                        // first check if all of the objects are null.
-                        if (nullStateDependencyObjects.Count > 0 && (nullStateDependencyObjects.Count == stateDependencyObjects.Count))
+                        List<Type?>? nullStateDependencyTypes = stateDependencyTypes.Where(obj => obj == null).ToList();
+                        // first check if all of the Types are null.
+                        if (nullStateDependencyTypes.Count > 0 && (nullStateDependencyTypes.Count == stateDependencyTypes.Count))
                         {
                             // if yes, then simply assume that default parameter less ctor is available on the state class
                             ctorInfo = ctype.GetConstructor(Type.EmptyTypes)!;
@@ -622,17 +632,18 @@ namespace Avak.StateMachine.Core.Implimentation
                         else
                         {
                             // Remove nulls
-                            stateDependencyObjects = stateDependencyObjects.Where(obj => obj != null).ToList();
+                            stateDependencyTypes = stateDependencyTypes.Where(obj => obj != null).ToList();
                         }
                     }
 
-                    Type[] stateDependencyTypes = [.. stateDependencyObjects!.Select(obj => obj!.GetType())];
+                    // Type[] stateDependencyTypes = [.. stateDependencyObjects!.Select(obj => obj!.GetType())];
+                    Type[] stateDependencyTypeArray = stateDependencyTypes!.ToArray()!;
 
-                    ctorInfo = ctype.GetConstructor(stateDependencyTypes)!;
+                    ctorInfo = ctype.GetConstructor(stateDependencyTypeArray)!;
 
                     if (ctorInfo == null)
                     {
-                        foreach (Type dependencyType in stateDependencyTypes)
+                        foreach (Type? dependencyType in stateDependencyTypes)
                         {
                             message = message + dependencyType + " ,";
                         }
@@ -644,8 +655,10 @@ namespace Avak.StateMachine.Core.Implimentation
                     }
                     else
                     {
-                        (ConstructorInfo CtorInfo, List<object?>? Dependencies) ctorInfoWithDependencies = (ctorInfo, stateDependencyObjects);
-                        stateCtorInfoWithDependenciesList.Add(ctorInfoWithDependencies);
+                        (ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)
+                            ctorInfoWithDependencieTypes = (ctorInfo, stateDependencyTypes);
+
+                        stateCtorInfoWithDependenciesList.Add(ctorInfoWithDependencieTypes);
                     }
                 }
                 catch (Exception ex)
@@ -657,7 +670,7 @@ namespace Avak.StateMachine.Core.Implimentation
             }
         }
 
-        private MasterStateBase CreateState(string stateName, string statesNamespace)
+        private MasterStateBase CreateState(string stateName, string statesNamespace, StateDependencyResolver resolver)
         {
             MasterStateBase stateBase = null!;
 
@@ -673,7 +686,7 @@ namespace Avak.StateMachine.Core.Implimentation
             }
 
             // Find the ctorInfo object
-            (ConstructorInfo CtorInfo, List<object?>? Dependencies)? ctorInfoTuple = stateCtorInfoWithDependenciesList
+            (ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)? ctorInfoTuple = stateCtorInfoWithDependenciesList
                 .FirstOrDefault(ctorTuple => ctorTuple.CtorInfo.DeclaringType!.FullName == typeFullName);
 
             if (ctorInfoTuple == null || !ctorInfoTuple.HasValue)
@@ -684,16 +697,30 @@ namespace Avak.StateMachine.Core.Implimentation
 
             ConstructorInfo ctorInfo = ctorInfoTuple.Value.CtorInfo;
 
-            List<object?>? stateDependencyObjects = ctorInfoTuple.Value.Dependencies;
+            List<Type?>? stateDependencyTypes = ctorInfoTuple.Value.DependencieTypes;
+
+            // Need to get the objects from the types.
+            // List<object?>? stateDependencyObjectss = ctorInfoTuple.Value.DependencieTypes?.Select(type => resolver.Invoke(type));
+
+            List<object?>? stateDependencyObjects = [];
+
+            foreach (Type? type in ctorInfoTuple.Value.DependencieTypes!)
+            {
+                if (type != null)
+                {
+                    stateDependencyObjects.Add(resolver.Invoke(type));
+                }
+            }
 
             object stateObject = null!;
 
-            if (stateDependencyObjects!.Count == 0)
+            if (stateDependencyTypes!.Count == 0)
             {
                 stateObject = ctorInfo!.Invoke(null);
             }
             else
             {
+
                 stateObject = ctorInfo!.Invoke(stateDependencyObjects!.ToArray());
             }
 

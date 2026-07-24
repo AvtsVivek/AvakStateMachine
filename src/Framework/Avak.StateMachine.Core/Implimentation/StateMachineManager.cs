@@ -8,7 +8,8 @@ namespace Avak.StateMachine.Core.Implimentation
     {
         public IStateGraph StateGraph { get; private set; }
         private IStateFileReader stateFileReader;
-        private StateDependencyObjectFinder stateDependencyObjectFinderDelegate;
+        private StateDependencyTypeFinder stateDependencyTypeFinderDelegate;
+        private StateDependencyResolver resolver;
         public event EventHandler<StateBase>? StateCreated;
 
         public StateBase CurrentState
@@ -21,26 +22,36 @@ namespace Avak.StateMachine.Core.Implimentation
         private StateBase _currentState;
         private Stack<StateBase> StateStack;
 
-        public StateMachineManager(IXmlKeys constants, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        public StateMachineManager(IXmlKeys constants, StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver)
         {
+
+            if (resolver == null)
+            {
+                // Todo. Need elaborate messages and logging here
+                throw new ArgumentNullException(nameof(resolver));
+            }
+
+            this.resolver = resolver;
+
             if (constants == null)
             {
+                // Todo. Need elaborate messages and logging here
                 throw new ArgumentNullException(nameof(constants));
             }
 
-            if (stateDependencyObjectFinderDelegate == null)
+            if (stateDependencyTypeFinderDelegate == null)
             {
-                string message = $"The argument/parameter to the constructor of the type {typeof(StateMachineManager).FullName}, {nameof(StateMachineManager.stateDependencyObjectFinderDelegate)} of type {typeof(StateDependencyObjectFinder).FullName} cannot be null." +
-                        $"If your states do not have any dependencies, then pass the default {StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation}";
+                string message = $"The argument/parameter to the constructor of the type {typeof(StateMachineManager).FullName}, {nameof(StateMachineManager.stateDependencyTypeFinderDelegate)} of type {typeof(StateDependencyTypeFinder).FullName} cannot be null." +
+                        $"If your states do not have any dependencies, then pass the default {StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation}";
                 throw new ArgumentNullException(message);
             }
 
-            this.stateDependencyObjectFinderDelegate = stateDependencyObjectFinderDelegate;
+            this.stateDependencyTypeFinderDelegate = stateDependencyTypeFinderDelegate;
 
             StateGraph = null!;
             _currentState = null!;
             StateStack = new();
-            stateFileReader = new XmlStateFileReader(constants);
+            stateFileReader = new XmlStateFileReader(constants, this.resolver);
             stateFileReader.StateCreated += StateFileReader_StateCreated;
         }
 
@@ -72,7 +83,7 @@ namespace Avak.StateMachine.Core.Implimentation
         // Gets the current state graph, not the full state graph. 
         public IStateGraph GetCurrentStateGraph()
         {
-            StateGraph = stateFileReader.GetStateGraph(stateDependencyObjectFinderDelegate);
+            StateGraph = stateFileReader.GetStateGraph(stateDependencyTypeFinderDelegate, resolver);
             if (CurrentState == null)
             {
                 _currentState = StateGraph.InitialState;
@@ -82,7 +93,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public void SetInitialState()
         {
-            MasterStateBase? initialState = stateFileReader.SetInitialState(stateDependencyObjectFinderDelegate);
+            MasterStateBase? initialState = stateFileReader.SetInitialState(stateDependencyTypeFinderDelegate, resolver);
             this._currentState = initialState!;
         }
 
@@ -145,7 +156,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             SetCurrentState(targetState);
 
-            stateFileReader.SetTransitionsAndTargetsForState(targetState);
+            stateFileReader.SetTransitionsAndTargetsForState(targetState, resolver);
 
             return true;
         }

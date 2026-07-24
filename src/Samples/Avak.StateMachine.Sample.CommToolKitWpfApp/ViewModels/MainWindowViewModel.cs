@@ -73,7 +73,7 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
             Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
 
             IXmlKeys constants = new XmlKeys();
-            stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation, StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
             stateMachineManager.SetMasterStateFile(resourceStream);
             bool loadResult = stateMachineManager.LoadMasterStateFile();

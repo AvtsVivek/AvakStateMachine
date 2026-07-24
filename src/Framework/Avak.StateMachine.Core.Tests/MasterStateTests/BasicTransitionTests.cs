@@ -35,7 +35,9 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             int numberOfStateObjectsCreated = 0;
             string nameOfStateJustCreated = string.Empty;
             IXmlKeys constants = new XmlKeys();
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
             // Tests the state created event on state machine manager.
 
