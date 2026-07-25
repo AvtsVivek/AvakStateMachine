@@ -345,109 +345,6 @@ namespace Avak.StateMachine.Core.Implimentation
             }
         }
 
-        private MasterStateBase? SetInitialStateOld(XElement stateCollectionElement)
-        {
-            if (States.Count == 0)
-            {
-                // No states. So just return null.
-                return null;
-            }
-
-            XAttribute? initialAttribute = stateCollectionElement
-                .Attribute(constants.StateFileStateCollectionInitialAttributeName);
-
-            if (initialAttribute == null)
-            {
-                // Pick the very first State Element and set that as the Initial Element.
-                States[0].IsInitial = true;
-                return States[0];
-            }
-
-
-            if (string.IsNullOrWhiteSpace(initialAttribute!.Value))
-            {
-                throw new XmlException($"{constants.StateFileStateCollectionInitialAttributeName} on {constants.StateFileStateCollectionElementName} must be set to a valid state");
-            }
-
-            string initialStateName = initialAttribute.Value;
-
-            MasterStateBase? initialState = States.FirstOrDefault(state => state.Name == initialStateName);
-
-            if (initialState == null)
-            {
-                throw new XmlException($"{constants.StateFileStateCollectionInitialAttributeName} " +
-                    $"on {constants.StateFileStateCollectionElementName} must be set to a valid state. " +
-                    $"The {initialStateName} does not represent any state.");
-            }
-            initialState.IsInitial = true;
-            return initialState;
-        }
-
-        private void ReadStates(XElement stateCollectionElement, StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
-        {
-            if (stateCollectionElement == null)
-            {
-                throw new Exception($"{constants.StateFileStateCollectionElementName} not present in the file {XResourceDoc.BaseUri}");
-            }
-
-            // PopulateStates(stateElements, stateDependencyObjectFinderDelegate);
-            PopulateStateTypeCtorInfoObject(stateDependencyTypeFinderDelegate);
-
-            // states = GetStates(stateElements, stateDependencyObjectFinderDelegate);
-
-            // AddTargetStateToStateTransitions(stateElements, states);
-        }
-
-        private void AddTargetStateToStateTransitions(List<MasterStateBase> states)
-        {
-            foreach (XElement stateElement in stateElements)
-            {
-                XAttribute stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName)!;
-
-                string stateName = stateNameAttribute.Value;
-
-                StateBase state = states.Where(state => state.Name == stateName).First();
-
-                List<XElement> transitionElements = stateElement
-                    .Descendants(constants.StateFileTransitionElementName)
-                    .ToList();
-
-                foreach (XElement transitionElement in transitionElements)
-                {
-                    XAttribute? triggerAttribute = transitionElement
-                        .Attribute(constants.StateFileTransitionTriggerAttributeName);
-
-                    XAttribute? targetAttribute = transitionElement
-                        .Attribute(constants.StateFileTransitionTargetAttributeName);
-
-                    if (targetAttribute == null && string.IsNullOrWhiteSpace(targetAttribute!.Value))
-                    {
-                        string errorMessage = $"Target attribute is missing on the transition with Trigger name {triggerAttribute!.Name} in the state {state.Name}";
-                        throw new Exception(errorMessage);
-                    }
-
-                    // The target attribute name should match a state
-
-                    MasterStateBase targetState = states.First(state => state.Name == targetAttribute!.Value);
-
-                    if (targetState == null)
-                    {
-                        string errorMessage = $"Target attribute {targetAttribute!.Value} on the transition " +
-                            $"with Trigger name {triggerAttribute!.Name} in the state " +
-                            $"{state.Name} is invalid. No state with name {targetAttribute!.Value} is found";
-
-                        throw new Exception(errorMessage);
-                    }
-
-                    Transition transition = state
-                        .Transitions
-                        .First(transition => transition.Trigger.Name == triggerAttribute!.Value);
-
-                    transition.Target = targetState;
-                }
-            }
-        }
-
         private void PopulateStateTypeCtorInfoObject(StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
         {
             List<string> uniqueStateNameList = []; // Used to check state names are unique in the state file.
@@ -477,37 +374,6 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 CreateStateTypeConstructorInfoObject(stateName, stateNamespace, stateDependencyTypeFinderDelegate);
             }
-        }
-
-        private List<MasterStateBase> GetStates(StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
-        {
-            List<MasterStateBase> states = [];
-
-            foreach (XElement stateElement in stateElements)
-            {
-                XAttribute? stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName)
-                    ?? throw new Exception($"State Element name missing in state file {XResourceDoc.BaseUri}");
-
-                string stateName = stateNameAttribute.Value;
-
-                string stateNamespace = GetStateNamespaceForElement(stateElement);
-
-                CreateStateTypeConstructorInfoObject(stateName, stateNamespace, stateDependencyTypeFinderDelegate);
-
-                MasterStateBase state = CreateState(stateName, stateNamespace);
-
-                List<Transition> transitionsForState = GetTransitionsForState(stateElement);
-
-                state.Transitions = transitionsForState;
-
-                if (state != null)
-                {
-                    state.Name = stateName;
-                    states.Add(state);
-                }
-            }
-
-            return states;
         }
 
         private string GetStateNamespaceForElement(XElement stateElement)
@@ -589,11 +455,8 @@ namespace Avak.StateMachine.Core.Implimentation
             if (!successfullyFound)
             {
                 message = $"The type {stateName} with namespace {statesNamespace} is not found" + Environment.NewLine;
-
                 message = message + $"Check the name of the type {stateName}" + Environment.NewLine;
-
                 message = message + $"Also Check the namespace {statesNamespace}";
-
                 throw new Exception(message);
             }
 
@@ -601,7 +464,6 @@ namespace Avak.StateMachine.Core.Implimentation
             {
                 try
                 {
-                    // List<object?>? stateDependencyObjects = stateDependencyObjectFinderDelegate.Invoke(ctype);
                     List<Type?>? stateDependencyTypes = stateDependencyTypeFinderDelegate.Invoke(ctype);
                     ConstructorInfo ctorInfo = null!;
 
@@ -636,7 +498,6 @@ namespace Avak.StateMachine.Core.Implimentation
                         }
                     }
 
-                    // Type[] stateDependencyTypes = [.. stateDependencyObjects!.Select(obj => obj!.GetType())];
                     Type[] stateDependencyTypeArray = stateDependencyTypes!.ToArray()!;
 
                     ctorInfo = ctype.GetConstructor(stateDependencyTypeArray)!;
@@ -670,6 +531,15 @@ namespace Avak.StateMachine.Core.Implimentation
             }
         }
 
+        /// <summary>
+        /// Creates the state object along with its dependencies, it the state has any.
+        /// </summary>
+        /// <param name="stateName"></param>
+        /// <param name="statesNamespace"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="XmlException"></exception>
+        /// <exception cref="Exception"></exception>
         private MasterStateBase CreateState(string stateName, string statesNamespace)
         {
             MasterStateBase stateBase = null!;
@@ -707,20 +577,54 @@ namespace Avak.StateMachine.Core.Implimentation
             {
                 if (type != null)
                 {
-                    stateDependencyObjects.Add(resolver.Invoke(type));
+                    try
+                    {
+                        object? dependencyObject = resolver.Invoke(type);
+                        stateDependencyObjects.Add(dependencyObject);
+                    }
+                    catch (Exception exception)
+                    {
+                        string message = $"The state {typeFullName} could not be created. " + Environment.NewLine +
+                            $"It has a dependency of type {type.FullName} that could not be resovled." + Environment.NewLine +
+                            $"If you are using any dependency injection container, " + Environment.NewLine +
+                            $"ensure the state dependency, along with ITS dependencies are registed with the DI Container" + Environment.NewLine +
+                            $"This is the exception {exception.Message}" + Environment.NewLine +
+                            $"The stake trace is {exception.StackTrace}";
+                        throw new Exception(message);
+                    }
                 }
             }
 
             object stateObject = null!;
 
-            if (stateDependencyTypes!.Count == 0)
+            try
             {
-                stateObject = ctorInfo!.Invoke(null);
+                if (stateDependencyTypes!.Count == 0)
+                {
+                    stateObject = ctorInfo!.Invoke(null);
+                }
+                else
+                {
+                    stateObject = ctorInfo!.Invoke(stateDependencyObjects!.ToArray());
+                }
             }
-            else
+            catch (Exception exception)
             {
+                string message = $"The state {typeFullName} could not be created. " + Environment.NewLine +
+                    "The following execution failed.";
+                if (stateDependencyTypes!.Count == 0)
+                {
+                    message = message + "ctorInfo!.Invoke(null);";
+                }
+                else
+                {
+                    message = message + "ctorInfo!.Invoke(stateDependencyObjects!.ToArray());";
+                }
 
-                stateObject = ctorInfo!.Invoke(stateDependencyObjects!.ToArray());
+                message = message + $"This is the exception {exception.Message}" + Environment.NewLine +
+                    $"The stake trace is {exception.StackTrace}";
+
+                throw new Exception(message);
             }
 
             if (stateObject == null)
@@ -792,7 +696,6 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 throw new Exception(exceptionString);
             }
-
             return triggerSource;
         }
 
