@@ -1,5 +1,6 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.States;
+using System.Reflection;
 
 namespace Avak.StateMachine.Core.Implimentation
 {
@@ -11,6 +12,7 @@ namespace Avak.StateMachine.Core.Implimentation
         private StateDependencyTypeFinder stateDependencyTypeFinderDelegate;
         private StateDependencyResolver resolver;
         public event EventHandler<StateBase>? StateCreated;
+        private StateXmlFile masterStateXmlFile;
 
         public StateBase CurrentState
         {
@@ -22,7 +24,9 @@ namespace Avak.StateMachine.Core.Implimentation
         private StateBase _currentState;
         private Stack<StateBase> StateStack;
 
-        public StateMachineManager(IXmlKeys constants, StateDependencyTypeFinder stateDependencyTypeFinderDelegate, StateDependencyResolver resolver)
+        public StateMachineManager(IXmlKeys constants,
+            StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
+            StateDependencyResolver resolver)
         {
 
             if (resolver == null)
@@ -53,6 +57,7 @@ namespace Avak.StateMachine.Core.Implimentation
             StateStack = new();
             stateFileReader = new XmlStateFileReader(constants, this.resolver);
             stateFileReader.StateCreated += StateFileReader_StateCreated;
+            masterStateXmlFile = null!;
         }
 
         private void StateFileReader_StateCreated(object? sender, StateBase stateCreated)
@@ -60,19 +65,24 @@ namespace Avak.StateMachine.Core.Implimentation
             StateCreated?.Invoke(this, stateCreated);
         }
 
-        public void SetMasterStateFile(Stream stream)
+        public void SetMasterStateFile(Assembly assembly, string manifestResourceName)
         {
-            stateFileReader.SetMasterStateFile(stream);
+            masterStateXmlFile = new(null, assembly, manifestResourceName);
         }
 
-        public void SetMasterStateFilePath(string filePath)
-        {
-            stateFileReader.SetMasterStateFilePath(filePath);
-        }
+        //public void SetMasterStateFile(Stream stream)
+        //{
+        //    stateFileReader.SetMasterStateFile(stream);
+        //}
 
-        public bool LoadMasterStateFile()
+        //public void SetMasterStateFilePath(string filePath)
+        //{
+        //    stateFileReader.SetMasterStateFilePath(filePath);
+        //}
+
+        public void LoadMasterStateFile()
         {
-            return stateFileReader.LoadMasterStateFile();
+            stateFileReader.LoadMasterStateFile(masterStateXmlFile);
         }
 
         public bool PopulateStateXmlFileTree()

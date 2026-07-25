@@ -30,24 +30,18 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     [TestClass]
     public class DifferntNamespaceTests
     {
-        private Stream FileStream = null!;
+        private string masterStateXmlFile = string.Empty;
         [TestInitialize]
         public void Setup()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.DifferentNamespaces.xml";
-            FileStream = assembly.GetManifestResourceStream(appStateFile)!;
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.DifferentNamespaces.xml";
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             // Runs after each test (clean up files, database connections, etc.)
-
             // Close the stream.
-            FileStream.Close();
-            FileStream.Dispose();
         }
 
         [TestMethod]
@@ -60,9 +54,9 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
                 StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
-            stateMachineManager.SetMasterStateFile(FileStream);
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;

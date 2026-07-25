@@ -8,11 +8,7 @@ namespace Avak.StateMachine.Core.Implimentation
 {
     internal class XmlStateFileReader : IStateFileReader
     {
-        private Stream XmlFileStream;
-
         private string XmlFilePath = string.Empty;
-
-        private bool isStateFileValidAndLoaded;
 
         private XDocument XResourceDoc { get; set; }
 
@@ -69,11 +65,11 @@ namespace Avak.StateMachine.Core.Implimentation
             this.constants = constants;
 
             this.typeFinder = new CurrentAppDomainTypeFinder();
-            XmlFileStream = null!;
+
             XResourceDoc = null!;
             triggers = [];
             stateGraph = null!;
-            isStateFileValidAndLoaded = false;
+            // isStateFileValidAndLoaded = false;
             _stateCollectionElement = new Lazy<XElement?>(() =>
             {
                 XElement? element = XResourceDoc.Descendants(constants.StateFileStateCollectionElementName).FirstOrDefault();
@@ -112,54 +108,36 @@ namespace Avak.StateMachine.Core.Implimentation
             });
         }
 
-        public void SetMasterStateFile(Stream stream)
+        //public void SetMasterStateFile(Stream stream)
+        //{
+        //    if (IsStreamValid(stream))
+        //    {
+        //        XmlFileStream = stream;
+        //    }
+        //}
+
+        //public void SetMasterStateFilePath(string filePath)
+        //{
+        //    if (string.IsNullOrWhiteSpace(filePath))
+        //    {
+        //        throw new ArgumentNullException("Invalid Xml file Path. Its null or empty.");
+        //    }
+
+        //    if (!File.Exists(filePath))
+        //    {
+        //        throw new ArgumentNullException($"Invalid Xml file Path. The File {filePath} does not exist.");
+        //    }
+
+        //    XmlFilePath = filePath;
+
+        //    FileStream fileStream = new(XmlFilePath, FileMode.Open, FileAccess.Read);
+
+        //    SetMasterStateFile(fileStream);
+        //}
+
+        public void LoadMasterStateFile(StateXmlFile masterStateXmlFile)
         {
-            if (IsStreamValid(stream))
-            {
-                XmlFileStream = stream;
-            }
-        }
-
-        public void SetMasterStateFilePath(string filePath)
-        {
-            if (string.IsNullOrWhiteSpace(filePath))
-            {
-                throw new ArgumentNullException("Invalid Xml file Path. Its null or empty.");
-            }
-
-            if (!File.Exists(filePath))
-            {
-                throw new ArgumentNullException($"Invalid Xml file Path. The File {filePath} does not exist.");
-            }
-
-            XmlFilePath = filePath;
-
-            FileStream fileStream = new(XmlFilePath, FileMode.Open, FileAccess.Read);
-
-            SetMasterStateFile(fileStream);
-        }
-
-        public bool LoadMasterStateFile()
-        {
-            try
-            {
-                if (!isStateFileValidAndLoaded)
-                {
-                    if (!IsStreamValid(XmlFileStream))
-                        return false;
-
-                    XResourceDoc = XDocument.Load(XmlFileStream, LoadOptions.SetBaseUri);
-                    isStateFileValidAndLoaded = true;
-                }
-            }
-            catch (XmlException ex)
-            {
-                // Log the exception message ex.Message
-                // todo need logging.
-                isStateFileValidAndLoaded = false;
-            }
-
-            return isStateFileValidAndLoaded;
+            XResourceDoc = masterStateXmlFile.GetXmlDocument();
         }
 
         public bool PopulateStateXmlFileTree()
@@ -526,7 +504,9 @@ namespace Avak.StateMachine.Core.Implimentation
                 {
                     // to do need logging.
                     // logger.Error(ex, $"Error creating state {stateName} in namespace {statesNamespace}.");
-                    throw;
+                    string errorMessage = $"Error creating state {stateName} in namespace {statesNamespace}" + Environment.NewLine;
+                    errorMessage += ex.Message;
+                    throw new Exception(errorMessage, ex);
                 }
             }
         }
@@ -751,42 +731,6 @@ namespace Avak.StateMachine.Core.Implimentation
                     rootNamespace = attribute.Value;
                 }
             }
-        }
-
-        private bool IsStreamValid(Stream stream)
-        {
-            var result = DoStreamCheck(stream);
-            bool isValid = result.Item1;
-            if (!isValid)
-            {
-                // log the message, result.Item2
-                throw new ArgumentException(result.Item2);
-            }
-            return isValid;
-        }
-
-        private (bool, string) DoStreamCheck(Stream stream)
-        {
-            string message;
-            if (stream == null)
-            {
-                message = "Ensure correct stream object. Stream object is null";
-                return (false, message);
-            }
-
-            if (stream != null && !stream!.CanRead)
-            {
-                message = "Ensure correct stream object. The stream object cannot read. Stream.CanRead is false";
-                return (false, message);
-            }
-
-            if (!stream!.CanSeek)
-            {
-                message = "Ensure correct stream object. The stream object cannot seek. Stream.CanSeek is false";
-                return (false, message);
-            }
-
-            return (true, string.Empty);
         }
     }
 }

@@ -37,23 +37,17 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
     [TestClass]
     public class ArbitraryNamespaceTests
     {
-        private Stream FileStream = null!;
+        private string masterStateXmlFile = string.Empty;
         [TestInitialize]
         public void Setup()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.ArbitraryNamespace.xml";
-            FileStream = assembly.GetManifestResourceStream(appStateFile)!;
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.ArbitraryNamespace.xml";
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             // Runs after each test (clean up files, database connections, etc.)
-
-            // Close the stream.
-            FileStream.Close();
-            FileStream.Dispose();
         }
 
         [TestMethod]
@@ -66,9 +60,9 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
                 StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
-            stateMachineManager.SetMasterStateFile(FileStream);
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;

@@ -7,43 +7,18 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     [TestClass]
     public class IStateFileReaderTests
     {
-        private Stream FileStream = null!;
+        string masterStateXmlFile = string.Empty;
         [TestInitialize]
         public void Setup()
         {
             // Runs before each test
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.TestStateFile.xml";
-            FileStream = assembly.GetManifestResourceStream(appStateFile)!;
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.TestStateFile.xml";
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             // Runs after each test (clean up files, database connections, etc.)
-
-            // Close the stream.
-            FileStream.Close();
-            FileStream.Dispose();
-        }
-
-        [TestMethod]
-        public void Should_Load_Valid_XmlStateFile_Successfully()
-        {
-            // Arrange
-            IXmlKeys constants = new XmlKeys();
-
-            StateMachineManager stateMachineManager = new(constants,
-                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
-                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
-
-            stateMachineManager.SetMasterStateFile(FileStream);
-
-            // Act
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
-
-            // Assert
-            Assert.IsTrue(loadResult);
         }
 
         // Read triggers from xml file
@@ -57,8 +32,9 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
                 StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
-            stateMachineManager.SetMasterStateFile(FileStream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
 
             // Act
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetCurrentStateGraph());

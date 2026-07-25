@@ -8,14 +8,13 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     [TestClass]
     public class WithTriggerAndTwoStatesTests
     {
-        private Stream FileStream = null!;
+        private string masterStateXmlFile = string.Empty;
+
         [TestInitialize]
         public void Setup()
         {
             // Runs before each test
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.WithTriggersTagAndTwoStatesStateFile.xml";
-            FileStream = assembly.GetManifestResourceStream(appStateFile)!;
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.WithTriggersTagAndTwoStatesStateFile.xml";
         }
 
         [TestCleanup]
@@ -24,8 +23,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             // Runs after each test (clean up files, database connections, etc.)
 
             // Close the stream.
-            FileStream.Close();
-            FileStream.Dispose();
         }
 
         [TestMethod]
@@ -38,8 +35,9 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
                 StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
-            stateMachineManager.SetMasterStateFile(FileStream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<Trigger> triggers = stateMachineManager.GetCurrentStateGraph().TriggerList;

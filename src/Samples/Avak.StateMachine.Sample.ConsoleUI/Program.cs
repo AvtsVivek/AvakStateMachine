@@ -17,16 +17,8 @@ namespace Avak.StateMachine.Sample.ConsoleUI
 
         private static void PopulateStateListUsingFileStream()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-
             string appStateTable = "Avak.StateMachine.Sample.ConsoleUI.StateManager.State.xml";
 
-            using Stream stream = assembly.GetManifestResourceStream(appStateTable)!;
-
-            if (stream == null)
-            {
-                return;
-            }
 
             IXmlKeys constants = new XmlKeys();
 
@@ -34,9 +26,9 @@ namespace Avak.StateMachine.Sample.ConsoleUI
                 StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
-            stateMachineManager.SetMasterStateFile(stream);
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), appStateTable);
 
-            bool isLoaded = stateMachineManager.LoadMasterStateFile();
+            stateMachineManager.LoadMasterStateFile();
 
             IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
 
