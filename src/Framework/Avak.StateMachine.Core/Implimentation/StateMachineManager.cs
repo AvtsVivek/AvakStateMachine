@@ -58,7 +58,7 @@ namespace Avak.StateMachine.Core.Implimentation
             StateGraph = null!;
             _currentState = null!;
             StateStack = new();
-            stateFileReader = new XmlStateFileReader(this.constants, this.stateDependencyTypeFinderDelegate);
+            stateFileReader = new XmlStateFileReader();
             masterStateXmlFile = null!;
         }
 
