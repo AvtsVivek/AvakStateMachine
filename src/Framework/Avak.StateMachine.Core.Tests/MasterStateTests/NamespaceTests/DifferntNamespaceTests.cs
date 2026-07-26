@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.MasterStateTests
+namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
 {
     // This test checks for three different state classes defined in three different namespaces.
     // Looking at the following app state file, the state classes and their namespaces are as follows.
@@ -34,7 +34,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         [TestInitialize]
         public void Setup()
         {
-            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.DifferentNamespaces.xml";
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.NameSpaceTestsXmlFiles.DifferentNamespaces.xml";
         }
 
         [TestCleanup]

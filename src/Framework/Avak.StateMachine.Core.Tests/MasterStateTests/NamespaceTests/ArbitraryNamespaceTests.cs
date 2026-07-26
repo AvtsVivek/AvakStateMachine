@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.MasterStateTests
+namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
 {
     // Some references
     // https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-mstest-writing-tests-lifecycle
@@ -41,7 +41,7 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
         [TestInitialize]
         public void Setup()
         {
-            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.ArbitraryNamespace.xml";
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.NameSpaceTestsXmlFiles.ArbitraryNamespace.xml";
         }
 
         [TestCleanup]

@@ -8,19 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="NoStatesNoTriggers.xml" />
-    <None Remove="StateManager\ArbitraryNamespace.xml" />
-    <None Remove="StateManager\IncorrectStateBaseClass.xml" />
-    <None Remove="StateManager\IncorrectTypeName.xml" />
-    <None Remove="StateManager\MasterStateXmlFileWithSubStateXmlFileRefs.xml" />
-    <None Remove="TestStateFile.xml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="StateManager\MasterStateXmlFileWithSubStateXmlFileRefs.xml" />
+    <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\ArbitraryNamespace.xml" />
+    <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\DifferentNamespaces.xml" />
+    <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\EmptyStringDefaultNamespace.xml" />
+    <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\NoNamespaceAttribute.xml" />
     <EmbeddedResource Include="StateManager\TestStateFile.xml" />
-    <EmbeddedResource Include="StateManager\ArbitraryNamespace.xml" />
-    <EmbeddedResource Include="StateManager\DifferentNamespaces.xml" />
     <EmbeddedResource Include="StateManager\IncorrectStateBaseClass.xml" />
     <EmbeddedResource Include="StateManager\IncorrectTypeName.xml" />
     <EmbeddedResource Include="StateManager\BasicTransitions.xml" />
@@ -28,7 +21,6 @@
     <EmbeddedResource Include="StateManager\WithTriggersTagAndTwoStatesStateFile.xml" />
     <EmbeddedResource Include="StateManager\InitialStateSpecified.xml" />
     <EmbeddedResource Include="StateManager\NoInitialStateSpecified.xml" />
-
   </ItemGroup>
 
   <ItemGroup>

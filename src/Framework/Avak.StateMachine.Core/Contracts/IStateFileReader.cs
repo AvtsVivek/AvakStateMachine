@@ -8,11 +8,9 @@ namespace Avak.StateMachine.Core.Contracts
 
         IReadOnlyList<MasterStateBase> States { get; }
 
-        void LoadMasterStateFile(StateXmlFile stateXmlFile);
+        void LoadStateFile(StateXmlFile stateXmlFile);
 
         bool PopulateStateXmlFileTree();
-
-        string GetRootNamespace();
 
         void SetTransitionsAndTargetsForState(StateBase state);
 

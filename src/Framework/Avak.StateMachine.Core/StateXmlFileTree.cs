@@ -2,17 +2,17 @@
 {
     internal class StateXmlFileTree
     {
+        internal const int MasterXmlHierarchyLevel = 1;
+
         private List<StateXmlFile> StateXmlFiles = [];
 
-        public const int MasterXmlHierarchyLevel = 1;
-
-        // 1. Lazy<T> ensures thread-safe, lazy initialization automatically
+        // 1. Lazy<StateXmlFileTree> ensures thread-safe, lazy initialization automatically
         private static readonly Lazy<StateXmlFileTree> _lazyInstance = new(() => new StateXmlFileTree());
 
         // 2. Public static property provides global access to the single instance
-        public static StateXmlFileTree Instance => _lazyInstance.Value;
+        internal static StateXmlFileTree Instance => _lazyInstance.Value;
 
-        // 3. Finally, ensure a private parameterless constructor to prevent external instantiation
+        // 3. Finally, ensure an explicit private parameterless constructor to prevent external instantiation
         private StateXmlFileTree() { }
 
         internal void AddStateXmlFileToTree(StateXmlFile xmlFile)
@@ -20,7 +20,7 @@
             ArgumentNullException.ThrowIfNull(xmlFile);
             StateXmlFiles.Add(xmlFile);
         }
-        public StateXmlFile GetMasterXmlFile()
+        internal StateXmlFile GetMasterXmlFile()
         {
             StateXmlFile? masterXmlFile = StateXmlFiles
                 .FirstOrDefault(xmlFile => xmlFile.IsMasterXmlFile && xmlFile.Level == MasterXmlHierarchyLevel);
@@ -33,7 +33,7 @@
             return masterXmlFile;
         }
 
-        public List<StateXmlFile> GetStateXmlFiles(int level)
+        internal List<StateXmlFile> GetStateXmlFiles(int level)
         {
             List<StateXmlFile> stateXmlFilesAtGivenLevel = [.. StateXmlFiles
                 .Where(xmlFile => xmlFile.Level == level)];

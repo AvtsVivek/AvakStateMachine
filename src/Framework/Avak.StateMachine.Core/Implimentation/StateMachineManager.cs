@@ -4,7 +4,6 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Core.Implimentation
 {
-
     public class StateMachineManager : IStateMachineManager
     {
         public IStateGraph StateGraph { get; private set; }
@@ -70,19 +69,10 @@ namespace Avak.StateMachine.Core.Implimentation
             masterStateXmlFile = new(null, assembly, manifestResourceName);
         }
 
-        //public void SetMasterStateFile(Stream stream)
-        //{
-        //    stateFileReader.SetMasterStateFile(stream);
-        //}
-
-        //public void SetMasterStateFilePath(string filePath)
-        //{
-        //    stateFileReader.SetMasterStateFilePath(filePath);
-        //}
-
         public void LoadMasterStateFile()
         {
-            stateFileReader.LoadMasterStateFile(masterStateXmlFile);
+            stateFileReader.LoadStateFile(masterStateXmlFile);
+            stateFileReader.PopulateStateXmlFileTree();
         }
 
         public bool PopulateStateXmlFileTree()

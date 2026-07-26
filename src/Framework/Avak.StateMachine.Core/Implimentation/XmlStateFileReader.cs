@@ -8,9 +8,12 @@ namespace Avak.StateMachine.Core.Implimentation
 {
     internal class XmlStateFileReader : IStateFileReader
     {
-        private string XmlFilePath = string.Empty;
+        private XDocument xCurrentStateDoc;
 
-        private XDocument XResourceDoc { get; set; }
+        /// <summary>
+        /// This is just for logging.
+        /// </summary>
+        private string currentStateFileDetails;
 
         private string rootNamespace = string.Empty;
 
@@ -66,16 +69,16 @@ namespace Avak.StateMachine.Core.Implimentation
 
             this.typeFinder = new CurrentAppDomainTypeFinder();
 
-            XResourceDoc = null!;
+            xCurrentStateDoc = null!;
+            currentStateFileDetails = null!;
             triggers = [];
             stateGraph = null!;
-            // isStateFileValidAndLoaded = false;
             _stateCollectionElement = new Lazy<XElement?>(() =>
             {
-                XElement? element = XResourceDoc.Descendants(constants.StateFileStateCollectionElementName).FirstOrDefault();
+                XElement? element = xCurrentStateDoc.Descendants(constants.StateFileStateCollectionElementName).FirstOrDefault();
                 if (element == null)
                 {
-                    throw new XmlException($"{constants.StateFileStateCollectionElementName} element must be present in the state xml file {XResourceDoc.BaseUri}.");
+                    throw new XmlException($"{constants.StateFileStateCollectionElementName} element must be present in the state xml file {xCurrentStateDoc}.");
                 }
                 return element;
             });
@@ -93,7 +96,7 @@ namespace Avak.StateMachine.Core.Implimentation
             _triggerElements = new Lazy<List<XElement>>(() =>
             {
                 string triggersString = constants.StateFileTriggerCollectionElementName;
-                XElement? triggerCollectionElement = XResourceDoc.Descendants(triggersString).FirstOrDefault();
+                XElement? triggerCollectionElement = xCurrentStateDoc.Descendants(triggersString).FirstOrDefault();
 
                 if (triggerCollectionElement == null)
                 {
@@ -108,36 +111,17 @@ namespace Avak.StateMachine.Core.Implimentation
             });
         }
 
-        //public void SetMasterStateFile(Stream stream)
-        //{
-        //    if (IsStreamValid(stream))
-        //    {
-        //        XmlFileStream = stream;
-        //    }
-        //}
-
-        //public void SetMasterStateFilePath(string filePath)
-        //{
-        //    if (string.IsNullOrWhiteSpace(filePath))
-        //    {
-        //        throw new ArgumentNullException("Invalid Xml file Path. Its null or empty.");
-        //    }
-
-        //    if (!File.Exists(filePath))
-        //    {
-        //        throw new ArgumentNullException($"Invalid Xml file Path. The File {filePath} does not exist.");
-        //    }
-
-        //    XmlFilePath = filePath;
-
-        //    FileStream fileStream = new(XmlFilePath, FileMode.Open, FileAccess.Read);
-
-        //    SetMasterStateFile(fileStream);
-        //}
-
-        public void LoadMasterStateFile(StateXmlFile masterStateXmlFile)
+        public void LoadStateFile(StateXmlFile stateXmlFile)
         {
-            XResourceDoc = masterStateXmlFile.GetXmlDocument();
+            xCurrentStateDoc = stateXmlFile.GetXmlDocument();
+            currentStateFileDetails = string.Empty; // Just reset
+
+            if (xCurrentStateDoc == null)
+            {
+                throw new Exception($"The state doc object is null, for the file {stateXmlFile}");
+            }
+
+            currentStateFileDetails = stateXmlFile.ToString();
         }
 
         public bool PopulateStateXmlFileTree()
@@ -146,16 +130,10 @@ namespace Avak.StateMachine.Core.Implimentation
             return true;
         }
 
-        public string GetRootNamespace()
-        {
-            ReadRootStateNamespace();
-            return rootNamespace;
-        }
-
         public MasterStateBase SetInitialState(StateDependencyTypeFinder stateDependencyTypeFinderDelegate)
         {
             // First ensure root name space is read.
-            ReadRootStateNamespace();
+            // ReadRootStateNamespace();
 
             // Next triggers
             ReadTriggers();
@@ -174,7 +152,6 @@ namespace Avak.StateMachine.Core.Implimentation
                 return stateGraph;
             }
 
-            // First ensure root namespace is read.
             ReadRootStateNamespace();
 
             ReadTriggers();
@@ -330,7 +307,7 @@ namespace Avak.StateMachine.Core.Implimentation
             foreach (XElement stateElement in stateElements)
             {
                 XAttribute? stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName)
-                    ?? throw new XmlException($"{constants.StateFileStateElementName} Element {constants.StateFileStateNameAttributeName} missing in state file {XResourceDoc.BaseUri}");
+                    ?? throw new XmlException($"{constants.StateFileStateElementName} Element {constants.StateFileStateNameAttributeName} missing in state file {xCurrentStateDoc}");
 
                 string stateName = stateNameAttribute.Value;
 
@@ -363,6 +340,7 @@ namespace Avak.StateMachine.Core.Implimentation
             if (stateNamespaceAttribute == null)
             {
                 stateNamespace = rootNamespace;
+                ReadRootStateNamespace();
             }
             else if (string.IsNullOrWhiteSpace(stateNamespaceAttribute.Value))
             {
@@ -376,23 +354,6 @@ namespace Avak.StateMachine.Core.Implimentation
             return stateNamespace;
         }
 
-        private List<Transition> GetTransitionsForState(XElement stateElement)
-        {
-            List<XElement> transitionElements = stateElement
-                .Descendants(constants.StateFileTransitionElementName)
-                .ToList();
-
-            List<Transition> transitionsForState = new();
-
-            foreach (XElement initialStateElement in transitionElements)
-            {
-                Transition transition = CreateTriansition(initialStateElement, stateElement);
-                transitionsForState.Add(transition);
-            }
-
-            return transitionsForState;
-        }
-
         private Transition CreateTriansition(XElement transitionElement, XElement stateElement)
         {
             Transition transition = new();
@@ -404,7 +365,7 @@ namespace Avak.StateMachine.Core.Implimentation
             {
                 XAttribute stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName)!;
 
-                throw new XmlException($"{constants.StateFileTransitionTriggerAttributeName} Attribute missing in the file {XResourceDoc.BaseUri} for one of the transitions in state {stateNameAttribute.Value}");
+                throw new XmlException($"{constants.StateFileTransitionTriggerAttributeName} Attribute missing in the file {xCurrentStateDoc} for one of the transitions in state {stateNameAttribute.Value}");
             }
 
             Trigger? triggerForTransition = triggers
@@ -649,14 +610,14 @@ namespace Avak.StateMachine.Core.Implimentation
 
             if (triggerSourceAttribute == null)
             {
-                throw new Exception($"Trigger Attribute Source missing in state file {XResourceDoc.BaseUri}");
+                throw new Exception($"Trigger Attribute Source missing in state file {xCurrentStateDoc}");
             }
 
             string sourceName = triggerSourceAttribute.Value;
 
             if (string.IsNullOrWhiteSpace(triggerSourceAttribute.Value))
             {
-                throw new Exception($"Trigger Attribute Source missing in state file {XResourceDoc.BaseUri}");
+                throw new Exception($"Trigger Attribute Source missing in state file {xCurrentStateDoc}");
             }
 
             if (!Enum.TryParse(sourceName, out TriggerSource triggerSource))
@@ -669,7 +630,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 triggerSourceEnumValuesString = triggerSourceEnumValuesString.TrimEnd(',', ' ');
 
-                string exceptionString = $"Incorrect trigger source value in the file {XResourceDoc.BaseUri}";
+                string exceptionString = $"Incorrect trigger source value in the file {xCurrentStateDoc}";
                 exceptionString = exceptionString + Environment.NewLine;
                 exceptionString = exceptionString + "It must be one of the following." + Environment.NewLine;
                 exceptionString = exceptionString + triggerSourceEnumValuesString;
@@ -692,7 +653,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
                 if (triggerNameAttribute == null)
                 {
-                    throw new Exception($"Trigger Element {constants.StateFileTriggerNameAttributeName} missing in state file {XResourceDoc.BaseUri}");
+                    throw new Exception($"Trigger Element {constants.StateFileTriggerNameAttributeName} missing in state file {xCurrentStateDoc}");
                 }
 
                 string triggerName = triggerNameAttribute.Value;
@@ -710,7 +671,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             if (triggers.Count != distinctTriggerCount)
             {
-                throw new XmlException($"{constants.StateFileTriggerCollectionElementName} present in the xml file {XResourceDoc.BaseUri} are not unique." +
+                throw new XmlException($"{constants.StateFileTriggerCollectionElementName} present in the xml file {currentStateFileDetails} are not unique." +
                     Environment.NewLine + $"Please ensure trigger names are unique.");
             }
         }
@@ -720,17 +681,36 @@ namespace Avak.StateMachine.Core.Implimentation
             if (!string.IsNullOrWhiteSpace(rootNamespace))
                 return;
 
-            XElement? rootElement = XResourceDoc.Descendants(constants.StateFileRootElementName).First();
+            XElement? rootElement = xCurrentStateDoc.Descendants(constants.StateFileRootElementName).First();
 
-            if (rootElement != null)
+            if (rootElement == null)
             {
-                XAttribute attribute = rootElement.Attributes(constants.StateFileRootNamespaceAttributeName).First();
-
-                if (attribute != null)
-                {
-                    rootNamespace = attribute.Value;
-                }
+                throw new XmlException($"The root element is missing in the file {currentStateFileDetails}");
             }
+
+            XAttribute? rootNamespaceAttribute = rootElement.Attributes(constants.StateFileRootNamespaceAttributeName).FirstOrDefault();
+
+            if (rootNamespaceAttribute == null)
+            {
+                string errorMessage =
+                    $"{constants.StateFileRootNamespaceAttributeName} " +
+                    $"is missing at the root {constants.StateFileRootElementName} in the state xml file {currentStateFileDetails}";
+
+                throw new XmlException(errorMessage);
+            }
+
+            if (string.IsNullOrWhiteSpace(rootNamespaceAttribute.Value))
+            {
+                string errorMessage =
+                    $"{constants.StateFileRootNamespaceAttributeName} " +
+                    $"at the root {constants.StateFileRootElementName} in the state xml file {currentStateFileDetails}" + Environment.NewLine +
+                    $"is not having any value. Ensure to have it as some non blank, non white space value, which represents a valid namespace.";
+
+
+                throw new XmlException(errorMessage);
+            }
+
+            rootNamespace = rootNamespaceAttribute.Value;
         }
     }
 }

@@ -6,19 +6,26 @@ namespace Avak.StateMachine.Core
 {
     internal class StateXmlFile
     {
-        public readonly StateXmlFile? Parent;
-        public List<StateXmlFile> SubStateXmlFiles
+        internal readonly StateXmlFile? Parent;
+        private readonly Assembly assembly;
+        private readonly string fileName;
+        internal readonly int Level;
+
+        internal List<StateXmlFile> SubStateXmlFiles
         {
             get
             {
                 return StateXmlFileTree.Instance.GetStateXmlFiles(Level + 1);
             }
         }
-        public readonly int Level;
-        public bool IsMasterXmlFile => Parent == null;
-        private readonly Assembly assembly;
-        private readonly string fileName;
-        public StateXmlFile(StateXmlFile? parent, Assembly assembly, string fileName)
+
+        public override string ToString()
+        {
+            return $"File: {fileName}, Assembly: {assembly.FullName}";
+        }
+
+        internal bool IsMasterXmlFile => Parent == null;
+        internal StateXmlFile(StateXmlFile? parent, Assembly assembly, string fileName)
         {
             if (assembly == null)
             {
@@ -80,6 +87,11 @@ namespace Avak.StateMachine.Core
                 string message = $"The state file {fileName} in the assembly {assembly.FullName} could not be loaded.";
                 message = message + ex.Message;
                 throw new Exception(message, ex);
+            }
+            finally
+            {
+                fileStream.Close();
+                fileStream.Dispose();
             }
         }
 
