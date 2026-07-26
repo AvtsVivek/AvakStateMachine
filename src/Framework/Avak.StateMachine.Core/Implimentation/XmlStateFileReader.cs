@@ -9,6 +9,7 @@ namespace Avak.StateMachine.Core.Implimentation
     internal class XmlStateFileReader : IStateFileReader
     {
         private XDocument xCurrentStateDoc;
+        private StateXmlFile stateXmlFile;
 
         /// <summary>
         /// This is just for logging.
@@ -16,8 +17,6 @@ namespace Avak.StateMachine.Core.Implimentation
         private string currentStateFileDetails;
 
         private string rootNamespace = string.Empty;
-
-        internal readonly List<Trigger> triggers;
 
         private List<MasterStateBase> _states = [];
 
@@ -39,10 +38,6 @@ namespace Avak.StateMachine.Core.Implimentation
         private readonly Lazy<List<XElement>> _stateElements;
 
         private List<XElement> stateElements => _stateElements.Value;
-
-        private readonly Lazy<List<XElement>> _triggerElements;
-
-        private List<XElement> triggerElements => _triggerElements.Value;
 
         public event EventHandler<StateBase>? StateCreated;
 
@@ -70,8 +65,8 @@ namespace Avak.StateMachine.Core.Implimentation
             this.typeFinder = new CurrentAppDomainTypeFinder();
 
             xCurrentStateDoc = null!;
+            stateXmlFile = null!;
             currentStateFileDetails = null!;
-            triggers = [];
             stateGraph = null!;
             _stateCollectionElement = new Lazy<XElement?>(() =>
             {
@@ -92,27 +87,11 @@ namespace Avak.StateMachine.Core.Implimentation
                 }
                 return elementList;
             });
-
-            _triggerElements = new Lazy<List<XElement>>(() =>
-            {
-                string triggersString = constants.StateFileTriggerCollectionElementName;
-                XElement? triggerCollectionElement = xCurrentStateDoc.Descendants(triggersString).FirstOrDefault();
-
-                if (triggerCollectionElement == null)
-                {
-                    string message = $"{triggersString} not present in the state file. " +
-                        $"Add <{triggersString}></{triggersString}> element.";
-                    throw new Exception(message);
-                }
-                List<XElement> elementList = [.. triggerCollectionElement!.Descendants(constants.StateFileTriggerElementName)];
-
-
-                return elementList;
-            });
         }
 
         public void LoadStateFile(StateXmlFile stateXmlFile)
         {
+            this.stateXmlFile = stateXmlFile;
             xCurrentStateDoc = stateXmlFile.GetXmlDocument();
             currentStateFileDetails = string.Empty; // Just reset
 
@@ -158,7 +137,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             MasterStateBase? initialState = SetInitialState(stateDependencyTypeFinderDelegate);
 
-            stateGraph = new StateGraph(States.ToList(), triggers!, initialState!);
+            stateGraph = new StateGraph(States.ToList(), stateXmlFile.triggers!, initialState!);
 
             return stateGraph;
         }
@@ -368,7 +347,7 @@ namespace Avak.StateMachine.Core.Implimentation
                 throw new XmlException($"{constants.StateFileTransitionTriggerAttributeName} Attribute missing in the file {xCurrentStateDoc} for one of the transitions in state {stateNameAttribute.Value}");
             }
 
-            Trigger? triggerForTransition = triggers
+            Trigger? triggerForTransition = stateXmlFile.triggers
                 .FirstOrDefault(trigger => trigger.Name == triggerAttribute.Value);
 
             if (triggerForTransition == null)
@@ -642,38 +621,39 @@ namespace Avak.StateMachine.Core.Implimentation
 
         private void ReadTriggers()
         {
-            if (triggers.Count != 0)
-            {
-                return;
-            }
+            stateXmlFile.ReadTriggers();
+            //if (triggers.Count != 0)
+            //{
+            //    return;
+            //}
 
-            foreach (XElement triggerElement in triggerElements)
-            {
-                XAttribute? triggerNameAttribute = triggerElement.Attribute(constants.StateFileTriggerNameAttributeName);
+            //foreach (XElement triggerElement in triggerElements)
+            //{
+            //    XAttribute? triggerNameAttribute = triggerElement.Attribute(constants.StateFileTriggerNameAttributeName);
 
-                if (triggerNameAttribute == null)
-                {
-                    throw new Exception($"Trigger Element {constants.StateFileTriggerNameAttributeName} missing in state file {xCurrentStateDoc}");
-                }
+            //    if (triggerNameAttribute == null)
+            //    {
+            //        throw new Exception($"Trigger Element {constants.StateFileTriggerNameAttributeName} missing in state file {xCurrentStateDoc}");
+            //    }
 
-                string triggerName = triggerNameAttribute.Value;
+            //    string triggerName = triggerNameAttribute.Value;
 
-                TriggerSource triggerSource = GetTriggerSource(triggerElement);
+            //    TriggerSource triggerSource = GetTriggerSource(triggerElement);
 
-                Trigger trigger = new(triggerName, triggerSource);
+            //    Trigger trigger = new(triggerName, triggerSource);
 
-                triggers.Add(trigger);
-            }
+            //    triggers.Add(trigger);
+            //}
 
-            // Ensure all of the triggers in the file are unique.
-            // Get unique trigger count
-            int distinctTriggerCount = triggers.DistinctBy(x => x.Name).Count();
+            //// Ensure all of the triggers in the file are unique.
+            //// Get unique trigger count
+            //int distinctTriggerCount = triggers.DistinctBy(x => x.Name).Count();
 
-            if (triggers.Count != distinctTriggerCount)
-            {
-                throw new XmlException($"{constants.StateFileTriggerCollectionElementName} present in the xml file {currentStateFileDetails} are not unique." +
-                    Environment.NewLine + $"Please ensure trigger names are unique.");
-            }
+            //if (triggers.Count != distinctTriggerCount)
+            //{
+            //    throw new XmlException($"{constants.StateFileTriggerCollectionElementName} present in the xml file {currentStateFileDetails} are not unique." +
+            //        Environment.NewLine + $"Please ensure trigger names are unique.");
+            //}
         }
 
         private void ReadRootStateNamespace()

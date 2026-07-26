@@ -13,6 +13,8 @@ namespace Avak.StateMachine.Core.Implimentation
         public event EventHandler<StateBase>? StateCreated;
         private StateXmlFile masterStateXmlFile;
 
+        private IXmlKeys constants;
+
         public StateBase CurrentState
         {
             get
@@ -42,6 +44,8 @@ namespace Avak.StateMachine.Core.Implimentation
                 throw new ArgumentNullException(nameof(constants));
             }
 
+            this.constants = constants;
+
             if (stateDependencyTypeFinderDelegate == null)
             {
                 string message = $"The argument/parameter to the constructor of the type {typeof(StateMachineManager).FullName}, {nameof(StateMachineManager.stateDependencyTypeFinderDelegate)} of type {typeof(StateDependencyTypeFinder).FullName} cannot be null." +
@@ -54,7 +58,7 @@ namespace Avak.StateMachine.Core.Implimentation
             StateGraph = null!;
             _currentState = null!;
             StateStack = new();
-            stateFileReader = new XmlStateFileReader(constants, this.resolver);
+            stateFileReader = new XmlStateFileReader(this.constants, this.resolver);
             stateFileReader.StateCreated += StateFileReader_StateCreated;
             masterStateXmlFile = null!;
         }
@@ -66,7 +70,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public void SetMasterStateFile(Assembly assembly, string manifestResourceName)
         {
-            masterStateXmlFile = new(null, assembly, manifestResourceName);
+            masterStateXmlFile = new(constants, null, assembly, manifestResourceName);
         }
 
         public void LoadMasterStateFile()

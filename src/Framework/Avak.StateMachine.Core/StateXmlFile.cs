@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Avak.StateMachine.Core.Contracts;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -10,6 +11,11 @@ namespace Avak.StateMachine.Core
         private readonly Assembly assembly;
         private readonly string fileName;
         internal readonly int Level;
+        public readonly List<Trigger> triggers;
+        private readonly Lazy<List<XElement>> _triggerElements;
+        private List<XElement> triggerElements => _triggerElements.Value;
+
+        private IXmlKeys constants;
 
         internal List<StateXmlFile> SubStateXmlFiles
         {
@@ -25,8 +31,15 @@ namespace Avak.StateMachine.Core
         }
 
         internal bool IsMasterXmlFile => Parent == null;
-        internal StateXmlFile(StateXmlFile? parent, Assembly assembly, string fileName)
+        internal StateXmlFile(IXmlKeys constants, StateXmlFile? parent, Assembly assembly, string fileName)
         {
+            if (constants == null)
+            {
+                throw new ArgumentNullException(nameof(constants));
+            }
+
+            this.constants = constants;
+
             if (assembly == null)
             {
                 // Log
@@ -60,7 +73,102 @@ namespace Avak.StateMachine.Core
             {
                 Level = parent!.Level + 1;
             }
+            triggers = [];
             StateXmlFileTree.Instance.AddStateXmlFileToTree(this);
+
+            _triggerElements = new Lazy<List<XElement>>(() =>
+            {
+                string triggersString = constants.StateFileTriggerCollectionElementName;
+                XElement? triggerCollectionElement = xDoc.Descendants(triggersString).FirstOrDefault();
+
+                if (triggerCollectionElement == null)
+                {
+                    string message = $"{triggersString} not present in the state file. " +
+                        $"Add <{triggersString}></{triggersString}> element.";
+                    throw new Exception(message);
+                }
+                List<XElement> elementList = [.. triggerCollectionElement!.Descendants(constants.StateFileTriggerElementName)];
+
+                return elementList;
+            });
+
+            _xDoc = new(GetXmlDocument); // Same as new Lazy<XDocument>(() => GetXmlDocument());
+        }
+
+        private readonly Lazy<XDocument> _xDoc;
+
+        private XDocument xDoc => _xDoc.Value;
+
+        internal void ReadTriggers()
+        {
+            if (triggers.Count != 0)
+            {
+                return;
+            }
+
+            foreach (XElement triggerElement in triggerElements)
+            {
+                XAttribute? triggerNameAttribute = triggerElement.Attribute(constants.StateFileTriggerNameAttributeName);
+
+                if (triggerNameAttribute == null)
+                {
+                    throw new Exception($"Trigger Element {constants.StateFileTriggerNameAttributeName} missing in state file {this}");
+                }
+
+                string triggerName = triggerNameAttribute.Value;
+
+                TriggerSource triggerSource = GetTriggerSource(triggerElement);
+
+                Trigger trigger = new(triggerName, triggerSource);
+
+                triggers.Add(trigger);
+            }
+
+            // Ensure all of the triggers in the file are unique.
+            // Get unique trigger count
+            int distinctTriggerCount = triggers.DistinctBy(x => x.Name).Count();
+
+            if (triggers.Count != distinctTriggerCount)
+            {
+                throw new XmlException($"{constants.StateFileTriggerCollectionElementName} present in the xml file {this} are not unique." +
+                    Environment.NewLine + $"Please ensure trigger names are unique.");
+            }
+        }
+
+        private TriggerSource GetTriggerSource(XElement triggerElement)
+        {
+            XAttribute? triggerSourceAttribute = triggerElement.Attribute(constants.StateFileTriggerSourceAttributeName);
+
+            if (triggerSourceAttribute == null)
+            {
+                throw new Exception($"Trigger Attribute Source missing in state file {this}");
+            }
+
+            string sourceName = triggerSourceAttribute.Value;
+
+            if (string.IsNullOrWhiteSpace(triggerSourceAttribute.Value))
+            {
+                throw new Exception($"Trigger Attribute Source missing in state file {this}");
+            }
+
+            if (!Enum.TryParse(sourceName, out TriggerSource triggerSource))
+            {
+                string triggerSourceEnumValuesString = string.Empty;
+                foreach (TriggerSource sourceString in Enum.GetValues<TriggerSource>())
+                {
+                    triggerSourceEnumValuesString = triggerSourceEnumValuesString + sourceString + ", ";
+                }
+
+                triggerSourceEnumValuesString = triggerSourceEnumValuesString.TrimEnd(',', ' ');
+
+                string exceptionString = $"Incorrect trigger source value in the file {this}";
+                exceptionString = exceptionString + Environment.NewLine;
+                exceptionString = exceptionString + "It must be one of the following." + Environment.NewLine;
+                exceptionString = exceptionString + triggerSourceEnumValuesString;
+
+                throw new Exception(exceptionString);
+            }
+            return triggerSource;
         }
 
         private Stream GetFileStream()
