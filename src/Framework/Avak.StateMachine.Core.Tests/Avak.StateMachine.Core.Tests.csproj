@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="StateManager\MasterStateXmlFileWithSubStateXmlFileRefs.xml" />
+    <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileWithSubStateXmlFileRefs.xml" />
     <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\ArbitraryNamespace.xml" />
     <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\DifferentNamespaces.xml" />
     <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\EmptyStringDefaultNamespace.xml" />

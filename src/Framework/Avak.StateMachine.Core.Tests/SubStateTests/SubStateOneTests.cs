@@ -12,7 +12,7 @@ namespace Avak.StateMachine.Core.Tests.SubStateTests
         [TestInitialize]
         public void Setup()
         {
-            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.MasterStateXmlFileWithSubStateXmlFileRefs.xml";
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.XmlFilesWithSubStates.MasterStateXmlFileWithSubStateXmlFileRefs.xml";
 
         }
 

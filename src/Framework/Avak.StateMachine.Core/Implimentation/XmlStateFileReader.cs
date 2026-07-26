@@ -42,9 +42,9 @@ namespace Avak.StateMachine.Core.Implimentation
 
         private readonly Lazy<List<XElement>> _triggerElements;
 
-        public event EventHandler<StateBase>? StateCreated;
-
         private List<XElement> triggerElements => _triggerElements.Value;
+
+        public event EventHandler<StateBase>? StateCreated;
 
         IReadOnlyList<MasterStateBase> IStateFileReader.States => States;
 
