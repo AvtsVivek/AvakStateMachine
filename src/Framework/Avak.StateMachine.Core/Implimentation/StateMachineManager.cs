@@ -58,8 +58,7 @@ namespace Avak.StateMachine.Core.Implimentation
             StateGraph = null!;
             _currentState = null!;
             StateStack = new();
-            stateFileReader = new XmlStateFileReader(this.constants, this.resolver);
-            stateFileReader.StateCreated += StateFileReader_StateCreated;
+            stateFileReader = new XmlStateFileReader(this.constants, this.stateDependencyTypeFinderDelegate);
             masterStateXmlFile = null!;
         }
 
@@ -70,7 +69,8 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public void SetMasterStateFile(Assembly assembly, string manifestResourceName)
         {
-            masterStateXmlFile = new(constants, null, assembly, manifestResourceName);
+            masterStateXmlFile = new(parent: null, this.constants, this.stateDependencyTypeFinderDelegate, this.resolver, assembly, manifestResourceName);
+            masterStateXmlFile.StateCreated += StateFileReader_StateCreated;
         }
 
         public void LoadMasterStateFile()
@@ -87,7 +87,7 @@ namespace Avak.StateMachine.Core.Implimentation
         // Gets the current state graph, not the full state graph. 
         public IStateGraph GetCurrentStateGraph()
         {
-            StateGraph = stateFileReader.GetStateGraph(stateDependencyTypeFinderDelegate);
+            StateGraph = stateFileReader.GetStateGraph();
             if (CurrentState == null)
             {
                 _currentState = StateGraph.InitialState;
@@ -97,7 +97,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public void SetInitialState()
         {
-            MasterStateBase? initialState = stateFileReader.SetInitialState(stateDependencyTypeFinderDelegate);
+            MasterStateBase? initialState = stateFileReader.SetInitialState();
             this._currentState = initialState!;
         }
 
@@ -160,7 +160,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             SetCurrentState(targetState);
 
-            stateFileReader.SetTransitionsAndTargetsForState(targetState);
+            masterStateXmlFile.SetTransitionsAndTargetsForState(targetState);
 
             return true;
         }

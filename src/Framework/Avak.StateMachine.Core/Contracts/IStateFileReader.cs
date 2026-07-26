@@ -12,10 +12,10 @@ namespace Avak.StateMachine.Core.Contracts
 
         bool PopulateStateXmlFileTree();
 
-        void SetTransitionsAndTargetsForState(StateBase state);
+        // void SetTransitionsAndTargetsForState(StateBase state);
 
-        MasterStateBase SetInitialState(StateDependencyTypeFinder stateDependencyTypeFinderDelegate);
+        MasterStateBase SetInitialState();
 
-        IStateGraph GetStateGraph(StateDependencyTypeFinder stateDependencyTypeFinderDelegate);
+        IStateGraph GetStateGraph();
     }
 }
