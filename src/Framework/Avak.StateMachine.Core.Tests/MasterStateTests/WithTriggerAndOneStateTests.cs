@@ -8,24 +8,17 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     [TestClass]
     public class WithTriggersTagAndOneStateTests
     {
-        private Stream FileStream = null!;
-        [TestInitialize]
+        private string masterStateXmlFile = string.Empty; [TestInitialize]
         public void Setup()
         {
             // Runs before each test
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.WithTriggersTagAndOneStateStateFile.xml";
-            FileStream = assembly.GetManifestResourceStream(appStateFile)!;
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.WithTriggersTagAndOneStateStateFile.xml";
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             // Runs after each test (clean up files, database connections, etc.)
-
-            // Close the stream.
-            FileStream.Close();
-            FileStream.Dispose();
         }
 
         [TestMethod]
@@ -33,9 +26,14 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         {
             // Arrange
             IXmlKeys constants = new XmlKeys();
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetMasterStateFile(FileStream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
+
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<Trigger> triggers = stateMachineManager.GetCurrentStateGraph().TriggerList;
@@ -44,7 +42,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             // Assert
             // Assert.AreEqual("Avak.StateMachine.Core.Tests.StateManager.States", stateNamespace);
-            Assert.IsTrue(loadResult);
             Assert.IsEmpty(triggers);
             Assert.HasCount(1, states);
             Assert.AreEqual("Aa", zerothState.Name);

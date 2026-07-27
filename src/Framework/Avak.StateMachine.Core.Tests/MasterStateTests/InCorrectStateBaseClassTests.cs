@@ -18,13 +18,16 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         public void NoBaseClass_ThrowsException()
         {
             // Arrange
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectStateBaseClass.xml";
-            Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
+            string masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectStateBaseClass.xml";
             IXmlKeys constants = new XmlKeys();
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetMasterStateFile(stream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
+
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
 
             // Act
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetCurrentStateGraph().StateList);
@@ -38,14 +41,16 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         public void InCorrectTypeName_ThrowsException()
         {
             // Arrange
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectTypeName.xml";
-            Stream stream = assembly.GetManifestResourceStream(appStateFile)!;
+            string masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.IncorrectTypeName.xml";
             IXmlKeys constants = new XmlKeys();
-            //IStateFileReader reader = new XmlStateFileReader(constants);
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetMasterStateFile(stream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
+
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
 
             // Act
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetCurrentStateGraph().StateList);

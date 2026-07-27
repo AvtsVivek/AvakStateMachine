@@ -28,13 +28,16 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         public void NoInitialSpecified_TopStateIsDefaultInitial()
         {
             // Arrange
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.NoInitialStateSpecified.xml";
-            Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
+            string masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.NoInitialStateSpecified.xml";
             IXmlKeys constants = new XmlKeys();
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetMasterStateFile(resourceStream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
+
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
 
             // Act 
             IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
@@ -42,7 +45,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             // Assert
             Assert.IsNotNull(stateBb);
-            Assert.IsTrue(loadResult);
             Assert.IsTrue(stateBb.IsInitial);
             Assert.AreEqual(stateBb, stateMachineManager.CurrentState);
         }
@@ -51,13 +53,15 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         public void InitialSpecified_TopStateIsInitial()
         {
             // Arrange
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.InitialStateSpecified.xml";
-            Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
+
+            string masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.InitialStateSpecified.xml";
             IXmlKeys constants = new XmlKeys();
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
-            stateMachineManager.SetMasterStateFile(resourceStream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
 
             // Act 
             IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
@@ -66,7 +70,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             // Assert
             Assert.IsNotNull(stateBb);
-            Assert.IsTrue(loadResult);
             Assert.IsTrue(stateBb.IsInitial);
             Assert.AreEqual(stateBb, stateMachineManager.CurrentState);
         }

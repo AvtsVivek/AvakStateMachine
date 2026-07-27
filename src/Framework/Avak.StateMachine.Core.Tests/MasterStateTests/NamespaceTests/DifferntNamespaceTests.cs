@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
 
-namespace Avak.StateMachine.Core.Tests.MasterStateTests
+namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
 {
     // This test checks for three different state classes defined in three different namespaces.
     // Looking at the following app state file, the state classes and their namespaces are as follows.
@@ -30,24 +30,18 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     [TestClass]
     public class DifferntNamespaceTests
     {
-        private Stream FileStream = null!;
+        private string masterStateXmlFile = string.Empty;
         [TestInitialize]
         public void Setup()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.DifferentNamespaces.xml";
-            FileStream = assembly.GetManifestResourceStream(appStateFile)!;
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.NameSpaceTestsXmlFiles.DifferentNamespaces.xml";
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             // Runs after each test (clean up files, database connections, etc.)
-
             // Close the stream.
-            FileStream.Close();
-            FileStream.Dispose();
         }
 
         [TestMethod]
@@ -56,11 +50,13 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             // Arrange
             IXmlKeys constants = new XmlKeys();
 
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
-            stateMachineManager.SetMasterStateFile(FileStream);
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;

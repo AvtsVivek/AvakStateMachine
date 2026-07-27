@@ -9,23 +9,17 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     [TestClass]
     public class BasicTransitionTests
     {
-        private Stream fileStream = null!;
+        private string masterStateXmlFile = string.Empty;
         [TestInitialize]
         public void Setup()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Core.Tests.StateManager.BasicTransitions.xml";
-            fileStream = assembly.GetManifestResourceStream(appStateFile)!;
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.BasicTransitions.xml";
         }
 
         [TestCleanup]
         public void Cleanup()
         {
             // Runs after each test (clean up files, database connections, etc.)
-
-            // Close the stream.
-            fileStream.Close();
-            fileStream.Dispose();
         }
 
         [TestMethod]
@@ -35,8 +29,14 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             int numberOfStateObjectsCreated = 0;
             string nameOfStateJustCreated = string.Empty;
             IXmlKeys constants = new XmlKeys();
-            StateMachineManager stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
 
+            StateMachineManager stateMachineManager = new(constants,
+                StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
+                StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
+
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
             // Tests the state created event on state machine manager.
 
             stateMachineManager.StateCreated += (sender, state) =>
@@ -44,11 +44,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
                 numberOfStateObjectsCreated++;
                 nameOfStateJustCreated = state.Name;
             };
-            stateMachineManager.SetMasterStateFile(fileStream);
 
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
-
-            Assert.IsTrue(loadResult);
             Assert.AreEqual(0, numberOfStateObjectsCreated);
             Assert.AreEqual("", nameOfStateJustCreated);
             IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();

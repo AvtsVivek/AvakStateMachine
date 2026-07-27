@@ -1,15 +1,19 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.States;
+using System.Reflection;
 
 namespace Avak.StateMachine.Core.Implimentation
 {
-
     public class StateMachineManager : IStateMachineManager
     {
         public IStateGraph StateGraph { get; private set; }
         private IStateFileReader stateFileReader;
-        private StateDependencyObjectFinder stateDependencyObjectFinderDelegate;
+        private StateDependencyTypeFinder stateDependencyTypeFinderDelegate;
+        private StateDependencyResolver resolver;
         public event EventHandler<StateBase>? StateCreated;
+        private StateXmlFile masterStateXmlFile;
+
+        private IXmlKeys constants;
 
         public StateBase CurrentState
         {
@@ -21,27 +25,41 @@ namespace Avak.StateMachine.Core.Implimentation
         private StateBase _currentState;
         private Stack<StateBase> StateStack;
 
-        public StateMachineManager(IXmlKeys constants, StateDependencyObjectFinder stateDependencyObjectFinderDelegate)
+        public StateMachineManager(IXmlKeys constants,
+            StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
+            StateDependencyResolver resolver)
         {
+
+            if (resolver == null)
+            {
+                // Todo. Need elaborate messages and logging here
+                throw new ArgumentNullException(nameof(resolver));
+            }
+
+            this.resolver = resolver;
+
             if (constants == null)
             {
+                // Todo. Need elaborate messages and logging here
                 throw new ArgumentNullException(nameof(constants));
             }
 
-            if (stateDependencyObjectFinderDelegate == null)
+            this.constants = constants;
+
+            if (stateDependencyTypeFinderDelegate == null)
             {
-                string message = $"The argument/parameter to the constructor of the type {typeof(StateMachineManager).FullName}, {nameof(StateMachineManager.stateDependencyObjectFinderDelegate)} of type {typeof(StateDependencyObjectFinder).FullName} cannot be null." +
-                        $"If your states do not have any dependencies, then pass the default {StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation}";
+                string message = $"The argument/parameter to the constructor of the type {typeof(StateMachineManager).FullName}, {nameof(StateMachineManager.stateDependencyTypeFinderDelegate)} of type {typeof(StateDependencyTypeFinder).FullName} cannot be null." +
+                        $"If your states do not have any dependencies, then pass the default {StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation}";
                 throw new ArgumentNullException(message);
             }
 
-            this.stateDependencyObjectFinderDelegate = stateDependencyObjectFinderDelegate;
+            this.stateDependencyTypeFinderDelegate = stateDependencyTypeFinderDelegate;
 
             StateGraph = null!;
             _currentState = null!;
             StateStack = new();
-            stateFileReader = new XmlStateFileReader(constants);
-            stateFileReader.StateCreated += StateFileReader_StateCreated;
+            stateFileReader = new XmlStateFileReader();
+            masterStateXmlFile = null!;
         }
 
         private void StateFileReader_StateCreated(object? sender, StateBase stateCreated)
@@ -49,19 +67,21 @@ namespace Avak.StateMachine.Core.Implimentation
             StateCreated?.Invoke(this, stateCreated);
         }
 
-        public void SetMasterStateFile(Stream stream)
+        public void SetMasterStateFile(Assembly assembly, string manifestResourceName)
         {
-            stateFileReader.SetMasterStateFile(stream);
+            masterStateXmlFile = new StateXmlFile(parent: null,
+                this.constants,
+                this.stateDependencyTypeFinderDelegate,
+                this.resolver,
+                assembly,
+                manifestResourceName);
+            masterStateXmlFile.StateCreated += StateFileReader_StateCreated;
         }
 
-        public void SetMasterStateFilePath(string filePath)
+        public void LoadMasterStateFile()
         {
-            stateFileReader.SetMasterStateFilePath(filePath);
-        }
-
-        public bool LoadMasterStateFile()
-        {
-            return stateFileReader.LoadMasterStateFile();
+            stateFileReader.LoadStateFile(masterStateXmlFile);
+            stateFileReader.PopulateStateXmlFileTree();
         }
 
         public bool PopulateStateXmlFileTree()
@@ -72,7 +92,7 @@ namespace Avak.StateMachine.Core.Implimentation
         // Gets the current state graph, not the full state graph. 
         public IStateGraph GetCurrentStateGraph()
         {
-            StateGraph = stateFileReader.GetStateGraph(stateDependencyObjectFinderDelegate);
+            StateGraph = stateFileReader.GetStateGraph();
             if (CurrentState == null)
             {
                 _currentState = StateGraph.InitialState;
@@ -82,7 +102,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public void SetInitialState()
         {
-            MasterStateBase? initialState = stateFileReader.SetInitialState(stateDependencyObjectFinderDelegate);
+            MasterStateBase? initialState = stateFileReader.SetInitialState();
             this._currentState = initialState!;
         }
 
@@ -145,7 +165,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             SetCurrentState(targetState);
 
-            stateFileReader.SetTransitionsAndTargetsForState(targetState);
+            masterStateXmlFile.SetTransitionsAndTargetsForState(targetState);
 
             return true;
         }

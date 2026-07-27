@@ -2,7 +2,6 @@
 using Avak.StateMachine.Core.States;
 using Avak.StateMachine.Sample.WpfViewChanged.Infra;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.IO;
 using System.Reflection;
 
 namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
@@ -18,8 +17,7 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
         private IStateGraph stateGraph = null!;
 
-        public MainWindowViewModel(StateDependencyObjectProvider stateDependencyProvider,
-            IStateMachineManager stateMachineManager)
+        public MainWindowViewModel(IStateMachineManager stateMachineManager)
         {
             this.stateMachineManager = stateMachineManager;
 
@@ -47,16 +45,15 @@ namespace Avak.StateMachine.Sample.WpfViewChanged.ViewModels
 
         private void InitializeState()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Sample.WpfViewChanged.StateManager.BasicTransitions.xml";
-            Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
+            string masterStateXmlFile = "Avak.StateMachine.Sample.WpfViewChanged.StateManager.BasicTransitions.xml";
 
-            stateMachineManager.SetMasterStateFile(resourceStream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
+
             stateGraph = stateMachineManager.GetCurrentStateGraph();
             List<MasterStateBase> stateList = stateGraph.StateList;
-            resourceStream.Close();
-            resourceStream.Dispose();
+
         }
     }
 }

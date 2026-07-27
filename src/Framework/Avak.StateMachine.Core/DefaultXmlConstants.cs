@@ -27,6 +27,10 @@
 
         public const string StateFileStateNamespaceAttributeName = "Namespace";
 
+        public const string StateFileStateSubStateAssemblyAttributeName = "SubStateAssembly";
+
+        public const string StateFileStateSubStateXmlFileNameAttributeName = "SubStateXmlFile";
+
         public const string StateFileTransitionElementName = "Transition";
 
         public const string StateFileTransitionTriggerAttributeName = "Trigger";

@@ -3,7 +3,6 @@ using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.Implimentation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.IO;
 using System.Reflection;
 
 namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
@@ -68,19 +67,16 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
 
         private void InitializeState()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            string appStateFile = "Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.BasicTransitions.xml";
-            Stream resourceStream = assembly.GetManifestResourceStream(appStateFile)!;
+            string masterStateXmlFile = "Avak.StateMachine.Sample.CommToolKitWpfApp.StateManager.BasicTransitions.xml";
 
             IXmlKeys constants = new XmlKeys();
-            stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyObjectFinderDefaultImplimentation);
+            stateMachineManager = new(constants, StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation, StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
-            stateMachineManager.SetMasterStateFile(resourceStream);
-            bool loadResult = stateMachineManager.LoadMasterStateFile();
+            stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
+
+            stateMachineManager.LoadMasterStateFile();
             stateMachineManager.SetInitialState();
             var t2 = stateMachineManager.CurrentState.Name;
-            resourceStream.Close();
-            resourceStream.Dispose();
         }
     }
 }
