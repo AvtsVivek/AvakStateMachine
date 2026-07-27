@@ -1,6 +1,5 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.States;
-using System.Reflection;
 using System.Xml.Linq;
 
 namespace Avak.StateMachine.Core.Implimentation
@@ -11,17 +10,8 @@ namespace Avak.StateMachine.Core.Implimentation
 
         private StateXmlFile currentStateXmlFile;
 
-        private List<MasterStateBase> _states = [];
-
-        internal IReadOnlyList<MasterStateBase> States => _states;
-
         private StateGraph stateGraph;
-
-        private List<(ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)> stateCtorInfoWithDependenciesList = [];
-
         public event EventHandler<StateBase>? StateCreated;
-
-        IReadOnlyList<MasterStateBase> IStateFileReader.States => States;
 
         internal XmlStateFileReader()
         {

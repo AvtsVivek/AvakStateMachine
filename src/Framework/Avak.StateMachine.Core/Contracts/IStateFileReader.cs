@@ -6,7 +6,6 @@ namespace Avak.StateMachine.Core.Contracts
     {
         event EventHandler<StateBase> StateCreated;
 
-        IReadOnlyList<MasterStateBase> States { get; }
 
         void LoadStateFile(StateXmlFile stateXmlFile);
 

@@ -69,7 +69,12 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public void SetMasterStateFile(Assembly assembly, string manifestResourceName)
         {
-            masterStateXmlFile = new(parent: null, this.constants, this.stateDependencyTypeFinderDelegate, this.resolver, assembly, manifestResourceName);
+            masterStateXmlFile = new StateXmlFile(parent: null,
+                this.constants,
+                this.stateDependencyTypeFinderDelegate,
+                this.resolver,
+                assembly,
+                manifestResourceName);
             masterStateXmlFile.StateCreated += StateFileReader_StateCreated;
         }
 
