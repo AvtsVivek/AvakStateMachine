@@ -56,7 +56,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;

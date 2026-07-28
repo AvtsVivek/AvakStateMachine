@@ -29,7 +29,8 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
             // Act
-            Exception ex = Assert.Throws<XmlException>(() => stateMachineManager.LoadMasterStateFile());
+            // Exception ex = Assert.Throws<XmlException>(() => stateMachineManager.LoadMasterStateFile());
+            Exception ex = Assert.Throws<XmlException>(stateMachineManager.GetCurrentStateGraph);
 
             // Assert
             string message = "Namespace is missing at the root AvakStates in the state xml file File: " +
@@ -52,8 +53,9 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            // Act
-            Exception ex = Assert.Throws<XmlException>(() => stateMachineManager.LoadMasterStateFile());
+            // Act () => stateMachineManager.GetCurrentStateGraph().StateList
+            Exception ex = Assert.Throws<XmlException>(stateMachineManager.GetCurrentStateGraph);
+            // Exception ex1 = Assert.Throws<XmlException>(stateMachineManager.LoadMasterStateFile);
 
             // Assert
             string message = "Namespace at the root AvakStates in the state xml file File: " +

@@ -36,7 +36,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            stateMachineManager.LoadMasterStateFile();
             // Tests the state created event on state machine manager.
 
             stateMachineManager.StateCreated += (sender, state) =>

@@ -288,7 +288,7 @@ namespace Avak.StateMachine.Core
             return stream;
         }
 
-        internal XDocument GetXmlDocument()
+        private XDocument GetXmlDocument()
         {
             Stream fileStream = GetFileStream();
             try

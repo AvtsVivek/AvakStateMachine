@@ -10,7 +10,7 @@ namespace Avak.StateMachine.Core.Contracts
         void SetMasterStateFile(Assembly assembly, string manifestResourceName);
         //void SetMasterStateFile(Stream stream);
         //void SetMasterStateFilePath(string filePath);
-        void LoadMasterStateFile();
+        // void LoadMasterStateFile();
         bool PopulateStateXmlFileTree();
         IStateGraph GetCurrentStateGraph();
         // void SetInitialState();

@@ -62,11 +62,6 @@ namespace Avak.StateMachine.Core.Implimentation
             masterStateXmlFile = null!;
         }
 
-        private void StateFileReader_StateCreated(object? sender, StateBase stateCreated)
-        {
-            StateCreated?.Invoke(this, stateCreated);
-        }
-
         public void SetMasterStateFile(Assembly assembly, string manifestResourceName)
         {
             masterStateXmlFile = new StateXmlFile(parent: null,
@@ -76,16 +71,12 @@ namespace Avak.StateMachine.Core.Implimentation
                 assembly,
                 manifestResourceName);
             masterStateXmlFile.StateCreated += StateFileReader_StateCreated;
-        }
-
-        public void LoadMasterStateFile()
-        {
-            stateFileReader.LoadStateFile(masterStateXmlFile);
-            stateFileReader.PopulateStateXmlFileTree();
+            stateFileReader.SetStateFile(masterStateXmlFile);
         }
 
         public bool PopulateStateXmlFileTree()
         {
+            stateFileReader.PopulateStateXmlFileTree();
             return true;
         }
 
@@ -162,6 +153,11 @@ namespace Avak.StateMachine.Core.Implimentation
             masterStateXmlFile.SetTransitionsAndTargetsForState(targetState);
 
             return true;
+        }
+
+        private void StateFileReader_StateCreated(object? sender, StateBase stateCreated)
+        {
+            StateCreated?.Invoke(this, stateCreated);
         }
 
         private void SetCurrentState(StateBase state)

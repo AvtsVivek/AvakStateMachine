@@ -6,14 +6,9 @@ namespace Avak.StateMachine.Core.Contracts
     {
         event EventHandler<StateBase> StateCreated;
 
-
-        void LoadStateFile(StateXmlFile stateXmlFile);
+        void SetStateFile(StateXmlFile stateXmlFile);
 
         bool PopulateStateXmlFileTree();
-
-        // void SetTransitionsAndTargetsForState(StateBase state);
-
-        MasterStateBase SetInitialState();
 
         IStateGraph GetStateGraph();
     }

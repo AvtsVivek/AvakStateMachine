@@ -37,7 +37,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<Trigger> triggers = stateMachineManager.GetCurrentStateGraph().TriggerList;

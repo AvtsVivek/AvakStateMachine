@@ -34,7 +34,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            stateMachineManager.LoadMasterStateFile();
 
             // Act
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetCurrentStateGraph());

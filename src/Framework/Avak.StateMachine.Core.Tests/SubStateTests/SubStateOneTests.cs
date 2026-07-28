@@ -35,7 +35,6 @@ namespace Avak.StateMachine.Core.Tests.SubStateTests
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            stateMachineManager.LoadMasterStateFile();
 
             // Act
             List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;

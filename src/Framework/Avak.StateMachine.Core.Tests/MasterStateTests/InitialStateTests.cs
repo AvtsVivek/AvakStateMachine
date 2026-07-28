@@ -37,7 +37,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            stateMachineManager.LoadMasterStateFile();
 
             // Act 
             IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
@@ -61,7 +60,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-            stateMachineManager.LoadMasterStateFile();
 
             // Act 
             IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
