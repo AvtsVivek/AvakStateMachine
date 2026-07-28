@@ -18,19 +18,19 @@ namespace Avak.StateMachine.Core
         private readonly List<Trigger> _triggers;
         internal List<Trigger> Triggers => _triggers;
         private readonly Lazy<List<XElement>> _triggerElements;
-        internal List<XElement> triggerElements => _triggerElements.Value;
+        internal List<XElement> TriggerElements => _triggerElements.Value;
         private readonly Lazy<XElement?> _stateCollectionElement;
-        internal XElement? stateCollectionElement => _stateCollectionElement.Value;
+        internal XElement? StateCollectionElement => _stateCollectionElement.Value;
         private readonly Lazy<List<XElement>> _stateElements;
-        internal List<XElement> stateElements => _stateElements.Value;
+        internal List<XElement> StateElements => _stateElements.Value;
         private readonly IXmlKeys constants; // Can we make this static?
         private readonly StateDependencyTypeFinder stateDependencyTypeFinderDelegate;
-        private StateDependencyResolver resolver;
-        private static ITypeFinder typeFinder = new CurrentAppDomainTypeFinder();
-        private List<(ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)> stateCtorInfoWithDependenciesList = [];
+        private readonly StateDependencyResolver resolver;
+        private readonly static CurrentAppDomainTypeFinder typeFinder = new();
+        private readonly List<(ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)> stateCtorInfoWithDependenciesList = [];
         internal List<StateXmlFile> SubStateXmlFiles => StateXmlFileTree.Instance.GetStateXmlFiles(Level + 1);
         public event EventHandler<StateBase>? StateCreated;
-        private List<MasterStateBase> _states = [];
+        private readonly List<MasterStateBase> _states = [];
         internal IReadOnlyList<MasterStateBase> States => _states;
 
         public override string ToString() => $"File: {fileName}, Assembly: {assembly.FullName}";
@@ -41,10 +41,7 @@ namespace Avak.StateMachine.Core
             StateDependencyResolver resolver,
             Assembly assembly, string fileName)
         {
-            if (constants == null)
-            {
-                throw new ArgumentNullException(nameof(constants));
-            }
+            ArgumentNullException.ThrowIfNull(constants);
 
             this.constants = constants;
 
@@ -56,34 +53,22 @@ namespace Avak.StateMachine.Core
             }
 
             this.stateDependencyTypeFinderDelegate = stateDependencyTypeFinderDelegate;
-            if (resolver == null)
-            {
-                // Todo. Need elaborate messages and logging here
-                throw new ArgumentNullException(nameof(resolver));
-            }
+            ArgumentNullException.ThrowIfNull(resolver);
 
             this.resolver = resolver;
-            if (assembly == null)
-            {
-                // Log
-                throw new ArgumentNullException("State xml assembly cannot be null. Cannot continue");
-            }
+            ArgumentNullException.ThrowIfNull(assembly);
 
             this.assembly = assembly;
 
             if (string.IsNullOrWhiteSpace(fileName))
             {
                 // Log
-                ArgumentNullException argumentNullException = new("State xml file name cannot be null. Cannot continue");
+                ArgumentNullException argumentNullException = new(paramName: "State xml file name cannot be null. Cannot continue");
                 throw argumentNullException;
             }
 
-            ManifestResourceInfo? manifestResource = assembly.GetManifestResourceInfo(fileName);
-
-            if (manifestResource == null)
-            {
+            ManifestResourceInfo? manifestResource = assembly.GetManifestResourceInfo(fileName) ??
                 throw new Exception($"Manifest resource {fileName} not found in the assembly {assembly.FullName}");
-            }
 
             this.fileName = fileName;
             Parent = parent;
@@ -103,7 +88,7 @@ namespace Avak.StateMachine.Core
             _triggerElements = new Lazy<List<XElement>>(() =>
             {
                 string triggersString = constants.StateFileTriggerCollectionElementName;
-                XElement? triggerCollectionElement = xDoc.Descendants(triggersString).FirstOrDefault();
+                XElement? triggerCollectionElement = XDoc.Descendants(triggersString).FirstOrDefault();
 
                 if (triggerCollectionElement == null)
                 {
@@ -120,17 +105,14 @@ namespace Avak.StateMachine.Core
 
             _stateCollectionElement = new Lazy<XElement?>(() =>
             {
-                XElement? element = xDoc.Descendants(constants.StateFileStateCollectionElementName).FirstOrDefault();
-                if (element == null)
-                {
-                    throw new XmlException($"{constants.StateFileStateCollectionElementName} element must be present in the state xml file {xDoc}.");
-                }
+                XElement? element = XDoc.Descendants(constants.StateFileStateCollectionElementName).FirstOrDefault() ??
+                throw new XmlException($"{constants.StateFileStateCollectionElementName} element must be present in the state xml file {XDoc}.");
                 return element;
             });
 
             _stateElements = new Lazy<List<XElement>>(() =>
             {
-                List<XElement> elementList = [.. stateCollectionElement!.Descendants(constants.StateFileStateElementName)];
+                List<XElement> elementList = [.. StateCollectionElement!.Descendants(constants.StateFileStateElementName)];
                 if (elementList.Count == 0)
                 {
                     throw new XmlException($"{constants.StateFileStateCollectionElementName} element is empty. It must contain some state elements. Verify the state xml file.");
@@ -141,19 +123,15 @@ namespace Avak.StateMachine.Core
 
         private readonly Lazy<XDocument> _xDoc;
 
-        private XDocument xDoc => _xDoc.Value;
+        private XDocument XDoc => _xDoc.Value;
 
         internal void ReadRootStateNamespace()
         {
             if (!string.IsNullOrWhiteSpace(rootNamespace))
                 return;
 
-            XElement? rootElement = xDoc.Descendants(constants.StateFileRootElementName).First();
-
-            if (rootElement == null)
-            {
+            XElement? rootElement = XDoc.Descendants(constants.StateFileRootElementName).First() ??
                 throw new XmlException($"The root element is missing in the file {this}");
-            }
 
             XAttribute? rootNamespaceAttribute = rootElement.Attributes(constants.StateFileRootNamespaceAttributeName).FirstOrDefault();
 
@@ -189,7 +167,7 @@ namespace Avak.StateMachine.Core
         {
             XElement stateElementFound = null!;
             // Get the state element from the stateElements given the name of the state.
-            foreach (XElement stateElement in stateElements)
+            foreach (XElement stateElement in StateElements)
             {
                 XAttribute? stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName);
                 // Here we do not have to check for presence of name attribute, and its validity. 
@@ -212,14 +190,10 @@ namespace Avak.StateMachine.Core
                 return;
             }
 
-            foreach (XElement triggerElement in triggerElements)
+            foreach (XElement triggerElement in TriggerElements)
             {
-                XAttribute? triggerNameAttribute = triggerElement.Attribute(constants.StateFileTriggerNameAttributeName);
-
-                if (triggerNameAttribute == null)
-                {
+                XAttribute? triggerNameAttribute = triggerElement.Attribute(constants.StateFileTriggerNameAttributeName) ??
                     throw new Exception($"Trigger Element {constants.StateFileTriggerNameAttributeName} missing in state file {this}");
-                }
 
                 string triggerName = triggerNameAttribute.Value;
 
@@ -243,12 +217,8 @@ namespace Avak.StateMachine.Core
 
         private TriggerSource GetTriggerSource(XElement triggerElement)
         {
-            XAttribute? triggerSourceAttribute = triggerElement.Attribute(constants.StateFileTriggerSourceAttributeName);
-
-            if (triggerSourceAttribute == null)
-            {
+            XAttribute? triggerSourceAttribute = triggerElement.Attribute(constants.StateFileTriggerSourceAttributeName) ??
                 throw new Exception($"Trigger Attribute Source missing in state file {this}");
-            }
 
             string sourceName = triggerSourceAttribute.Value;
 
@@ -268,9 +238,9 @@ namespace Avak.StateMachine.Core
                 triggerSourceEnumValuesString = triggerSourceEnumValuesString.TrimEnd(',', ' ');
 
                 string exceptionString = $"Incorrect trigger source value in the file {this}";
-                exceptionString = exceptionString + Environment.NewLine;
-                exceptionString = exceptionString + "It must be one of the following." + Environment.NewLine;
-                exceptionString = exceptionString + triggerSourceEnumValuesString;
+                exceptionString += Environment.NewLine;
+                exceptionString += "It must be one of the following." + Environment.NewLine;
+                exceptionString += triggerSourceEnumValuesString;
 
                 throw new Exception(exceptionString);
             }
@@ -299,7 +269,7 @@ namespace Avak.StateMachine.Core
             catch (XmlException ex)
             {
                 string message = $"The state file {fileName} in the assembly {assembly.FullName} could not be loaded.";
-                message = message + ex.Message;
+                message += ex.Message;
                 throw new Exception(message, ex);
             }
             finally
@@ -323,7 +293,7 @@ namespace Avak.StateMachine.Core
             return HashCode.Combine(Parent, Level, assembly, fileName);
         }
 
-        private void CheckStreamValidity(Stream stream)
+        private static void CheckStreamValidity(Stream stream)
         {
             var result = DoStreamCheck(stream);
             bool isValid = result.Item1;
@@ -336,7 +306,7 @@ namespace Avak.StateMachine.Core
 
         internal MasterStateBase CreateAndSetInitialState()
         {
-            XAttribute? initialAttribute = stateCollectionElement!
+            XAttribute? initialAttribute = StateCollectionElement!
                 .Attribute(constants.StateFileStateCollectionInitialAttributeName);
 
             if (initialAttribute != null && string.IsNullOrWhiteSpace(initialAttribute?.Value))
@@ -346,12 +316,12 @@ namespace Avak.StateMachine.Core
                     $"Its currently an invalid empty string");
             }
 
-            XElement initialStateElement = null!;
-            XAttribute? initialStateNameAttribute = null!;
+            XElement initialStateElement;
+            XAttribute? initialStateNameAttribute;
             if (initialAttribute == null || string.IsNullOrWhiteSpace(initialAttribute?.Value))
             {
                 // Pick the very first state element
-                initialStateElement = stateElements[0];
+                initialStateElement = StateElements[0];
                 // Here we do not have to check for presence of name attribute, and its validity. 
                 // Its already done before.
             }
@@ -393,9 +363,7 @@ namespace Avak.StateMachine.Core
         {
             XElement stateElement = GetStateElement(state.Name)!;
 
-            List<XElement> transitionElements = stateElement
-                .Descendants(constants.StateFileTransitionElementName)
-                .ToList();
+            List<XElement> transitionElements = [.. stateElement.Descendants(constants.StateFileTransitionElementName)];
 
             foreach (XElement transitionElement in transitionElements)
             {
@@ -549,7 +517,7 @@ namespace Avak.StateMachine.Core
                 }
                 else
                 {
-                    stateObject = ctorInfo!.Invoke(stateDependencyObjects!.ToArray());
+                    stateObject = ctorInfo!.Invoke([.. stateDependencyObjects!]);
                 }
             }
             catch (Exception exception)
@@ -558,11 +526,11 @@ namespace Avak.StateMachine.Core
                     "The following execution failed.";
                 if (stateDependencyTypes!.Count == 0)
                 {
-                    message = message + "ctorInfo!.Invoke(null);";
+                    message += "ctorInfo!.Invoke(null);";
                 }
                 else
                 {
-                    message = message + "ctorInfo!.Invoke(stateDependencyObjects!.ToArray());";
+                    message += "ctorInfo!.Invoke(stateDependencyObjects!.ToArray());";
                 }
 
                 message = message + $"This is the exception {exception.Message}" + Environment.NewLine +
@@ -625,10 +593,10 @@ namespace Avak.StateMachine.Core
         {
             List<string> uniqueStateNameList = []; // Used to check state names are unique in the state file.
 
-            foreach (XElement stateElement in stateElements)
+            foreach (XElement stateElement in StateElements)
             {
                 XAttribute? stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName)
-                    ?? throw new XmlException($"{constants.StateFileStateElementName} Element {constants.StateFileStateNameAttributeName} missing in state file {xDoc}");
+                    ?? throw new XmlException($"{constants.StateFileStateElementName} Element {constants.StateFileStateNameAttributeName} missing in state file {XDoc}");
 
                 string stateName = stateNameAttribute.Value;
 
@@ -663,8 +631,8 @@ namespace Avak.StateMachine.Core
             if (!successfullyFound)
             {
                 message = $"The type {stateName} with namespace {statesNamespace} is not found" + Environment.NewLine;
-                message = message + $"Check the name of the type {stateName}" + Environment.NewLine;
-                message = message + $"Also Check the namespace {statesNamespace}";
+                message += $"Check the name of the type {stateName}" + Environment.NewLine;
+                message += $"Also Check the namespace {statesNamespace}";
                 throw new Exception(message);
             }
 
@@ -692,7 +660,7 @@ namespace Avak.StateMachine.Core
                     else
                     {
 
-                        List<Type?>? nullStateDependencyTypes = stateDependencyTypes.Where(obj => obj == null).ToList();
+                        List<Type?>? nullStateDependencyTypes = [.. stateDependencyTypes.Where(obj => obj == null)];
                         // first check if all of the Types are null.
                         if (nullStateDependencyTypes.Count > 0 && (nullStateDependencyTypes.Count == stateDependencyTypes.Count))
                         {
@@ -702,7 +670,7 @@ namespace Avak.StateMachine.Core
                         else
                         {
                             // Remove nulls
-                            stateDependencyTypes = stateDependencyTypes.Where(obj => obj != null).ToList();
+                            stateDependencyTypes = [.. stateDependencyTypes.Where(obj => obj != null)];
                         }
                     }
 
@@ -714,9 +682,9 @@ namespace Avak.StateMachine.Core
                     {
                         foreach (Type? dependencyType in stateDependencyTypes)
                         {
-                            message = message + dependencyType + " ,";
+                            message += dependencyType + " ,";
                         }
-                        message.TrimEnd(',', ' ');
+                        message = message.TrimEnd(',', ' ');
                         // Log the message
                         message = $"Cannot create the object of type {ctype.FullName} " + Environment.NewLine +
                             $"A constructor with given types namely {message} " + Environment.NewLine +
@@ -743,7 +711,7 @@ namespace Avak.StateMachine.Core
 
         private string GetStateNamespaceForElement(XElement stateElement)
         {
-            string stateNamespace = string.Empty;
+            string stateNamespace;
 
             XAttribute? stateNamespaceAttribute = stateElement.Attribute(constants.StateFileStateNamespaceAttributeName);
 
@@ -763,7 +731,7 @@ namespace Avak.StateMachine.Core
             return stateNamespace;
         }
 
-        private (bool, string) DoStreamCheck(Stream stream)
+        private static (bool, string) DoStreamCheck(Stream stream)
         {
             string message;
             if (stream == null)

@@ -7,8 +7,6 @@ namespace Avak.StateMachine.Core.Implimentation
     {
         private StateXmlFile currentStateXmlFile;
         private StateGraph stateGraph;
-        public event EventHandler<StateBase>? StateCreated;
-
         internal XmlStateFileReader()
         {
             currentStateXmlFile = null!;
@@ -22,7 +20,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public bool PopulateStateXmlFileTree()
         {
-            currentStateXmlFile.ReadRootStateNamespace();
+            // currentStateXmlFile.ReadRootStateNamespace();
             return true;
         }
 
@@ -39,7 +37,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
             MasterStateBase? initialState = currentStateXmlFile.SetInitialState();
 
-            stateGraph = new StateGraph(currentStateXmlFile.States.ToList(), currentStateXmlFile.Triggers!, initialState!);
+            stateGraph = new StateGraph([.. currentStateXmlFile.States], currentStateXmlFile.Triggers!, initialState!);
 
             return stateGraph;
         }

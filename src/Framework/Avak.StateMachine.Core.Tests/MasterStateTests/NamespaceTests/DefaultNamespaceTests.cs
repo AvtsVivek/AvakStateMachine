@@ -3,7 +3,7 @@ using Avak.StateMachine.Core.Implimentation;
 using System.Reflection;
 using System.Xml;
 
-namespace Avak.StateMachine.Core.Tests.MasterStateTests
+namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
 {
     // There must be a Namespace attribute. If not exception is thrown
     [TestClass]

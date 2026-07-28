@@ -7,13 +7,13 @@ namespace Avak.StateMachine.Core.Implimentation
     public class StateMachineManager : IStateMachineManager
     {
         public IStateGraph StateGraph { get; private set; }
-        private IStateFileReader stateFileReader;
-        private StateDependencyTypeFinder stateDependencyTypeFinderDelegate;
-        private StateDependencyResolver resolver;
+        private readonly XmlStateFileReader stateFileReader;
+        private readonly StateDependencyTypeFinder stateDependencyTypeFinderDelegate;
+        private readonly StateDependencyResolver resolver;
         public event EventHandler<StateBase>? StateCreated;
         private StateXmlFile masterStateXmlFile;
 
-        private IXmlKeys constants;
+        private readonly IXmlKeys constants;
 
         public StateBase CurrentState
         {
@@ -23,26 +23,18 @@ namespace Avak.StateMachine.Core.Implimentation
             }
         }
         private StateBase _currentState;
-        private Stack<StateBase> StateStack;
+        private readonly Stack<StateBase> StateStack;
 
         public StateMachineManager(IXmlKeys constants,
             StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
             StateDependencyResolver resolver)
         {
 
-            if (resolver == null)
-            {
-                // Todo. Need elaborate messages and logging here
-                throw new ArgumentNullException(nameof(resolver));
-            }
+            ArgumentNullException.ThrowIfNull(resolver);
 
             this.resolver = resolver;
 
-            if (constants == null)
-            {
-                // Todo. Need elaborate messages and logging here
-                throw new ArgumentNullException(nameof(constants));
-            }
+            ArgumentNullException.ThrowIfNull(constants);
 
             this.constants = constants;
 
@@ -136,9 +128,9 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public bool DoTriggeredTriansition(StateBase currentState, Trigger trigger)
         {
-            var result = IsTriggeredTriansitionValid(currentState, trigger);
+            var (success, message) = IsTriggeredTriansitionValid(currentState, trigger);
 
-            if (!result.success)
+            if (!success)
             {
                 return false;
             }
@@ -174,12 +166,9 @@ namespace Avak.StateMachine.Core.Implimentation
             StateStack.Push(state);
         }
 
-        private List<Transition> GetTransitionsForState(StateBase state)
+        private static List<Transition> GetTransitionsForState(StateBase state)
         {
-            if (state == null)
-            {
-                throw new ArgumentNullException($"{nameof(state)} in {nameof(GetTransitionsForState)}");
-            }
+            ArgumentNullException.ThrowIfNull(state);
 
             return state.Transitions;
         }
