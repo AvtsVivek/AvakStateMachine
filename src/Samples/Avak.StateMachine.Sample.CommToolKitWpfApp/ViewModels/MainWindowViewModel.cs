@@ -75,7 +75,9 @@ namespace Avak.StateMachine.Sample.CommToolKitWpfApp.ViewModels
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
             stateMachineManager.LoadMasterStateFile();
-            stateMachineManager.SetInitialState();
+
+            stateGraph = stateMachineManager.GetCurrentStateGraph();
+
             var t2 = stateMachineManager.CurrentState.Name;
         }
     }

@@ -13,7 +13,7 @@ namespace Avak.StateMachine.Core.Contracts
         void LoadMasterStateFile();
         bool PopulateStateXmlFileTree();
         IStateGraph GetCurrentStateGraph();
-        void SetInitialState();
+        // void SetInitialState();
         (bool success, string message) IsTriggeredTriansitionValid(StateBase currentState, Trigger? trigger);
         bool DoTriggeredTriansition(StateBase currentState, Trigger trigger);
     }

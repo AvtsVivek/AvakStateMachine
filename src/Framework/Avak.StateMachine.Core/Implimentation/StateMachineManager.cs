@@ -100,12 +100,6 @@ namespace Avak.StateMachine.Core.Implimentation
             return StateGraph;
         }
 
-        public void SetInitialState()
-        {
-            MasterStateBase? initialState = stateFileReader.SetInitialState();
-            this._currentState = initialState!;
-        }
-
         public (bool success, string message) IsTriggeredTriansitionValid(StateBase currentState, Trigger? trigger)
         {
             List<Transition> stateTransitions = GetTransitionsForState(currentState);
