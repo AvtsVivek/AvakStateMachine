@@ -29,7 +29,7 @@
 
         public const string StateFileStateSubStateAssemblyAttributeName = "SubStateAssembly";
 
-        public const string StateFileStateSubStateXmlFileNameAttributeName = "SubStateXmlFile";
+        public const string StateFileStateSubStateXmlFileAttributeName = "SubStateXmlFile";
 
         public const string StateFileTransitionElementName = "Transition";
 

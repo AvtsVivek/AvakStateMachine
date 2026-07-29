@@ -62,7 +62,6 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
-
             // Act
             List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;
 

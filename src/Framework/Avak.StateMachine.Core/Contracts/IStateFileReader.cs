@@ -4,7 +4,7 @@
     {
         void SetStateFile(StateXmlFile stateXmlFile);
 
-        bool PopulateStateXmlFileTree();
+        bool AddSubStateXmlFiles();
 
         IStateGraph GetStateGraph();
     }

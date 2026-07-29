@@ -18,9 +18,8 @@ namespace Avak.StateMachine.Core.Implimentation
             currentStateXmlFile = stateXmlFile;
         }
 
-        public bool PopulateStateXmlFileTree()
+        public bool AddSubStateXmlFiles()
         {
-            // currentStateXmlFile.ReadRootStateNamespace();
             return true;
         }
 

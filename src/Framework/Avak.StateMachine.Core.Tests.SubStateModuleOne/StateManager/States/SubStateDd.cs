@@ -1,6 +1,6 @@
 ﻿using Avak.StateMachine.Core.States;
 
-namespace Avak.StateMachine.Core.Tests.TestModuleOne.StateManager.States
+namespace Avak.StateMachine.Core.Tests.SubStateModuleOne.StateManager.States
 {
     public class SubStateDd : SubStateBase
     {

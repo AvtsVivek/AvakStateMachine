@@ -32,10 +32,11 @@ namespace Avak.StateMachine.Core
         public event EventHandler<StateBase>? StateCreated;
         private readonly List<MasterStateBase> _states = [];
         internal IReadOnlyList<MasterStateBase> States => _states;
-
         public override string ToString() => $"File: {fileName}, Assembly: {assembly.FullName}";
-
         internal bool IsMasterXmlFile => Parent == null;
+        private readonly Lazy<XDocument> _xDoc;
+        private XDocument XDoc => _xDoc.Value;
+
         internal StateXmlFile(StateXmlFile? parent, IXmlKeys constants,
             StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
             StateDependencyResolver resolver,
@@ -121,10 +122,6 @@ namespace Avak.StateMachine.Core
             });
         }
 
-        private readonly Lazy<XDocument> _xDoc;
-
-        private XDocument XDoc => _xDoc.Value;
-
         internal void ReadRootStateNamespace()
         {
             if (!string.IsNullOrWhiteSpace(rootNamespace))
@@ -181,6 +178,14 @@ namespace Avak.StateMachine.Core
             }
 
             return stateElementFound;
+        }
+
+        internal void AddSubStateXmlFiles()
+        {
+            foreach (XElement stateElement in StateElements)
+            {
+                XAttribute? stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName);
+            }
         }
 
         internal void ReadTriggers()

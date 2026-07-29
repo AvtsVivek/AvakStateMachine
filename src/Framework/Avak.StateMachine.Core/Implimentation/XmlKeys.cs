@@ -26,6 +26,10 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public string StateFileStateNamespaceAttributeName => DefaultXmlConstants.StateFileStateNamespaceAttributeName; // Namespace
 
+        public string StateFileStateSubStateAssemblyAttributeName => DefaultXmlConstants.StateFileStateSubStateAssemblyAttributeName; // "SubStateAssembly";
+
+        public string StateFileStateSubStateXmlFileAttributeName => DefaultXmlConstants.StateFileStateSubStateXmlFileAttributeName; //  "SubStateXmlFile";
+
         public string StateFileTransitionElementName => DefaultXmlConstants.StateFileTransitionElementName; // Transaction
 
         public string StateFileTransitionTriggerAttributeName => DefaultXmlConstants.StateFileTransitionTriggerAttributeName; // Trigger
