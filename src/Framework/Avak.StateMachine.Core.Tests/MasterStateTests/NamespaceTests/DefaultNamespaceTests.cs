@@ -13,7 +13,10 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
         public void Setup() { }
 
         [TestCleanup]
-        public void Cleanup() { }
+        public void Cleanup()
+        {
+            StateXmlFileTree.Instance.Clear();
+        }
 
         [TestMethod]
         public void NoNamepsaceAttribute_ThrowsException()

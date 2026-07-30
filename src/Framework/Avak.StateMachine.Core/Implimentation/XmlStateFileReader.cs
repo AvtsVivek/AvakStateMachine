@@ -18,9 +18,30 @@ namespace Avak.StateMachine.Core.Implimentation
             currentStateXmlFile = stateXmlFile;
         }
 
-        public bool AddSubStateXmlFiles()
+        public bool PopulateStateXmlFileTree()
         {
+            AddSubStateXmlFilesFromLevel(StateXmlFileTree.MasterXmlHierarchyLevel);
             return true;
+        }
+
+        private void AddSubStateXmlFilesFromLevel(int level)
+        {
+            // Get all of the files at this level.
+            List<StateXmlFile> stateXmlFilesAtLevel = StateXmlFileTree.Instance.GetStateXmlFilesAtLevel(level);
+
+            if (stateXmlFilesAtLevel.Count == 0)
+            {
+                return;
+            }
+
+            // For each file at this level, add its sub-state XML files.
+            foreach (StateXmlFile stateXmlFile in stateXmlFilesAtLevel)
+            {
+                stateXmlFile.AddSubStateXmlFiles();
+            }
+
+            // Recursively call this method for the next level.
+            AddSubStateXmlFilesFromLevel(level + 1);
         }
 
         public IStateGraph GetStateGraph()

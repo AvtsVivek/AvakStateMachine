@@ -1,13 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileNoSubStateXmlFileValue.xml" />
+    <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileNoSubStateAssembly.xml" />
+    <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileNoSubStateAssemblyValue.xml" />
+    <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileNoSubStateXmlFile.xml" />
     <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileWithSubStateXmlFileRefs.xml" />
     <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\ArbitraryNamespace.xml" />
     <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\DifferentNamespaces.xml" />
@@ -28,6 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Avak.StateMachine.Core.Tests.SubStateModuleL2One\Avak.StateMachine.Core.Tests.SubStateModuleL2One.csproj" />
+    <ProjectReference Include="..\Avak.StateMachine.Core.Tests.SubStateModuleL2Two\Avak.StateMachine.Core.Tests.SubStateModuleL2Two.csproj" />
     <ProjectReference Include="..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
   </ItemGroup>
 

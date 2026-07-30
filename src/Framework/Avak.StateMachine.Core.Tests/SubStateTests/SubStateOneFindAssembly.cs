@@ -1,18 +1,17 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.Implimentation;
-using Avak.StateMachine.Core.States;
 using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.SubStateTests
 {
     [TestClass]
-    public class SubStateOneTests
+    [DoNotParallelize]
+    public class SubStateOneFindAssembly
     {
-        private string masterStateXmlFile = string.Empty;
+        private string masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.XmlFilesWithSubStates.MasterStateXmlFileWithSubStateXmlFileRefs.xml";
         [TestInitialize]
         public void Setup()
         {
-            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.XmlFilesWithSubStates.MasterStateXmlFileWithSubStateXmlFileRefs.xml";
 
         }
 
@@ -21,12 +20,12 @@ namespace Avak.StateMachine.Core.Tests.SubStateTests
         {
             // Runs after each test (clean up files, database connections, etc.)
             // Close the stream.
+            StateXmlFileTree.Instance.Clear();
         }
 
         [TestMethod]
-        public void GetStates_LookForTransitions_AndTriggers()
+        public void LookForAssemblyAndResource()
         {
-            // Arrange
             IXmlKeys constants = new XmlKeys();
 
             StateMachineManager stateMachineManager = new(constants,
@@ -34,10 +33,7 @@ namespace Avak.StateMachine.Core.Tests.SubStateTests
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation);
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
-
-
-            // Act
-            List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;
+            stateMachineManager.PopulateStateXmlFileTree();
         }
     }
 }

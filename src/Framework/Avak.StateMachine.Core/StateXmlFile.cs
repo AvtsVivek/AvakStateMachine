@@ -2,6 +2,7 @@
 using Avak.StateMachine.Core.Implimentation;
 using Avak.StateMachine.Core.States;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -28,7 +29,7 @@ namespace Avak.StateMachine.Core
         private readonly StateDependencyResolver resolver;
         private readonly static CurrentAppDomainTypeFinder typeFinder = new();
         private readonly List<(ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)> stateCtorInfoWithDependenciesList = [];
-        internal List<StateXmlFile> SubStateXmlFiles => StateXmlFileTree.Instance.GetStateXmlFiles(Level + 1);
+        internal List<StateXmlFile> SubStateXmlFiles => StateXmlFileTree.Instance.GetStateXmlFilesAtLevel(Level + 1);
         public event EventHandler<StateBase>? StateCreated;
         private readonly List<MasterStateBase> _states = [];
         internal IReadOnlyList<MasterStateBase> States => _states;
@@ -107,7 +108,7 @@ namespace Avak.StateMachine.Core
             _stateCollectionElement = new Lazy<XElement?>(() =>
             {
                 XElement? element = XDoc.Descendants(constants.StateFileStateCollectionElementName).FirstOrDefault() ??
-                throw new XmlException($"{constants.StateFileStateCollectionElementName} element must be present in the state xml file {XDoc}.");
+                throw new XmlException($"{constants.StateFileStateCollectionElementName} element must be present in the state xml file {this}.");
                 return element;
             });
 
@@ -184,8 +185,124 @@ namespace Avak.StateMachine.Core
         {
             foreach (XElement stateElement in StateElements)
             {
-                XAttribute? stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName);
+                // SubStateAssembly Attribute
+                XAttribute? subStateAssemblyNameAttribute = stateElement.Attribute(constants.StateFileStateSubStateAssemblyAttributeName);
+
+                // SubStateXmlFile Attribute
+                XAttribute? subStateXmlFileNameAttribute = stateElement.Attribute(constants.StateFileStateSubStateXmlFileAttributeName);
+
+                if (subStateAssemblyNameAttribute == null && subStateXmlFileNameAttribute == null)
+                {
+                    continue;
+                }
+
+                if (subStateAssemblyNameAttribute != null && subStateXmlFileNameAttribute == null)
+                {
+                    string errorMessage = $"{constants.StateFileStateSubStateAssemblyAttributeName} attribute is present, but {constants.StateFileStateSubStateXmlFileAttributeName} attribute is not present on the state element " + Environment.NewLine +
+                        $"{stateElement}" + Environment.NewLine +
+                        $"in the file {this}" + Environment.NewLine +
+                        $"If you want to specify SubStateXml file, then ensure both the attributes are specified.";
+                    throw new XmlException(errorMessage);
+                }
+
+                if (subStateAssemblyNameAttribute == null && subStateXmlFileNameAttribute != null)
+                {
+                    string errorMessage = $"{constants.StateFileStateSubStateXmlFileAttributeName} attribute is present, but {constants.StateFileStateSubStateAssemblyAttributeName} attribute is not present on the state element " + Environment.NewLine +
+                        $"{stateElement}" + Environment.NewLine +
+                        $"in the file {this}" + Environment.NewLine +
+                        $"If you want to specify SubStateXml file, then ensure both the attributes are specified.";
+                    throw new XmlException(errorMessage);
+                }
+
+                if (string.IsNullOrWhiteSpace(subStateAssemblyNameAttribute!.Value))
+                {
+                    string errorMessage = $"{constants.StateFileStateSubStateAssemblyAttributeName} attribute is present, but there is no value associated with it for the state " + Environment.NewLine +
+                        $"{stateElement}" + Environment.NewLine +
+                        $"in the file {this}" + Environment.NewLine +
+                        $"Ensure correct assembly name attribute value.";
+                    throw new XmlException(errorMessage);
+                }
+
+                if (string.IsNullOrWhiteSpace(subStateXmlFileNameAttribute!.Value))
+                {
+                    string errorMessage = $"{constants.StateFileStateSubStateXmlFileAttributeName} attribute is present, but there is no value associated with it for the state " + Environment.NewLine +
+                        $"{stateElement}" + Environment.NewLine +
+                        $"in the file {this}" + Environment.NewLine +
+                        $"Ensure correct assembly name attribute value.";
+                    throw new XmlException(errorMessage);
+                }
+
+                if (subStateAssemblyNameAttribute != null && subStateXmlFileNameAttribute != null)
+                {
+                    FindXmlFileInAssembly(subStateAssemblyNameAttribute.Value,
+                        subStateXmlFileNameAttribute.Value);
+                }
             }
+        }
+
+        private void FindXmlFileInAssembly(string assemblyName, string xmlFileName)
+        {
+            Assembly? subStateAssembly = null;
+            try
+            {
+                subStateAssembly = Assembly.Load(assemblyName);
+            }
+            catch
+            {
+                // If loading by name fails, try to construct the path from the current assembly's location
+                // This supports side-by-side assemblies in the same output directory
+                string? currentAssemblyDir = Path.GetDirectoryName(assembly.Location);
+                if (!string.IsNullOrEmpty(currentAssemblyDir))
+                {
+                    string assemblyPath = Path.Combine(currentAssemblyDir, $"{assemblyName}.dll");
+                    if (File.Exists(assemblyPath))
+                    {
+                        subStateAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
+                    }
+                }
+            }
+
+            if (subStateAssembly == null)
+            {
+                throw new Exception($"Unable to load assembly '{assemblyName}'. " +
+                    $"Ensure the assembly is either already loaded, or present in the same directory as {assembly.Location}");
+            }
+
+            string? subStateXmlFile = GetAssemblyResourceName(subStateAssembly, xmlFileName) ??
+                throw new Exception($"The file {xmlFileName} is not found in the assembly {subStateAssembly.FullName}");
+
+            if (subStateXmlFile == null)
+            {
+                string errorMessage = $"The file {xmlFileName} is not found in the assembly {subStateAssembly.FullName}" + Environment.NewLine +
+                    $"Ensure the file is present in the assembly and its Build Action is set to Embedded Resource" + Environment.NewLine +
+                    $"Also ensure the file name is correct, including the extension. It is case sensitive." + Environment.NewLine +
+                    $"The following are the manifest resource names in the assembly {subStateAssembly.FullName}" + Environment.NewLine;
+
+                foreach (string resourceName in subStateAssembly.GetManifestResourceNames())
+                {
+                    errorMessage += resourceName + Environment.NewLine;
+                }
+
+                throw new Exception(errorMessage);
+            }
+
+            StateXmlFile subStateXmlFileObject = new(this, constants, stateDependencyTypeFinderDelegate, resolver, subStateAssembly, subStateXmlFile);
+        }
+
+        private string? GetAssemblyResourceName(Assembly assembly, string resourceNameSuffix)
+        {
+            // debug: inspect names if you are not sure
+            var names = assembly.GetManifestResourceNames();
+            // find by suffix (safe if you don't want full name)
+            var fullName = names.FirstOrDefault(n => n.EndsWith(resourceNameSuffix, StringComparison.OrdinalIgnoreCase));
+            return fullName;
+
+            //if (fullName == null) return null;
+
+            //using var stream = asm.GetManifestResourceStream(fullName);
+            //if (stream == null) return null;
+            //using var reader = new StreamReader(stream);
+            //return reader.ReadToEnd();
         }
 
         internal void ReadTriggers()
@@ -601,7 +718,7 @@ namespace Avak.StateMachine.Core
             foreach (XElement stateElement in StateElements)
             {
                 XAttribute? stateNameAttribute = stateElement.Attribute(constants.StateFileStateNameAttributeName)
-                    ?? throw new XmlException($"{constants.StateFileStateElementName} Element {constants.StateFileStateNameAttributeName} missing in state file {XDoc}");
+                    ?? throw new XmlException($"{constants.StateFileStateElementName} Element {constants.StateFileStateNameAttributeName} missing in state file {this}");
 
                 string stateName = stateNameAttribute.Value;
 

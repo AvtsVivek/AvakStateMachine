@@ -21,7 +21,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         [TestCleanup]
         public void Cleanup()
         {
-
+            StateXmlFileTree.Instance.Clear();
         }
 
         [TestMethod]

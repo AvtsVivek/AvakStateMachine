@@ -68,7 +68,7 @@ namespace Avak.StateMachine.Core.Implimentation
 
         public bool PopulateStateXmlFileTree()
         {
-            stateFileReader.AddSubStateXmlFiles();
+            stateFileReader.PopulateStateXmlFileTree();
             return true;
         }
 

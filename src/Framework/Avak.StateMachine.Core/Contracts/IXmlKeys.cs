@@ -64,6 +64,16 @@
         string StateFileStateNamespaceAttributeName { get; }
 
         /// <summary>
+        /// Sub State Assembly Name attribute on state element.
+        /// </summary>
+        string StateFileStateSubStateAssemblyAttributeName { get; }
+
+        /// <summary>
+        /// Sub State Xml File Name attribute on state element.
+        /// </summary>
+        string StateFileStateSubStateXmlFileAttributeName { get; }
+
+        /// <summary>
         /// Transition element inside of a state element.
         /// </summary>
         string StateFileTransitionElementName { get; }

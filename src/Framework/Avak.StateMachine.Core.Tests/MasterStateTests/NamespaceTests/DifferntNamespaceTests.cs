@@ -42,6 +42,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
         {
             // Runs after each test (clean up files, database connections, etc.)
             // Close the stream.
+            StateXmlFileTree.Instance.Clear();
         }
 
         [TestMethod]

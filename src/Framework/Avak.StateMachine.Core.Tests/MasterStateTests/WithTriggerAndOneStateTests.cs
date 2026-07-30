@@ -19,6 +19,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         public void Cleanup()
         {
             // Runs after each test (clean up files, database connections, etc.)
+            StateXmlFileTree.Instance.Clear();
         }
 
         [TestMethod]

@@ -1,5 +1,6 @@
 <Solution>
-  <Project Path="Avak.StateMachine.Core.Tests.SubStateModuleOne/Avak.StateMachine.Core.Tests.SubStateModuleOne.csproj" />
+  <Project Path="Avak.StateMachine.Core.Tests.SubStateModuleL2One/Avak.StateMachine.Core.Tests.SubStateModuleL2One.csproj" />
+  <Project Path="Avak.StateMachine.Core.Tests.SubStateModuleL2Two/Avak.StateMachine.Core.Tests.SubStateModuleL2Two.csproj" />
   <Project Path="Avak.StateMachine.Core.Tests/Avak.StateMachine.Core.Tests.csproj" />
   <Project Path="Avak.StateMachine.Core/Avak.StateMachine.Core.csproj" />
 </Solution>

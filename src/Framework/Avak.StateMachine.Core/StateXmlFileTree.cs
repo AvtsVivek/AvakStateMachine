@@ -20,6 +20,11 @@
             ArgumentNullException.ThrowIfNull(xmlFile);
             StateXmlFiles.Add(xmlFile);
         }
+
+        internal void Clear()
+        {
+            StateXmlFiles.Clear();
+        }
         internal StateXmlFile GetMasterXmlFile()
         {
             StateXmlFile? masterXmlFile = StateXmlFiles
@@ -33,7 +38,7 @@
             return masterXmlFile;
         }
 
-        internal List<StateXmlFile> GetStateXmlFiles(int level)
+        internal List<StateXmlFile> GetStateXmlFilesAtLevel(int level)
         {
             List<StateXmlFile> stateXmlFilesAtGivenLevel = [.. StateXmlFiles
                 .Where(xmlFile => xmlFile.Level == level)];
