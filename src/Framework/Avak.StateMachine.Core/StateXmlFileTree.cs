@@ -21,6 +21,19 @@
             StateXmlFiles.Add(xmlFile);
         }
 
+        /// <summary>
+        /// Clears the StateXmlFiles list, effectively resetting the tree. 
+        /// This is used in the cleanup of the unit tests to ensure that each test starts with a clean state.
+        /// The method and the class is internal, meaning it can be accessed within the same assembly but not from outside.
+        /// But we have the following in the csproj file to allow the test project to access internal members of this assembly.
+        ///   <ItemGroup>
+        ///    <InternalsVisibleTo Include = "Avak.StateMachine.Core.Tests" />
+        ///  </ItemGroup>
+        /// Currently the only purpose of this method is to be used in the unit tests. It is not intended for use in production code.
+        /// Specifically, SubStateOneFindAssembly and SubStateOneMissingAttributeTests
+        /// Note, both the above test classes are marked with [DoNotParallelize] attribute, so that the tests in these classes are not run in parallel. 
+        /// This is to ensure that the state of the StateXmlFileTree is not shared between tests, which could lead to unpredictable results.
+        /// </summary>
         internal void Clear()
         {
             StateXmlFiles.Clear();

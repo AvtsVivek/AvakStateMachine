@@ -32,9 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Avak.StateMachine.Core.Tests.SubStateModuleL2One\Avak.StateMachine.Core.Tests.SubStateModuleL2One.csproj" />
-    <ProjectReference Include="..\Avak.StateMachine.Core.Tests.SubStateModuleL2Two\Avak.StateMachine.Core.Tests.SubStateModuleL2Two.csproj" />
     <ProjectReference Include="..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L2_1\Avak.StateMachine.Core.Tests.SSM_UT20_L2_1.csproj" />
   </ItemGroup>
 
   <ItemGroup>

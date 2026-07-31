@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AvakStates Namespace="Avak.StateMachine.Core.Tests.SSM_UT1_L3_2_2.StateManager.States">
+	<Triggers>
+		<Trigger Name="EnterSubStateL3_2_2BbFromSubStateL3_2_2Aa" Source="Event"/>
+		<Trigger Name="EnterSubStateL3_2_2CcFromSubStateL3_2_2Aa" Source="Event"/>
+		<Trigger Name="EnterSubStateL3_2_2BbFromSubStateL3_2_2Cc" Source="Event"/>
+	</Triggers>
+	<States Initial="SubStateL3_2_2Aa"  >
+		<State Name="SubStateL3_2_2Aa" >
+			<Transition Trigger="EnterSubStateL3_2_2BbFromSubStateL3_2_2Aa" Target="SubStateL3_2_2Bb"/>
+			<Transition Trigger="EnterSubStateL3_2_2CcFromSubStateL3_2_2Aa" Target="SubStateL3_2_2Cc"/>
+		</State>
+		<State Name="SubStateL3_2_2Bb"></State>
+		<State Name="SubStateL3_2_2Cc">
+			<Transition Trigger="EnterSubStateL3_2_2BbFromSubStateL3_2_2Cc" Target="SubStateL3_2_2Bb"/>
+		</State>
+	</States>
+</AvakStates>

@@ -235,12 +235,12 @@ namespace Avak.StateMachine.Core
                 if (subStateAssemblyNameAttribute != null && subStateXmlFileNameAttribute != null)
                 {
                     FindXmlFileInAssembly(subStateAssemblyNameAttribute.Value,
-                        subStateXmlFileNameAttribute.Value);
+                        subStateXmlFileNameAttribute.Value, stateElement);
                 }
             }
         }
 
-        private void FindXmlFileInAssembly(string assemblyName, string xmlFileName)
+        private void FindXmlFileInAssembly(string assemblyName, string xmlFileName, XElement stateElement)
         {
             Assembly? subStateAssembly = null;
             try
@@ -264,8 +264,17 @@ namespace Avak.StateMachine.Core
 
             if (subStateAssembly == null)
             {
-                throw new Exception($"Unable to load assembly '{assemblyName}'. " +
-                    $"Ensure the assembly is either already loaded, or present in the same directory as {assembly.Location}");
+                string errorMessage = $"Trying to look for sub state xml files in the following xml file" + Environment.NewLine +
+                    $"{this}" + Environment.NewLine +
+                    $"And the xml element is " + Environment.NewLine +
+                    $"{stateElement}" + Environment.NewLine +
+                    $"Looking for xml file {xmlFileName}, in the assembly {assemblyName}." + Environment.NewLine +
+                    $"Unable to load assembly '{assemblyName}'. " + Environment.NewLine +
+                    $"Ensure the assembly is either already loaded, or present in the same directory as {assembly.Location}" + Environment.NewLine +
+                    $"Try the following." + Environment.NewLine +
+                    $"Add reference from " + Assembly.GetEntryAssembly()?.Location + Environment.NewLine +
+                    $"to the assembly {assemblyName}" + Environment.NewLine;
+                throw new Exception(errorMessage);
             }
 
             string? subStateXmlFile = GetAssemblyResourceName(subStateAssembly, xmlFileName) ??

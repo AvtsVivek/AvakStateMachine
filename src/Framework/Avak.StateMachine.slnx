@@ -1,6 +1,23 @@
 <Solution>
-  <Project Path="Avak.StateMachine.Core.Tests.SubStateModuleL2One/Avak.StateMachine.Core.Tests.SubStateModuleL2One.csproj" />
-  <Project Path="Avak.StateMachine.Core.Tests.SubStateModuleL2Two/Avak.StateMachine.Core.Tests.SubStateModuleL2Two.csproj" />
+  <Folder Name="/SSM_UT/" />
+  <Folder Name="/SSM_UT/UT20/" />
+  <Folder Name="/SSM_UT/UT20/L2/">
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L2_1/Avak.StateMachine.Core.Tests.SSM_UT20_L2_1.csproj" />
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L2_2/Avak.StateMachine.Core.Tests.SSM_UT20_L2_2.csproj" />
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L2_3/Avak.StateMachine.Core.Tests.SSM_UT20_L2_3.csproj" />
+  </Folder>
+  <Folder Name="/SSM_UT/UT20/L2/L3/">
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L3_1_1/Avak.StateMachine.Core.Tests.SSM_UT20_L3_1_1.csproj" />
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L3_2_1/Avak.StateMachine.Core.Tests.SSM_UT20_L3_2_1.csproj" />
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L3_2_2/Avak.StateMachine.Core.Tests.SSM_UT20_L3_2_2.csproj" />
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_1/Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_1.csproj" />
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_2/Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_2.csproj" />
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_3/Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_3.csproj" />
+  </Folder>
+  <Folder Name="/SSM_UT/UT20/L2/L3/L4/">
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L4_1_1_1/Avak.StateMachine.Core.Tests.SSM_UT20_L4_1_1_1.csproj" />
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L4_2_1_1/Avak.StateMachine.Core.Tests.SSM_UT20_L4_2_1_1.csproj" />
+  </Folder>
   <Project Path="Avak.StateMachine.Core.Tests/Avak.StateMachine.Core.Tests.csproj" />
   <Project Path="Avak.StateMachine.Core/Avak.StateMachine.Core.csproj" />
 </Solution>

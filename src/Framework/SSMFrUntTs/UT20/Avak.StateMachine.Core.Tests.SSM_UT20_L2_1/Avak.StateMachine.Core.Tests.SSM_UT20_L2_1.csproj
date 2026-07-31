@@ -9,11 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="StateManager\SubStateXmlFileL2One.xml" />
+    <EmbeddedResource Include="StateManager\SubStateXmlFileL2_1.xml" />
   </ItemGroup>
-	
+
   <ItemGroup>
-    <ProjectReference Include="..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
+    <ProjectReference Include="..\..\..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
   </ItemGroup>
 
 </Project>
