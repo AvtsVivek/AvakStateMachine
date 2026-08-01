@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<AvakStates Namespace="Avak.StateMachine.Core.Tests.SSM_UT12_L3_1_1.StateManager.States">
+	<Triggers>
+		<Trigger Name="EnterSubStateL3_1_1BbFromSubStateL3_1_1Aa" Source="Event"/>
+		<Trigger Name="EnterSubStateL3_1_1CcFromSubStateL3_1_1Aa" Source="Event"/>
+		<Trigger Name="EnterSubStateL3_1_1BbFromSubStateL3_1_1Cc" Source="Event"/>
+	</Triggers>
+	<!--The following is refereing to L2_2, which already exists under L1. So the system should throw exception-->
+	<States Initial="SubStateL3_1_1Aa" >
+		<State Name="SubStateL3_1_1Aa" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT12_L2_2" SubStateXmlFile="SubStateXmlFileL2_2.xml" >
+			<Transition Trigger="EnterSubStateL3_1_1BbFromSubStateL3_1_1Aa" Target="SubStateL3_1_1Bb"/>
+			<Transition Trigger="EnterSubStateL3_1_1CcFromSubStateL3_1_1Aa" Target="SubStateL3_1_1Cc"/>
+		</State>
+		<State Name="SubStateL3_1_1Bb"></State>
+		<State Name="SubStateL3_1_1Cc">
+			<Transition Trigger="EnterSubStateL3_1_1BbFromSubStateL3_1_1Cc" Target="SubStateL3_1_1Bb"/>
+		</State>
+	</States>
+</AvakStates>

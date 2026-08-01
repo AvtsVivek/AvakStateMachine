@@ -41,7 +41,7 @@ namespace Avak.StateMachine.Core
         internal StateXmlFile(StateXmlFile? parent, IXmlKeys constants,
             StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
             StateDependencyResolver resolver,
-            Assembly assembly, string fileName)
+            Assembly assembly, string xmlFileName)
         {
             ArgumentNullException.ThrowIfNull(constants);
 
@@ -62,17 +62,17 @@ namespace Avak.StateMachine.Core
 
             this.assembly = assembly;
 
-            if (string.IsNullOrWhiteSpace(fileName))
+            if (string.IsNullOrWhiteSpace(xmlFileName))
             {
                 // Log
                 ArgumentNullException argumentNullException = new(paramName: "State xml file name cannot be null. Cannot continue");
                 throw argumentNullException;
             }
 
-            ManifestResourceInfo? manifestResource = assembly.GetManifestResourceInfo(fileName) ??
-                throw new Exception($"Manifest resource {fileName} not found in the assembly {assembly.FullName}");
+            ManifestResourceInfo? manifestResource = assembly.GetManifestResourceInfo(xmlFileName) ??
+                throw new Exception($"Manifest resource {xmlFileName} not found in the assembly {assembly.FullName}");
 
-            this.fileName = fileName;
+            this.fileName = xmlFileName;
             Parent = parent;
             if (Parent == null)
             {
@@ -277,8 +277,7 @@ namespace Avak.StateMachine.Core
                 throw new Exception(errorMessage);
             }
 
-            string? subStateXmlFile = GetAssemblyResourceName(subStateAssembly, xmlFileName) ??
-                throw new Exception($"The file {xmlFileName} is not found in the assembly {subStateAssembly.FullName}");
+            string? subStateXmlFile = GetAssemblyResourceName(subStateAssembly, xmlFileName);
 
             if (subStateXmlFile == null)
             {
@@ -292,6 +291,14 @@ namespace Avak.StateMachine.Core
                     errorMessage += resourceName + Environment.NewLine;
                 }
 
+                throw new Exception(errorMessage);
+            }
+
+            if (SameAssembly(subStateAssembly))
+            {
+                string errorMessage = $"The sub state xml file {subStateXmlFile} is in the same assembly as the parent state xml file {this}. " + Environment.NewLine +
+                    $"This is not allowed. The sub state xml file must be in a different assembly than the parent state xml file." + Environment.NewLine +
+                    $"Ensure the sub state xml file is in a different assembly than the parent state xml file.";
                 throw new Exception(errorMessage);
             }
 
@@ -415,8 +422,29 @@ namespace Avak.StateMachine.Core
             if (obj is not StateXmlFile other)
                 return false;
 
-            return Parent == other.Parent && Level == other.Level &&
+            return
+                Parent == other.Parent && Level == other.Level &&
                 fileName == other.fileName && assembly == other.assembly;
+        }
+
+        internal bool SameAssembly(StateXmlFile other)
+        {
+            return assembly == other.assembly;
+        }
+
+        internal bool SameAssembly(Assembly other)
+        {
+            return assembly == other;
+        }
+
+        internal bool SameAssemblySameFile(StateXmlFile other)
+        {
+            return assembly == other.assembly && fileName == other.fileName;
+        }
+
+        internal bool SameAssemblySameFile(Assembly assembly, string fileName)
+        {
+            return this.assembly == assembly && this.fileName == fileName;
         }
 
         public override int GetHashCode()

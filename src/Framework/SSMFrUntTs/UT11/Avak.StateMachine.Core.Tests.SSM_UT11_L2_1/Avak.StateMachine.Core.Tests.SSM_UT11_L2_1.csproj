@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="StateManager\SubStateXmlFileL2_1.xml" />
+    <EmbeddedResource Include="StateManager\SubStateXmlFileL2_2.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
+  </ItemGroup>
+
+</Project>

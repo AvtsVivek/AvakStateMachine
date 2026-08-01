@@ -7,18 +7,15 @@
 		<Trigger Name="EnterCcFromDd" Source="Event"/>
 	</Triggers>
 	<States Initial="Aa" >
-		<State Name="Aa" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT20_L2_1" SubStateXmlFile="SubStateXmlFileL2_1.xml" >
+		<State Name="Aa" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT11_L2_1" SubStateXmlFile="SubStateXmlFileL2_1.xml" >
 			<Transition Trigger="EnterBbFromAa" Target="Bb"/>
 			<Transition Trigger="EnterCcFromAa" Target="Cc"/>
 		</State>
-		<State Name="Bb" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT20_L2_2" SubStateXmlFile="SubStateXmlFileL2_2.xml" >
+		<State Name="Bb" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT11_L2_1" SubStateXmlFile="SubStateXmlFileL2_2.xml" >
 			<Transition Trigger="EnterDdFromBb" Target="Dd"/>
 		</State>
 		<State Name="Cc">
 			<Transition Trigger="EnterBbFromCc" Target="Bb"/>
-		</State>
-		<State Name="Dd" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT20_L2_3" SubStateXmlFile="SubStateXmlFileL2_3.xml" >
-			<Transition Trigger="EnterCcFromDd" Target="Cc"/>
 		</State>
 	</States>
 </AvakStates>

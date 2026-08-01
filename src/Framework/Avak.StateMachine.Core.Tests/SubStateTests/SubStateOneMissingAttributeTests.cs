@@ -50,7 +50,7 @@ namespace Avak.StateMachine.Core.Tests.SubStateTests
             Assert.AreEqual(message, ex.Message);
 
             // Act
-            List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;
+            // List<MasterStateBase> states = stateMachineManager.GetCurrentStateGraph().StateList;
         }
 
         [TestMethod]

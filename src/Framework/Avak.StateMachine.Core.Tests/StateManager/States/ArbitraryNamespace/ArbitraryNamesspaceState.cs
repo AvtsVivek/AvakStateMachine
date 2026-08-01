@@ -12,7 +12,7 @@ using Avak.StateMachine.Core.States;
 //    }
 //}
 
-namespace AribitratryDefaultNamespace
+namespace Avak.StateMachine.Core.Tests.StateManager.States.ArbitraryNamespace
 {
     internal class Cc : MasterStateBase
     {

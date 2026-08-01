@@ -1,5 +1,6 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.Implimentation;
+using Avak.StateMachine.Core.States;
 using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.SubStateTests
@@ -23,6 +24,8 @@ namespace Avak.StateMachine.Core.Tests.SubStateTests
             StateXmlFileTree.Instance.Clear();
         }
 
+
+        // This test is currently work in progress.
         [TestMethod]
         public void LookForAssemblyAndResource()
         {
@@ -34,6 +37,13 @@ namespace Avak.StateMachine.Core.Tests.SubStateTests
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
             stateMachineManager.PopulateStateXmlFileTree();
+
+            IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
+            // Act
+            List<MasterStateBase> states = stateGraph.StateList;
+
+            // Assert
+            Assert.HasCount(3, states);
         }
     }
 }

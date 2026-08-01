@@ -8,10 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileDuplicateSubStateXmlFile.xml" />
     <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileNoSubStateXmlFileValue.xml" />
     <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileNoSubStateAssembly.xml" />
     <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileNoSubStateAssemblyValue.xml" />
     <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileNoSubStateXmlFile.xml" />
+    <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileTwoXmlFilesInSameAssembly.xml" />
     <EmbeddedResource Include="StateManager\XmlFilesWithSubStates\MasterStateXmlFileWithSubStateXmlFileRefs.xml" />
     <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\ArbitraryNamespace.xml" />
     <EmbeddedResource Include="StateManager\NameSpaceTestsXmlFiles\DifferentNamespaces.xml" />
@@ -33,7 +35,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT11\Avak.StateMachine.Core.Tests.SSM_UT11_L2_1\Avak.StateMachine.Core.Tests.SSM_UT11_L2_1.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT12\Avak.StateMachine.Core.Tests.SSM_UT12_L2_1\Avak.StateMachine.Core.Tests.SSM_UT12_L2_1.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT12\Avak.StateMachine.Core.Tests.SSM_UT12_L2_2\Avak.StateMachine.Core.Tests.SSM_UT12_L2_2.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT12\Avak.StateMachine.Core.Tests.SSM_UT12_L3_1_1\Avak.StateMachine.Core.Tests.SSM_UT12_L3_1_1.csproj" />
     <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L2_1\Avak.StateMachine.Core.Tests.SSM_UT20_L2_1.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L2_2\Avak.StateMachine.Core.Tests.SSM_UT20_L2_2.csproj" />
   </ItemGroup>
 
   <ItemGroup>

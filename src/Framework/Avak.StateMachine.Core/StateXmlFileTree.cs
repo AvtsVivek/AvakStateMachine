@@ -18,6 +18,32 @@
         internal void AddStateXmlFileToTree(StateXmlFile xmlFile)
         {
             ArgumentNullException.ThrowIfNull(xmlFile);
+
+            StateXmlFiles.ForEach(existingXmlFile =>
+            {
+                if (existingXmlFile.SameAssemblySameFile(xmlFile))
+                {
+                    string errorMessage = $"StateXmlFileTree already contains the specified xmlFile: " + Environment.NewLine +
+                    $"{xmlFile}" + Environment.NewLine +
+                    $"Existing xmlFile: " + Environment.NewLine +
+                    $"{existingXmlFile}" + Environment.NewLine +
+                    $"Existing xmlFile Level: {existingXmlFile.Level}, New xmlFile Level: {xmlFile.Level}" + Environment.NewLine +
+                    $"You are trying to add and the same xml file at Level: {xmlFile.Level} which is already added at level: {existingXmlFile.Level}";
+                    throw new Exception(errorMessage);
+                }
+
+                if (existingXmlFile.SameAssembly(xmlFile))
+                {
+                    string errorMessage = $"StateXmlFileTree already contains an xmlFile from the same assembly: " + Environment.NewLine +
+                    $"{xmlFile}" + Environment.NewLine +
+                    $"Existing xmlFile: " + Environment.NewLine +
+                    $"{existingXmlFile}" + Environment.NewLine +
+                    $"Existing xmlFile Level: {existingXmlFile.Level}, New xmlFile Level: {xmlFile.Level}" + Environment.NewLine +
+                    $"You are trying to add xml file at Level: {xmlFile.Level} whose assembly is already added at level: {existingXmlFile.Level}";
+                    throw new Exception(errorMessage);
+                }
+            });
+
             StateXmlFiles.Add(xmlFile);
         }
 
@@ -26,7 +52,7 @@
         /// This is used in the cleanup of the unit tests to ensure that each test starts with a clean state.
         /// The method and the class is internal, meaning it can be accessed within the same assembly but not from outside.
         /// But we have the following in the csproj file to allow the test project to access internal members of this assembly.
-        ///   <ItemGroup>
+        ///  <ItemGroup>
         ///    <InternalsVisibleTo Include = "Avak.StateMachine.Core.Tests" />
         ///  </ItemGroup>
         /// Currently the only purpose of this method is to be used in the unit tests. It is not intended for use in production code.

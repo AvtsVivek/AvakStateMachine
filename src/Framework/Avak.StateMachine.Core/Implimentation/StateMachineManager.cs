@@ -12,9 +12,7 @@ namespace Avak.StateMachine.Core.Implimentation
         private readonly StateDependencyResolver resolver;
         public event EventHandler<StateBase>? StateCreated;
         private StateXmlFile masterStateXmlFile;
-
         private readonly IXmlKeys constants;
-
         public StateBase CurrentState
         {
             get
@@ -24,15 +22,17 @@ namespace Avak.StateMachine.Core.Implimentation
         }
         private StateBase _currentState;
         private readonly Stack<StateBase> StateStack;
-
+        private bool enableLazyLoad; // This needs to be implimented.
         public StateMachineManager(IXmlKeys constants,
             StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
-            StateDependencyResolver resolver)
+            StateDependencyResolver resolver,
+            bool enableLazyLoad = false)
         {
 
             ArgumentNullException.ThrowIfNull(resolver);
 
             this.resolver = resolver;
+            this.enableLazyLoad = enableLazyLoad;
 
             ArgumentNullException.ThrowIfNull(constants);
 
