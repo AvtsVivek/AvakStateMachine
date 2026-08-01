@@ -7,6 +7,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 {
     // Verifies the Transitions are read from the state file and set to the state objs.
     [TestClass]
+    [DoNotParallelize]
     public class BasicTransitionTests
     {
         private string masterStateXmlFile = string.Empty;

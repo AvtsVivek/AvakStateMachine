@@ -7,6 +7,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
 {
     // There must be a Namespace attribute. If not exception is thrown
     [TestClass]
+    [DoNotParallelize]
     public class DefaultAndNoNamepsaceTests
     {
         [TestInitialize]

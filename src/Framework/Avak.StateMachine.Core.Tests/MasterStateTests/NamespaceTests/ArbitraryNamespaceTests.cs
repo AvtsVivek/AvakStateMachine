@@ -35,6 +35,7 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
     /// We do not assert specifically on the namespace because the fact that the state is instanciated proves that the namespaces are correct.
     /// </summary>
     [TestClass]
+    [DoNotParallelize]
     public class ArbitraryNamespaceTests
     {
         private string masterStateXmlFile = string.Empty;

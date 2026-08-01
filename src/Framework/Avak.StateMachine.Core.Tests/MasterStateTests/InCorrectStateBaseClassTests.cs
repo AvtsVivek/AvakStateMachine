@@ -6,6 +6,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
 {
     // Checks for correct namespace and also checks the states are derived from correct state base 
     [TestClass]
+    [DoNotParallelize]
     public class StateClassTests
     {
         [TestInitialize]
