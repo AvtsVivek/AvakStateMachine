@@ -28,7 +28,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
     // So without altering, if the test runs to pass, then all of the three states are located correctly. 
 
     [TestClass]
-    [DoNotParallelize]
     public class DifferntNamespaceTests
     {
         private string masterStateXmlFile = string.Empty;

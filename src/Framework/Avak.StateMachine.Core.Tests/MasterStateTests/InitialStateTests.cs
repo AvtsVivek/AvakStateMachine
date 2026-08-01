@@ -10,7 +10,6 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     /// If initial state is specified for a state, then that state will be taken as the initial.
     /// </summary>
     [TestClass]
-    [DoNotParallelize]
     public class InitialStateTests
     {
         [TestInitialize]
