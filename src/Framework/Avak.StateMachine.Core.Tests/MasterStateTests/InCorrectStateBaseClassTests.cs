@@ -18,6 +18,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         }
 
         [TestMethod]
+        [DoNotParallelize]
         public void NoBaseClass_ThrowsException()
         {
             // Arrange
@@ -39,6 +40,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         }
 
         [TestMethod]
+        [DoNotParallelize]
         public void InCorrectTypeName_ThrowsException()
         {
             // Arrange

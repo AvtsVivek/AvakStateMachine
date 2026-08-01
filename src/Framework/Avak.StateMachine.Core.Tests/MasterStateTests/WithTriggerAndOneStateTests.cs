@@ -6,6 +6,7 @@ using System.Reflection;
 namespace Avak.StateMachine.Core.Tests.MasterStateTests
 {
     [TestClass]
+    [DoNotParallelize]
     public class WithTriggersTagAndOneStateTests
     {
         private string masterStateXmlFile = string.Empty; [TestInitialize]

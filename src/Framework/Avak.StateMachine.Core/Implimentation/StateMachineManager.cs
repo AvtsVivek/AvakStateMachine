@@ -22,17 +22,18 @@ namespace Avak.StateMachine.Core.Implimentation
         }
         private StateBase _currentState;
         private readonly Stack<StateBase> StateStack;
-        private bool enableLazyLoad; // This needs to be implimented.
+        private bool enableLazyInstantiation;
         public StateMachineManager(IXmlKeys constants,
             StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
             StateDependencyResolver resolver,
-            bool enableLazyLoad = false)
+            bool enableLazyInstantiation = false)
         {
 
             ArgumentNullException.ThrowIfNull(resolver);
 
             this.resolver = resolver;
-            this.enableLazyLoad = enableLazyLoad;
+
+            this.enableLazyInstantiation = enableLazyInstantiation;
 
             ArgumentNullException.ThrowIfNull(constants);
 
@@ -61,7 +62,8 @@ namespace Avak.StateMachine.Core.Implimentation
                 this.stateDependencyTypeFinderDelegate,
                 this.resolver,
                 assembly,
-                manifestResourceName);
+                manifestResourceName,
+                this.enableLazyInstantiation);
             masterStateXmlFile.StateCreated += StateFileReader_StateCreated;
             stateFileReader.SetStateFile(masterStateXmlFile);
         }

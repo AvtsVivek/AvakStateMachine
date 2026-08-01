@@ -44,6 +44,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests.NamespaceTests
         }
 
         [TestMethod]
+        [DoNotParallelize]
         public void InCorrectTypeName_ThrowsException()
         {
             // Arrange

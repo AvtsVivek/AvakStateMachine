@@ -53,6 +53,7 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
         }
 
         [TestMethod]
+        [DoNotParallelize]
         public void GetArbitraryStates_Has1Count_InitialSet()
         {
             // Arrange

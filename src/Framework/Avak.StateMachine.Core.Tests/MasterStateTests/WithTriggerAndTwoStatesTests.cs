@@ -26,6 +26,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
         }
 
         [TestMethod]
+        [DoNotParallelize]
         public void GetStates_WithCountTwo_StatesFound()
         {
             // Arrange
