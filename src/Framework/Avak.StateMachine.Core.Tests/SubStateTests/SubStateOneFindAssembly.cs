@@ -9,7 +9,8 @@ namespace Avak.StateMachine.Core.Tests.SubStateTests
     [DoNotParallelize]
     public class SubStateOneFindAssembly
     {
-        private string masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.XmlFilesWithSubStates.MasterStateXmlFileWithSubStateXmlFileRefs.xml";
+        private string masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager" +
+            ".XmlFilesWithSubStates.MasterStateXmlFileWithSubStateXmlFileRefs.xml";
         [TestInitialize]
         public void Setup()
         {
