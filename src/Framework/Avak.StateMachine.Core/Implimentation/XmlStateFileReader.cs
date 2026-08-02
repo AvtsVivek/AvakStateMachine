@@ -24,7 +24,7 @@ namespace Avak.StateMachine.Core.Implimentation
             return true;
         }
 
-        private void AddSubStateXmlFilesFromLevel(int level)
+        private static void AddSubStateXmlFilesFromLevel(int level)
         {
             // Get all of the files at this level.
             List<StateXmlFile> stateXmlFilesAtLevel = StateXmlFileTree.Instance.GetStateXmlFilesAtLevel(level);

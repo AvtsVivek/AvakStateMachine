@@ -5,12 +5,12 @@
 		<Trigger Name="EnterSubStateL2_3CcFromSubStateL2_3Aa" Source="Event"/>
 		<Trigger Name="EnterSubStateL2_3BbFromSubStateL2_3Cc" Source="Event"/>
 	</Triggers>
-	<States Initial="SubStateL2_3Aa" >
-		<State Name="SubStateL2_3Aa" >
+	<States Initial="SubStateL2_3Aa" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_1" SubStateXmlFile="SubStateXmlFileL3_3_1.xml">
+		<State Name="SubStateL2_3Aa" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_2" SubStateXmlFile="SubStateXmlFileL3_3_2.xml">
 			<Transition Trigger="EnterSubStateL2_3BbFromSubStateL2_3Aa" Target="SubStateL2_3Bb"/>
 			<Transition Trigger="EnterSubStateL2_3CcFromSubStateL2_3Aa" Target="SubStateL2_3Cc"/>
 		</State>
-		<State Name="SubStateL2_3Bb"></State>
+		<State Name="SubStateL2_3Bb" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_3" SubStateXmlFile="SubStateXmlFileL3_3_3.xml"></State>
 		<State Name="SubStateL2_3Cc">
 			<Transition Trigger="EnterSubStateL2_3BbFromSubStateL2_3Cc" Target="SubStateL2_3Bb"/>
 		</State>

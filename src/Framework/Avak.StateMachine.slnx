@@ -30,6 +30,9 @@
     <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L4_1_1_1/Avak.StateMachine.Core.Tests.SSM_UT20_L4_1_1_1.csproj" />
     <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L4_2_1_1/Avak.StateMachine.Core.Tests.SSM_UT20_L4_2_1_1.csproj" />
   </Folder>
+  <Folder Name="/SSM_UT/UT20/L2/L3/L4/L5/">
+    <Project Path="SSMFrUntTs/UT20/Avak.StateMachine.Core.Tests.SSM_UT20_L5_1_1_1_1/Avak.StateMachine.Core.Tests.SSM_UT20_L5_1_1_1_1.csproj" />
+  </Folder>
   <Project Path="Avak.StateMachine.Core.Tests/Avak.StateMachine.Core.Tests.csproj" />
   <Project Path="Avak.StateMachine.Core/Avak.StateMachine.Core.csproj" />
 </Solution>

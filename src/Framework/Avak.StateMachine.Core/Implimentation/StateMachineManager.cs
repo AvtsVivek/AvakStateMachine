@@ -13,27 +13,21 @@ namespace Avak.StateMachine.Core.Implimentation
         public event EventHandler<StateBase>? StateCreated;
         private StateXmlFile masterStateXmlFile;
         private readonly IXmlKeys constants;
-        public StateBase CurrentState
-        {
-            get
-            {
-                return _currentState;
-            }
-        }
+        public StateBase CurrentState => _currentState;
         private StateBase _currentState;
         private readonly Stack<StateBase> StateStack;
         private bool enableLazyStateInstantiation;
         public StateMachineManager(IXmlKeys constants,
             StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
             StateDependencyResolver resolver,
-            bool enableLazyInstantiation = true)
+            bool enableLazyStateInstantiation = true)
         {
 
             ArgumentNullException.ThrowIfNull(resolver);
 
             this.resolver = resolver;
 
-            this.enableLazyStateInstantiation = enableLazyInstantiation;
+            this.enableLazyStateInstantiation = enableLazyStateInstantiation;
 
             ArgumentNullException.ThrowIfNull(constants);
 
@@ -157,15 +151,15 @@ namespace Avak.StateMachine.Core.Implimentation
 
         private void SetCurrentState(StateBase state)
         {
-            if (_currentState == state)
+            if (CurrentState == state)
             {
                 return;
             }
 
-            _currentState.InternalExit();
+            CurrentState.InternalExit();
             _currentState = state;
-            _currentState.InternalInit();
-            _currentState.InternalEnter();
+            CurrentState.InternalInit();
+            CurrentState.InternalEnter();
             StateStack.Push(state);
         }
 

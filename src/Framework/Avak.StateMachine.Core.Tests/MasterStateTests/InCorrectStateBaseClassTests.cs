@@ -28,7 +28,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             StateMachineManager stateMachineManager = new(constants,
                 StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation,
-                enableLazyInstantiation: true);
+                enableLazyStateInstantiation: true);
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 

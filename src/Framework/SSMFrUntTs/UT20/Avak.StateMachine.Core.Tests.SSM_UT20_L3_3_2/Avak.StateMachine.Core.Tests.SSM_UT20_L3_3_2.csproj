@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="StateManager\SubStateXmlFileL2One.xml" />
+    <EmbeddedResource Include="StateManager\SubStateXmlFileL3_3_2.xml" />
   </ItemGroup>
 
   <ItemGroup>

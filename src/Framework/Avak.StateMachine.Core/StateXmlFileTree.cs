@@ -4,7 +4,7 @@
     {
         internal const int MasterXmlHierarchyLevel = 1;
 
-        private List<StateXmlFile> StateXmlFiles = [];
+        private readonly List<StateXmlFile> StateXmlFiles = [];
 
         // 1. Lazy<StateXmlFileTree> ensures thread-safe, lazy initialization automatically
         private static readonly Lazy<StateXmlFileTree> _lazyInstance = new(() => new StateXmlFileTree());

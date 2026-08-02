@@ -6,7 +6,7 @@
 		<Trigger Name="EnterSubStateL2_1BbFromSubStateL2_1Cc" Source="Event"/>
 	</Triggers>
 	<States Initial="SubStateL2_1Aa" >
-		<State Name="SubStateL2_1Aa" >
+		<State Name="SubStateL2_1Aa" SubStateAssembly="Avak.StateMachine.Core.Tests.SSM_UT20_L3_1_1" SubStateXmlFile="SubStateXmlFileL3_1_1.xml" >
 			<Transition Trigger="EnterSubStateL2_1BbFromSubStateL2_1Aa" Target="SubStateL2_1Bb"/>
 			<Transition Trigger="EnterSubStateL2_1CcFromSubStateL2_1Aa" Target="SubStateL2_1Cc"/>
 		</State>
