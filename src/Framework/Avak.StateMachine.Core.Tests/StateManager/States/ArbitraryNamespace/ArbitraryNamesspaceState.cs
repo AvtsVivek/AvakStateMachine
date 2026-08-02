@@ -1,16 +1,16 @@
 ﻿using Avak.StateMachine.Core.Contracts;
 using Avak.StateMachine.Core.States;
 
-//namespace Avak.StateMachine.Core.Tests.StateManager.States.ArbitraryNamespace
-//{
-//    internal class Cc : MasterStateBase
-//    {
-//        public override IStateViewModel GetStateViewModel()
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+namespace AribitratryDefaultNamespace
+{
+    internal class Cc : MasterStateBase
+    {
+        public override IStateViewModel GetStateViewModel()
+        {
+            throw new NotImplementedException();
+        }
+    }
+}
 
 namespace Avak.StateMachine.Core.Tests.StateManager.States.ArbitraryNamespace
 {

@@ -41,7 +41,8 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
         [TestInitialize]
         public void Setup()
         {
-            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager.NameSpaceTestsXmlFiles.ArbitraryNamespace.xml";
+            masterStateXmlFile = "Avak.StateMachine.Core.Tests.StateManager" +
+                ".NameSpaceTestsXmlFiles.ArbitraryNamespace.xml";
         }
 
         [TestCleanup]
@@ -52,6 +53,7 @@ Given_[Precondition]_When_[Action]_Then_[ExpectedResult]: A Behavior-Driven Deve
         }
 
         [TestMethod]
+        [DoNotParallelize]
         public void GetArbitraryStates_Has1Count_InitialSet()
         {
             // Arrange

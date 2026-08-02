@@ -41,6 +41,15 @@
     <ProjectReference Include="..\SSMFrUntTs\UT12\Avak.StateMachine.Core.Tests.SSM_UT12_L3_1_1\Avak.StateMachine.Core.Tests.SSM_UT12_L3_1_1.csproj" />
     <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L2_1\Avak.StateMachine.Core.Tests.SSM_UT20_L2_1.csproj" />
     <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L2_2\Avak.StateMachine.Core.Tests.SSM_UT20_L2_2.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L2_3\Avak.StateMachine.Core.Tests.SSM_UT20_L2_3.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L3_1_1\Avak.StateMachine.Core.Tests.SSM_UT20_L3_1_1.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L3_2_1\Avak.StateMachine.Core.Tests.SSM_UT20_L3_2_1.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L3_2_2\Avak.StateMachine.Core.Tests.SSM_UT20_L3_2_2.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_1\Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_1.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_2\Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_2.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_3\Avak.StateMachine.Core.Tests.SSM_UT20_L3_3_3.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L4_1_1_1\Avak.StateMachine.Core.Tests.SSM_UT20_L4_1_1_1.csproj" />
+    <ProjectReference Include="..\SSMFrUntTs\UT20\Avak.StateMachine.Core.Tests.SSM_UT20_L4_2_1_1\Avak.StateMachine.Core.Tests.SSM_UT20_L4_2_1_1.csproj" />
   </ItemGroup>
 
   <ItemGroup>

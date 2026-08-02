@@ -4,10 +4,9 @@ using System.Reflection;
 
 namespace Avak.StateMachine.Core.Tests.MasterStateTests
 {
-    // Checks for correct namespace and also checks the states are derived from correct state base 
     [TestClass]
     [DoNotParallelize]
-    public class StateClassTests
+    public class StateClassTestsWithoutLazyInstantiation
     {
         [TestInitialize]
         public void Setup() { }
@@ -28,7 +27,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             StateMachineManager stateMachineManager = new(constants,
                 StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation,
-                enableLazyInstantiation: true);
+                enableLazyInstantiation: false);
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
@@ -36,7 +35,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             Exception ex = Assert.Throws<Exception>(() => stateMachineManager.GetCurrentStateGraph().StateList);
 
             // Assert
-            string message = "Trying to create state object of type Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass. Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass must inherit MasterStateBase";
+            string message = "Error creating state InCorrectBaseClass in namespace Avak.StateMachine.Core.Tests.StateManager.States\r\nTrying to create state object of type Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass. Avak.StateMachine.Core.Tests.StateManager.States.InCorrectBaseClass must inherit MasterStateBase";
             Assert.AreEqual(message, ex.Message);
         }
 
