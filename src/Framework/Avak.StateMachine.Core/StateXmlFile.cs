@@ -28,7 +28,7 @@ namespace Avak.StateMachine.Core
         private readonly StateDependencyTypeFinder stateDependencyTypeFinderDelegate;
         private readonly StateDependencyResolver resolver;
         private readonly static CurrentAppDomainTypeFinder typeFinder = new();
-        private readonly List<(ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)> stateCtorInfoWithDependenciesList = [];
+        private readonly List<(ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)> stateCtorInfoWithDependencyList = [];
         internal List<StateXmlFile> SubStateXmlFiles => StateXmlFileTree.Instance.GetStateXmlFilesAtLevel(Level + 1);
         public event EventHandler<StateBase>? StateCreated;
         private readonly List<MasterStateBase> _states = [];
@@ -38,14 +38,13 @@ namespace Avak.StateMachine.Core
         private readonly Lazy<XDocument> _xDoc;
         private XDocument XDoc => _xDoc.Value;
 
-        private static bool enableLazyInstantiation;
+        internal static bool enableLazyStateInstantiation;
 
         internal StateXmlFile(StateXmlFile? parent, IXmlKeys constants,
             StateDependencyTypeFinder stateDependencyTypeFinderDelegate,
             StateDependencyResolver resolver,
             Assembly assembly,
-            string xmlFileName,
-            bool enableLazyInstantiation = false)
+            string xmlFileName)
         {
             ArgumentNullException.ThrowIfNull(constants);
 
@@ -88,8 +87,6 @@ namespace Avak.StateMachine.Core
                 Level = parent!.Level + 1;
             }
             _triggers = [];
-
-            StateXmlFile.enableLazyInstantiation = enableLazyInstantiation;
 
             StateXmlFileTree.Instance.AddStateXmlFileToTree(this);
 
@@ -617,13 +614,15 @@ namespace Avak.StateMachine.Core
                     else
                     {
                         (ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)
-                            ctorInfoWithDependencieTypes = (ctorInfo, stateDependencyTypes);
+                            ctorInfoWithDependencyTypes = (ctorInfo, stateDependencyTypes);
 
-                        stateCtorInfoWithDependenciesList.Add(ctorInfoWithDependencieTypes);
-
-                        if (enableLazyInstantiation)
+                        if (enableLazyStateInstantiation)
                         {
-                            CreateStateFromCtorInfoWithDependencies(typeFullName);
+                            stateCtorInfoWithDependencyList.Add(ctorInfoWithDependencyTypes);
+                        }
+                        else
+                        {
+                            CreateStateFromCtorInfoWithDependencies(ctorInfoWithDependencyTypes);
                         }
                     }
                 }
@@ -792,30 +791,31 @@ namespace Avak.StateMachine.Core
                 return stateToBeCreated; // already exits.
             }
 
-            return CreateStateFromCtorInfoWithDependencies(typeFullName);
-        }
+            (ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)? ctorInfoWithDependencyTypes =
+                stateCtorInfoWithDependencyList.FirstOrDefault(ctorTuple => ctorTuple.CtorInfo.DeclaringType!.FullName == typeFullName);
 
-        private MasterStateBase CreateStateFromCtorInfoWithDependencies(string typeFullName)
-        {
-            // Find the ctorInfo object
-            (ConstructorInfo CtorInfo, List<Type?>? DependencieTypes)? ctorInfoWithDependencieTypes =
-                stateCtorInfoWithDependenciesList.FirstOrDefault(ctorTuple => ctorTuple.CtorInfo.DeclaringType!.FullName == typeFullName);
-
-            if (ctorInfoWithDependencieTypes == null || !ctorInfoWithDependencieTypes.HasValue)
+            if (ctorInfoWithDependencyTypes == null || !ctorInfoWithDependencyTypes.HasValue)
             {
                 // Log the error
                 throw new InvalidOperationException($"Class not found for the given type {typeFullName}. Cannot continue.");
             }
 
-            ConstructorInfo ctorInfo = ctorInfoWithDependencieTypes.Value.CtorInfo;
+            return CreateStateFromCtorInfoWithDependencies(ctorInfoWithDependencyTypes.Value);
+        }
 
-            List<Type?>? stateDependencyTypes = ctorInfoWithDependencieTypes.Value.DependencieTypes;
+        private MasterStateBase CreateStateFromCtorInfoWithDependencies((ConstructorInfo CtorInfo, List<Type?>? DependencieTypes) ctorInfoWithDependencieTypes)
+        {
+            ConstructorInfo ctorInfo = ctorInfoWithDependencieTypes.CtorInfo;
+
+            string typeFullName = ctorInfo.DeclaringType!.FullName!;
+
+            List<Type?>? stateDependencyTypes = ctorInfoWithDependencieTypes.DependencieTypes;
 
             // Need to get the objects from the types.
 
             List<object?>? stateDependencyObjects = [];
 
-            foreach (Type? type in ctorInfoWithDependencieTypes.Value.DependencieTypes!)
+            foreach (Type? type in ctorInfoWithDependencieTypes.DependencieTypes!)
             {
                 if (type != null)
                 {
@@ -826,7 +826,7 @@ namespace Avak.StateMachine.Core
                     }
                     catch (Exception exception)
                     {
-                        string message = $"The state {typeFullName} could not be created. " + Environment.NewLine +
+                        string message = $"The state {ctorInfo.DeclaringType!.FullName} could not be created. " + Environment.NewLine +
                             $"It has a dependency of type {type.FullName} that could not be resovled." + Environment.NewLine +
                             $"If you are using any dependency injection container, " + Environment.NewLine +
                             $"ensure the state dependency, along with ITS dependencies are registed with the DI Container" + Environment.NewLine +

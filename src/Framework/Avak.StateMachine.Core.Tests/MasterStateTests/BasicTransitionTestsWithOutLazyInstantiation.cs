@@ -8,7 +8,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
     // Verifies the Transitions are read from the state file and set to the state objs, with lazy instantiation enabled.
     [TestClass]
     [DoNotParallelize]
-    public class BasicTransitionTestsWithLazyInstantiation
+    public class BasicTransitionTestsWithOutLazyInstantiation
     {
         private string masterStateXmlFile = string.Empty;
         [TestInitialize]
@@ -35,7 +35,7 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             StateMachineManager stateMachineManager = new(constants,
                 StateDependencyImplimentation.StateDependencyTypeFinderDefaultImplimentation,
                 StateDependencyImplimentation.StateDependencyResolverDefaultImplimentation,
-                enableLazyInstantiation: true);
+                enableLazyInstantiation: false);
 
             stateMachineManager.SetMasterStateFile(Assembly.GetExecutingAssembly(), masterStateXmlFile);
 
@@ -50,13 +50,13 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             Assert.AreEqual(0, numberOfStateObjectsCreated);
             Assert.AreEqual("", nameOfStateJustCreated);
             IStateGraph stateGraph = stateMachineManager.GetCurrentStateGraph();
-            Assert.AreEqual("Cc", nameOfStateJustCreated);
-            Assert.AreEqual(3, numberOfStateObjectsCreated);
+            Assert.AreEqual("Ff", nameOfStateJustCreated);
+            Assert.AreEqual(6, numberOfStateObjectsCreated);
             // Act
             List<MasterStateBase> states = stateGraph.StateList;
 
             // Assert
-            Assert.HasCount(3, states);
+            Assert.HasCount(6, states);
             List<Transition> zerothStateTransitions = states[0].Transitions;
             Assert.HasCount(2, zerothStateTransitions);
 
@@ -73,16 +73,16 @@ namespace Avak.StateMachine.Core.Tests.MasterStateTests
             Assert.HasCount(1, stateMachineManager.CurrentState.Transitions);
 
             Assert.AreEqual("Cc", stateMachineManager.CurrentState.Name);
-            Assert.AreEqual("Cc", nameOfStateJustCreated);
-            Assert.AreEqual(3, numberOfStateObjectsCreated);
+            Assert.AreEqual("Ff", nameOfStateJustCreated);
+            Assert.AreEqual(6, numberOfStateObjectsCreated);
             List<Transition> secondStateTransitions = states[2].Transitions;
             Assert.HasCount(1, secondStateTransitions);
             Assert.AreEqual(states[1].Name, secondStateTransitions[0].Target.Name);
             success = stateMachineManager.DoTriggeredTriansition(stateMachineManager.CurrentState, stateMachineManager.CurrentState.Transitions[0].Trigger);
             Assert.IsTrue(success);
             Assert.AreEqual("Bb", stateMachineManager.CurrentState.Name);
-            Assert.AreEqual("Dd", nameOfStateJustCreated);
-            Assert.AreEqual(4, numberOfStateObjectsCreated);
+            Assert.AreEqual("Ff", nameOfStateJustCreated);
+            Assert.AreEqual(6, numberOfStateObjectsCreated);
         }
     }
 }
