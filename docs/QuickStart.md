@@ -355,6 +355,7 @@ public class ConditionalCallback : ITransitionCallback
 ## Documentation Links
 
 - **[Framework Reference](Framework.md)**: Complete API documentation
+- **[Samples](Samples.md)**: Overview of available samples
 - **[Recorder Sample](../src/Samples/200500_ConsoleRecorder/README.md)**: Full example with tests
 - **[Basic Requirements](BasicRequirements.md)**: Original specification
 

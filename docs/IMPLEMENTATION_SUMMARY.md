@@ -125,7 +125,10 @@
    - Test coverage table
    - Extension ideas
 
-4. **`docs/BasicRequirements.md`** (existing)
+4. **`docs/Samples.md`**
+   - Catalog of available samples and links to their guides and tests
+
+5. **`docs/BasicRequirements.md`** (existing)
    - Original specification
 
 ## Guarantees Met
