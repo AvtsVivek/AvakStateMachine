@@ -1,3 +1,5 @@
 <Solution>
+  <Project Path="200500_ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder.Tests/Avak.StateMachine.Samples.ConsoleRecorder.Tests.csproj" />
+  <Project Path="200500_ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder.csproj" />
 </Solution>
 

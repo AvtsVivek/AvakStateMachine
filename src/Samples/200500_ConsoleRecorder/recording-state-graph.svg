@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 590" role="img" aria-labelledby="title description">
+  <title id="title">Recorder state graph</title>
+  <desc id="description">The recorder starts stopped. Start or Resume moves it to Recording. Pause moves to Paused, and Resume returns to Recording. Stop from Recording or Paused returns it to Stopped. Invalid triggers are rejected without changing state.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 10 4 L 0 8 z" fill="#334155" />
+    </marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #172033; }
+      .edge { fill: none; stroke: #334155; stroke-width: 2.5; marker-end: url(#arrow); }
+      .rejected { fill: none; stroke: #b45309; stroke-width: 2; stroke-dasharray: 6 5; marker-end: url(#arrow); }
+      .state { fill: #eff6ff; stroke: #2563eb; stroke-width: 2.5; }
+      .state-name { font-size: 20px; font-weight: 600; text-anchor: middle; dominant-baseline: central; }
+      .label { font-size: 16px; font-weight: 600; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+      .rejected-label { font-size: 14px; fill: #92400e; text-anchor: middle; }
+      .initial-label { font-size: 14px; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <text class="initial-label" x="30" y="264">Initial</text>
+  <path class="edge" d="M 40 280 L 74 280" />
+
+  <path class="edge" d="M 206 280 L 413 280" />
+  <text class="label" x="310" y="264">Start, Resume</text>
+
+  <path class="edge" d="M 557 280 L 764 280" />
+  <text class="label" x="660" y="264">Pause</text>
+
+  <path class="edge" d="M 770 240 C 720 137 555 137 510 240" />
+  <text class="label" x="640" y="163">Resume</text>
+
+  <path class="edge" d="M 420 322 C 380 402 270 402 190 322" />
+  <text class="label" x="300" y="390">Stop</text>
+
+  <path class="edge" d="M 770 322 C 690 510 260 510 190 322" />
+  <text class="label" x="485" y="500">Stop</text>
+
+  <path class="rejected" d="M 80 235 C 42 160 188 160 150 235" />
+  <text class="rejected-label" x="115" y="151">Rejected: Pause, Stop</text>
+
+  <path class="rejected" d="M 420 235 C 382 160 528 160 490 235" />
+  <text class="rejected-label" x="455" y="151">Rejected: Start, Resume</text>
+
+  <path class="rejected" d="M 770 235 C 732 160 878 160 840 235" />
+  <text class="rejected-label" x="805" y="151">Rejected: Start, Pause</text>
+
+  <circle class="state" cx="140" cy="280" r="68" />
+  <text class="state-name" x="140" y="280">Stopped</text>
+
+  <circle class="state" cx="485" cy="280" r="72" />
+  <text class="state-name" x="485" y="280">Recording</text>
+
+  <circle class="state" cx="835" cy="280" r="68" />
+  <text class="state-name" x="835" y="280">Paused</text>
+
+  <text x="490" y="565" font-size="14" text-anchor="middle" fill="#475569">Solid arrows: accepted transitions · Dashed loops: rejected triggers leave the state unchanged</text>
+</svg>

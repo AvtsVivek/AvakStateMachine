@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StateMachine initialState="Stopped">
+  <States>
+    <State name="Stopped">
+      <Transitions>
+        <Transition trigger="Start" to="Recording" onLeaving="PrepareRecording" onEntered="OnRecordingStarted" />
+        <Transition trigger="Resume" to="Recording" />
+      </Transitions>
+    </State>
+    <State name="Recording">
+      <Transitions>
+        <Transition trigger="Pause" to="Paused" onLeaving="OnRecordingPaused" />
+        <Transition trigger="Stop" to="Stopped" onLeaving="OnRecordingStopped" />
+      </Transitions>
+    </State>
+    <State name="Paused">
+      <Transitions>
+        <Transition trigger="Resume" to="Recording" onLeaving="OnResumeRecording" onEntering="ValidateResumeState" />
+        <Transition trigger="Stop" to="Stopped" onLeaving="OnRecordingStopped" />
+      </Transitions>
+    </State>
+  </States>
+</StateMachine>

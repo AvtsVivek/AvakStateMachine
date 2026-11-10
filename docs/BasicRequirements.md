@@ -18,4 +18,6 @@
 9. Samples will be added as we go along. Each sample will have unit tests. The samples should help in understanding the framework and its use cases. The solution file will be C:\Trials\AvakStateMachine\src\Samples\Avak.StateMachine.Samples.slnx
 
 10. Documentation will be added to the docs folder
+11. We need to add logging to the framework.
+12. Dependency Injection support should be added.
 
