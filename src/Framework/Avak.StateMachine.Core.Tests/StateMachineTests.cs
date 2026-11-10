@@ -3,9 +3,23 @@ namespace Avak.StateMachine.Core.Tests;
 using Configuration;
 using Extensions;
 
+/// <summary>
+/// Tests runtime transition resolution, extension execution, failure results, and state preservation.
+/// </summary>
+/// <remarks>
+/// Tests use in-memory configurations and local test doubles without devices or external services.
+/// Each method documents its actual assertions rather than implying broader contract coverage.
+/// </remarks>
 [TestClass]
 public class StateMachineTests
 {
+    /// <summary>
+    /// Creates a fresh, unguarded Idle/Running/Paused configuration for an individual test.
+    /// </summary>
+    /// <returns>
+    /// A configuration starting at Idle, with Start to Running, Stop to Idle,
+    /// Pause to Paused, and Resume back to Running.
+    /// </returns>
     private StateMachineConfiguration CreateSimpleConfig()
     {
         return new StateMachineConfiguration
@@ -54,6 +68,13 @@ public class StateMachineTests
         };
     }
 
+    /// <summary>
+    /// Verifies that construction exposes the configured initial state before any trigger is issued.
+    /// </summary>
+    /// <remarks>
+    /// The shared configuration selects Idle; the assertion checks CurrentState immediately
+    /// after creating the machine.
+    /// </remarks>
     [TestMethod]
     public void Constructor_InitializesWithInitialState()
     {
@@ -63,6 +84,13 @@ public class StateMachineTests
         Assert.AreEqual("Idle", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that Start moves Idle to Running and returns matching transition endpoints.
+    /// </summary>
+    /// <remarks>
+    /// Assertions check success, the result's source and target names, and the machine's
+    /// resulting current state.
+    /// </remarks>
     [TestMethod]
     public void Trigger_ValidTransition_ChangesState()
     {
@@ -77,6 +105,13 @@ public class StateMachineTests
         Assert.AreEqual("Running", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that an unknown trigger returns failure without leaving Idle.
+    /// </summary>
+    /// <remarks>
+    /// InvalidTrigger has no configured transition. The result must report a missing
+    /// transition diagnostic and the current state must remain unchanged.
+    /// </remarks>
     [TestMethod]
     public void Trigger_InvalidTransition_FailsAndPreservesState()
     {
@@ -90,6 +125,13 @@ public class StateMachineTests
         Assert.IsTrue(result.ErrorMessage!.Contains("No transition configured"));
     }
 
+    /// <summary>
+    /// Verifies that a trigger configured for another state is rejected in the current state.
+    /// </summary>
+    /// <remarks>
+    /// Start first moves the machine to Running. Resume exists only on Paused,
+    /// so issuing it from Running must fail and preserve Running.
+    /// </remarks>
     [TestMethod]
     public void Trigger_TransitionFromWrongState_FailsAndPreservesState()
     {
@@ -103,6 +145,14 @@ public class StateMachineTests
         Assert.AreEqual("Running", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies source-specific routing and selection of the source-agnostic entry when no source is supplied.
+    /// </summary>
+    /// <remarks>
+    /// Separate machines start at Idle for each case. Resume from UI reaches Running,
+    /// Resume from API reaches Paused, and Resume without a source reaches Running.
+    /// Every case checks success and the resulting state.
+    /// </remarks>
     [TestMethod]
     public void Trigger_SourceAware_ResolvesCorrectTransition()
     {
@@ -146,6 +196,13 @@ public class StateMachineTests
         Assert.AreEqual("Running", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that a registered guard returning false denies Start and preserves Idle.
+    /// </summary>
+    /// <remarks>
+    /// The transition references AlwaysDeny. Assertions check failure, unchanged state,
+    /// a guard diagnostic, and a <see cref="TransitionDeniedException"/> in the result.
+    /// </remarks>
     [TestMethod]
     public void Trigger_GuardDenies_FailsAndPreservesState()
     {
@@ -165,6 +222,13 @@ public class StateMachineTests
         Assert.IsTrue(result.Exception is TransitionDeniedException);
     }
 
+    /// <summary>
+    /// Verifies that a registered permission returning false denies Start and preserves Idle.
+    /// </summary>
+    /// <remarks>
+    /// The transition references AlwaysDeny. Assertions check failure, unchanged state,
+    /// a permission diagnostic, and a <see cref="TransitionDeniedException"/> in the result.
+    /// </remarks>
     [TestMethod]
     public void Trigger_PermissionDenies_FailsAndPreservesState()
     {
@@ -184,6 +248,13 @@ public class StateMachineTests
         Assert.IsTrue(result.Exception is TransitionDeniedException);
     }
 
+    /// <summary>
+    /// Verifies that Start succeeds when its named guard and permission both return true.
+    /// </summary>
+    /// <remarks>
+    /// Both implementations are registered and attached to the transition.
+    /// Assertions check a successful result and the resulting Running state.
+    /// </remarks>
     [TestMethod]
     public void Trigger_GuardAndPermissionAllow_TransitionSucceeds()
     {
@@ -205,6 +276,13 @@ public class StateMachineTests
         Assert.AreEqual("Running", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that Start invokes the callback named by onLeaving.
+    /// </summary>
+    /// <remarks>
+    /// The callback sets a local flag, which is asserted after the trigger returns.
+    /// This test checks invocation only, not ordering or state visibility inside the callback.
+    /// </remarks>
     [TestMethod]
     public void Trigger_OnLeavingCallbackExecutes()
     {
@@ -221,6 +299,13 @@ public class StateMachineTests
         Assert.IsTrue(callbackExecuted);
     }
 
+    /// <summary>
+    /// Verifies that Start invokes the callback named by onEntering.
+    /// </summary>
+    /// <remarks>
+    /// The callback sets a local flag, which is asserted after the trigger returns.
+    /// This test checks invocation only, not ordering or state visibility inside the callback.
+    /// </remarks>
     [TestMethod]
     public void Trigger_OnEnteringCallbackExecutes()
     {
@@ -237,6 +322,13 @@ public class StateMachineTests
         Assert.IsTrue(callbackExecuted);
     }
 
+    /// <summary>
+    /// Verifies that Start invokes the callback named by onEntered.
+    /// </summary>
+    /// <remarks>
+    /// The callback sets a local flag, which is asserted after the trigger returns.
+    /// This test checks invocation only, not ordering or state visibility inside the callback.
+    /// </remarks>
     [TestMethod]
     public void Trigger_OnEnteredCallbackExecutes()
     {
@@ -253,6 +345,14 @@ public class StateMachineTests
         Assert.IsTrue(callbackExecuted);
     }
 
+    /// <summary>
+    /// Verifies that an exception in onLeaving fails Start and leaves the machine at Idle.
+    /// </summary>
+    /// <remarks>
+    /// A callback deliberately throws <see cref="InvalidOperationException"/>.
+    /// Assertions check failure, restored source state, a failure diagnostic,
+    /// and a <see cref="CallbackException"/> in the result.
+    /// </remarks>
     [TestMethod]
     public void Trigger_OnLeavingCallbackThrows_RollsBackAndPreservesState()
     {
@@ -271,6 +371,13 @@ public class StateMachineTests
         Assert.IsTrue(result.Exception is CallbackException);
     }
 
+    /// <summary>
+    /// Verifies that an exception in onEntering fails Start and preserves its source state.
+    /// </summary>
+    /// <remarks>
+    /// The named callback deliberately throws. The test checks a failed result and Idle
+    /// as the final current state; it does not assert exception wrapping or external compensation.
+    /// </remarks>
     [TestMethod]
     public void Trigger_OnEnteringCallbackThrows_RollsBackAndPreservesState()
     {
@@ -287,6 +394,13 @@ public class StateMachineTests
         Assert.AreEqual("Idle", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that an exception in onEntered fails Start and restores Idle.
+    /// </summary>
+    /// <remarks>
+    /// This exercises failure in the post-entry callback. Assertions check the failed
+    /// result and final source state, not reversal of any callback side effects.
+    /// </remarks>
     [TestMethod]
     public void Trigger_OnEnteredCallbackThrows_RollsBackAndPreservesState()
     {
@@ -303,6 +417,15 @@ public class StateMachineTests
         Assert.AreEqual("Idle", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies rejection of a nested Pause request while the outer Start request completes.
+    /// </summary>
+    /// <remarks>
+    /// The onEntering callback checks that the nested result fails with
+    /// <see cref="NestedRequestException"/>. The outer assertions currently expect success
+    /// and Running. This characterizes existing behavior; it does not verify the required
+    /// contract that a nested request must also cause the outer transition to fail.
+    /// </remarks>
     [TestMethod]
     public void Trigger_NestedRequest_RejectedAndPreservesState()
     {
@@ -327,6 +450,13 @@ public class StateMachineTests
         Assert.AreEqual("Running", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that a lifecycle callback receives transition endpoints, trigger name, and caller data.
+    /// </summary>
+    /// <remarks>
+    /// The onEntering callback captures its context during Start. Assertions check
+    /// Idle, Running, Start, and the supplied Key1 value on the captured context.
+    /// </remarks>
     [TestMethod]
     public void Trigger_ContextDataPassedToCallbacks()
     {
