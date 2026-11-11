@@ -12,6 +12,8 @@ reference](docs/Framework.md) for API and configuration details. The original
 
 Browse the [samples overview](docs/Samples.md) for a summary of available examples and links to their guides and tests.
 
+Considering a contribution? See the [contribution guide](docs/CONTRIBUTING.md).
+
 ## Solutions
 
 - Framework and framework tests: `src/Framework/Avak.StateMachine.slnx`
