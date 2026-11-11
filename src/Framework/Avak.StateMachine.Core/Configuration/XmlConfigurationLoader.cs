@@ -18,9 +18,11 @@ public class XmlConfigurationLoader : IConfigurationLoader
     public StateMachineConfiguration LoadFromFile(string filePath)
     {
         if (!File.Exists(filePath))
+        {
             throw new FileNotFoundException($"Configuration file not found: {filePath}");
+        }
 
-        var xml = File.ReadAllText(filePath);
+        string xml = File.ReadAllText(filePath);
         return LoadFromXml(xml);
     }
 
@@ -36,10 +38,8 @@ public class XmlConfigurationLoader : IConfigurationLoader
                 IgnoreComments = true
             };
 
-            using (var reader = XmlReader.Create(new StringReader(xml), settings))
-            {
-                return XDocument.Load(reader);
-            }
+            using var reader = XmlReader.Create(new StringReader(xml), settings);
+            return XDocument.Load(reader);
         }
         catch (XmlException ex)
         {
@@ -52,12 +52,14 @@ public class XmlConfigurationLoader : IConfigurationLoader
         var root = xdoc.Root ?? throw new StateMachineException("Configuration XML has no root element");
 
         if (root.Name.LocalName != "StateMachine")
+        {
             throw new StateMachineException("Root element must be 'StateMachine'");
+        }
 
         var config = new StateMachineConfiguration();
 
         var initialStateAttr = root.Attribute("initialState");
-        config.InitialState = initialStateAttr?.Value 
+        config.InitialState = initialStateAttr?.Value
             ?? throw new StateMachineException("Missing required 'initialState' attribute on StateMachine element");
 
         var statesElement = root.Element("States")
@@ -65,7 +67,7 @@ public class XmlConfigurationLoader : IConfigurationLoader
 
         foreach (var stateElement in statesElement.Elements("State"))
         {
-            var stateName = stateElement.Attribute("name")?.Value
+            string stateName = stateElement.Attribute("name")?.Value
                 ?? throw new StateMachineException("State element missing 'name' attribute");
 
             var stateConfig = new StateConfiguration { Name = stateName };
@@ -76,11 +78,13 @@ public class XmlConfigurationLoader : IConfigurationLoader
                 foreach (var transitionElement in transitionsElement.Elements("Transition"))
                 {
                     var transition = ParseTransition(transitionElement);
-                    var triggerName = transitionElement.Attribute("trigger")?.Value
+                    string triggerName = transitionElement.Attribute("trigger")?.Value
                         ?? throw new StateMachineException($"Transition in state '{stateName}' missing 'trigger' attribute");
 
                     if (!stateConfig.Transitions.ContainsKey(triggerName))
-                        stateConfig.Transitions[triggerName] = new();
+                    {
+                        stateConfig.Transitions[triggerName] = [];
+                    }
 
                     stateConfig.Transitions[triggerName].Add(transition);
                 }
@@ -113,10 +117,14 @@ public class XmlConfigurationLoader : IConfigurationLoader
     private void ValidateConfiguration(StateMachineConfiguration config)
     {
         if (string.IsNullOrWhiteSpace(config.InitialState))
+        {
             throw new StateMachineException("InitialState cannot be empty");
+        }
 
         if (!config.States.ContainsKey(config.InitialState))
+        {
             throw new StateMachineException($"InitialState '{config.InitialState}' not found in States");
+        }
 
         foreach (var state in config.States.Values)
         {
@@ -125,10 +133,14 @@ public class XmlConfigurationLoader : IConfigurationLoader
                 foreach (var transition in transitions)
                 {
                     if (string.IsNullOrWhiteSpace(transition.ToState))
+                    {
                         throw new StateMachineException($"Transition 'to' state cannot be empty in state '{state.Name}'");
+                    }
 
                     if (!config.States.ContainsKey(transition.ToState))
+                    {
                         throw new StateMachineException($"Transition target state '{transition.ToState}' not found");
+                    }
                 }
             }
         }

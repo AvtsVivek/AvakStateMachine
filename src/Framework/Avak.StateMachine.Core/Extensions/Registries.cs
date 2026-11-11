@@ -44,7 +44,7 @@ public interface ICallbackRegistry
 /// </summary>
 public class GuardRegistry : IGuardRegistry
 {
-    private readonly Dictionary<string, IGuard> _guards = new();
+    private readonly Dictionary<string, IGuard> _guards = [];
 
     public void Register(string name, IGuard guard)
     {
@@ -63,7 +63,7 @@ public class GuardRegistry : IGuardRegistry
 /// </summary>
 public class PermissionRegistry : IPermissionRegistry
 {
-    private readonly Dictionary<string, IPermission> _permissions = new();
+    private readonly Dictionary<string, IPermission> _permissions = [];
 
     public void Register(string name, IPermission permission)
     {
@@ -82,7 +82,7 @@ public class PermissionRegistry : IPermissionRegistry
 /// </summary>
 public class CallbackRegistry : ICallbackRegistry
 {
-    private readonly Dictionary<string, ITransitionCallback> _callbacks = new();
+    private readonly Dictionary<string, ITransitionCallback> _callbacks = [];
 
     public void Register(string name, ITransitionCallback callback)
     {

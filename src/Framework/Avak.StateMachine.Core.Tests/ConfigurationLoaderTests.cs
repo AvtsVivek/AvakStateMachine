@@ -25,7 +25,7 @@ public class ConfigurationLoaderTests
     [TestMethod]
     public void LoadFromXml_ValidConfiguration_LoadsSuccessfully()
     {
-        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <StateMachine initialState=""Idle"">
   <States>
     <State name=""Idle"">
@@ -59,7 +59,7 @@ public class ConfigurationLoaderTests
     [TestMethod]
     public void LoadFromXml_NoInitialState_ThrowsException()
     {
-        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <StateMachine>
   <States>
     <State name=""Idle"" />
@@ -87,7 +87,7 @@ public class ConfigurationLoaderTests
     [TestMethod]
     public void LoadFromXml_InvalidInitialState_ThrowsException()
     {
-        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <StateMachine initialState=""NonExistent"">
   <States>
     <State name=""Idle"" />
@@ -115,7 +115,7 @@ public class ConfigurationLoaderTests
     [TestMethod]
     public void LoadFromXml_TransitionToNonExistentState_ThrowsException()
     {
-        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <StateMachine initialState=""Idle"">
   <States>
     <State name=""Idle"">
@@ -147,7 +147,7 @@ public class ConfigurationLoaderTests
     [TestMethod]
     public void LoadFromXml_WithGuardsAndPermissions_ParsedCorrectly()
     {
-        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <StateMachine initialState=""Idle"">
   <States>
     <State name=""Idle"">
@@ -177,7 +177,7 @@ public class ConfigurationLoaderTests
     [TestMethod]
     public void LoadFromXml_WithCallbacks_ParsedCorrectly()
     {
-        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <StateMachine initialState=""Idle"">
   <States>
     <State name=""Idle"">
@@ -207,7 +207,7 @@ public class ConfigurationLoaderTests
     [TestMethod]
     public void LoadFromXml_WithSourceAwareness_ParsedCorrectly()
     {
-        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <StateMachine initialState=""Idle"">
   <States>
     <State name=""Idle"">
@@ -241,7 +241,7 @@ public class ConfigurationLoaderTests
     [TestMethod]
     public void LoadFromXml_DTDProhibited_ThrowsException()
     {
-        var xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
+        string xml = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <!DOCTYPE foo [<!ENTITY xxe SYSTEM ""file:///etc/passwd"">]>
 <StateMachine initialState=""Idle"">
   <States>

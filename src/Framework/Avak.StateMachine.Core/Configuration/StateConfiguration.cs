@@ -10,7 +10,7 @@ public class StateConfiguration
     /// <summary>
     /// Transitions triggered from this state, keyed by trigger name.
     /// </summary>
-    public Dictionary<string, List<TransitionConfiguration>> Transitions { get; set; } = new();
+    public Dictionary<string, List<TransitionConfiguration>> Transitions { get; set; } = [];
 }
 
 /// <summary>
@@ -70,5 +70,5 @@ public class StateMachineConfiguration
     /// <summary>
     /// All states in the machine, keyed by state name.
     /// </summary>
-    public Dictionary<string, StateConfiguration> States { get; set; } = new();
+    public Dictionary<string, StateConfiguration> States { get; set; } = [];
 }

@@ -13,36 +13,23 @@ public class StateMachineException : Exception
 /// <summary>
 /// Thrown when a guard or permission denies a transition.
 /// </summary>
-public class TransitionDeniedException : StateMachineException
+public class TransitionDeniedException(string message, string reason) : StateMachineException(message)
 {
-    public string Reason { get; }
-
-    public TransitionDeniedException(string message, string reason) 
-        : base(message)
-    {
-        Reason = reason;
-    }
+    public string Reason { get; } = reason;
 }
 
 /// <summary>
 /// Thrown when attempting to trigger a state machine from within a callback,
 /// indicating a nested/recursive request.
 /// </summary>
-public class NestedRequestException : StateMachineException
+public class NestedRequestException(string message) : StateMachineException(message)
 {
-    public NestedRequestException(string message) : base(message) { }
 }
 
 /// <summary>
 /// Thrown when a lifecycle callback fails during a transition.
 /// </summary>
-public class CallbackException : StateMachineException
+public class CallbackException(string message, string callbackName, Exception innerException) : StateMachineException(message, innerException)
 {
-    public string CallbackName { get; }
-
-    public CallbackException(string message, string callbackName, Exception innerException) 
-        : base(message, innerException)
-    {
-        CallbackName = callbackName;
-    }
+    public string CallbackName { get; } = callbackName;
 }

@@ -26,7 +26,7 @@ public class StateMachine
     private readonly IGuardRegistry _guardRegistry;
     private readonly IPermissionRegistry _permissionRegistry;
     private readonly ICallbackRegistry _callbackRegistry;
-    
+
     private string _currentState;
     private bool _isProcessing;
 
@@ -42,7 +42,7 @@ public class StateMachine
         _guardRegistry = guardRegistry ?? new GuardRegistry();
         _permissionRegistry = permissionRegistry ?? new PermissionRegistry();
         _callbackRegistry = callbackRegistry ?? new CallbackRegistry();
-        
+
         _currentState = _config.InitialState;
         _isProcessing = false;
     }
@@ -53,10 +53,12 @@ public class StateMachine
     public TransitionResult Trigger(string triggerName, string? source = null, IDictionary<string, object?>? data = null)
     {
         if (_isProcessing)
+        {
             return FailureResult(
                 $"Nested request detected for trigger '{triggerName}' while already processing a transition",
                 new NestedRequestException($"Nested request detected for trigger '{triggerName}'"));
-        
+        }
+
         _isProcessing = true;
         try
         {
@@ -71,13 +73,17 @@ public class StateMachine
     private TransitionResult TriggerInternal(string triggerName, string? source, IDictionary<string, object?>? data)
     {
         var currentStateConfig = _config.States[_currentState];
-        
+
         if (!currentStateConfig.Transitions.TryGetValue(triggerName, out var transitionList))
+        {
             return FailureResult($"No transition configured for trigger '{triggerName}' from state '{_currentState}'", null);
+        }
 
         var transition = ResolveTransition(transitionList, source);
         if (transition == null)
+        {
             return FailureResult($"No matching transition for trigger '{triggerName}' from state '{_currentState}' with source '{source}'", null);
+        }
 
         var context = new TransitionContext
         {
@@ -88,21 +94,25 @@ public class StateMachine
             Data = data ?? new Dictionary<string, object?>()
         };
 
-        if (!EvaluateGuard(transition, context, out var guardError))
+        if (!EvaluateGuard(transition, context, out string? guardError))
+        {
             return FailureResult(guardError!, new TransitionDeniedException(guardError!, "Guard denied transition"));
+        }
 
-        if (!EvaluatePermission(transition, context, out var permissionError))
+        if (!EvaluatePermission(transition, context, out string? permissionError))
+        {
             return FailureResult(permissionError!, new TransitionDeniedException(permissionError!, "Permission denied transition"));
+        }
 
-        var sourceState = _currentState;
+        string sourceState = _currentState;
 
         try
         {
             ExecuteCallback(transition.OnLeavingCallbackName, context);
             ExecuteCallback(transition.OnEnteringCallbackName, context);
-            
+
             _currentState = transition.ToState;
-            
+
             ExecuteCallback(transition.OnEnteredCallbackName, context);
 
             return new TransitionResult
@@ -115,19 +125,23 @@ public class StateMachine
         catch (Exception ex)
         {
             _currentState = sourceState;
-            
+
             if (ex is CallbackException)
+            {
                 return FailureResult(ex.Message, ex);
-            
+            }
+
             return FailureResult($"Transition failed: {ex.Message}", ex);
         }
     }
 
-    private TransitionConfiguration? ResolveTransition(List<TransitionConfiguration> transitions, string? source)
+    private static TransitionConfiguration? ResolveTransition(List<TransitionConfiguration> transitions, string? source)
     {
         var sourceSpecific = transitions.FirstOrDefault(t => t.Source == source);
         if (sourceSpecific != null)
+        {
             return sourceSpecific;
+        }
 
         var anySource = transitions.FirstOrDefault(t => string.IsNullOrEmpty(t.Source));
         return anySource;
@@ -136,13 +150,17 @@ public class StateMachine
     private bool EvaluateGuard(TransitionConfiguration transition, TransitionContext context, out string? error)
     {
         error = null;
-        
+
         if (string.IsNullOrEmpty(transition.GuardName))
+        {
             return true;
+        }
 
         var guard = _guardRegistry.Resolve(transition.GuardName);
         if (guard == null)
+        {
             return true;
+        }
 
         try
         {
@@ -163,13 +181,17 @@ public class StateMachine
     private bool EvaluatePermission(TransitionConfiguration transition, TransitionContext context, out string? error)
     {
         error = null;
-        
+
         if (string.IsNullOrEmpty(transition.PermissionName))
+        {
             return true;
+        }
 
         var permission = _permissionRegistry.Resolve(transition.PermissionName);
         if (permission == null)
+        {
             return true;
+        }
 
         try
         {
@@ -190,11 +212,15 @@ public class StateMachine
     private void ExecuteCallback(string? callbackName, TransitionContext context)
     {
         if (string.IsNullOrEmpty(callbackName))
+        {
             return;
+        }
 
         var callback = _callbackRegistry.Resolve(callbackName);
         if (callback == null)
+        {
             return;
+        }
 
         try
         {

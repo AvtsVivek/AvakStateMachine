@@ -16,3 +16,16 @@ Browse the [samples overview](docs/Samples.md) for a summary of available exampl
 
 - Framework and framework tests: `src/Framework/Avak.StateMachine.slnx`
 - Samples and sample tests: `src/Samples/Avak.StateMachine.Samples.slnx`
+
+## Code style
+
+The root [.editorconfig](.editorconfig) shares formatting and C# style preferences
+across the framework, samples, and tests. It uses four-space C# indentation,
+two-space XML/project-file indentation, UTF-8 encoding, and LF line endings.
+C# style diagnostics are suggestions, not build errors. Markdown trailing spaces
+are preserved for intentional line breaks.
+
+The root [.gitattributes](.gitattributes) also keeps Git-managed text files on LF
+line endings. If Visual Studio prompts to normalize line endings, select Unix
+(LF). Reload externally changed files rather than keeping stale editor contents;
+save any unsaved edits before reloading.

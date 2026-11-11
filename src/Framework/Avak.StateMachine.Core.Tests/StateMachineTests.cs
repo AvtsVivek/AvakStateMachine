@@ -32,10 +32,10 @@ public class StateMachineTests
                     Name = "Idle",
                     Transitions = new()
                     {
-                        ["Start"] = new List<TransitionConfiguration>
-                        {
+                        ["Start"] =
+                        [
                             new() { ToState = "Running" }
-                        }
+                        ]
                     }
                 },
                 ["Running"] = new StateConfiguration
@@ -43,14 +43,14 @@ public class StateMachineTests
                     Name = "Running",
                     Transitions = new()
                     {
-                        ["Stop"] = new List<TransitionConfiguration>
-                        {
+                        ["Stop"] =
+                        [
                             new() { ToState = "Idle" }
-                        },
-                        ["Pause"] = new List<TransitionConfiguration>
-                        {
+                        ],
+                        ["Pause"] =
+                        [
                             new() { ToState = "Paused" }
-                        }
+                        ]
                     }
                 },
                 ["Paused"] = new StateConfiguration
@@ -58,10 +58,10 @@ public class StateMachineTests
                     Name = "Paused",
                     Transitions = new()
                     {
-                        ["Resume"] = new List<TransitionConfiguration>
-                        {
+                        ["Resume"] =
+                        [
                             new() { ToState = "Running" }
-                        }
+                        ]
                     }
                 }
             }
@@ -166,12 +166,12 @@ public class StateMachineTests
                     Name = "Idle",
                     Transitions = new()
                     {
-                        ["Resume"] = new List<TransitionConfiguration>
-                        {
+                        ["Resume"] =
+                        [
                             new() { ToState = "Running", Source = "UI" },
                             new() { ToState = "Paused", Source = "API" },
                             new() { ToState = "Running" }
-                        }
+                        ]
                     }
                 },
                 ["Running"] = new StateConfiguration { Name = "Running" },
@@ -288,7 +288,7 @@ public class StateMachineTests
     {
         var config = CreateSimpleConfig();
         var callbackRegistry = new CallbackRegistry();
-        var callbackExecuted = false;
+        bool callbackExecuted = false;
 
         callbackRegistry.Register("LeaveCallback", new TestCallback(() => callbackExecuted = true));
         config.States["Idle"].Transitions["Start"][0].OnLeavingCallbackName = "LeaveCallback";
@@ -311,7 +311,7 @@ public class StateMachineTests
     {
         var config = CreateSimpleConfig();
         var callbackRegistry = new CallbackRegistry();
-        var callbackExecuted = false;
+        bool callbackExecuted = false;
 
         callbackRegistry.Register("EnterCallback", new TestCallback(() => callbackExecuted = true));
         config.States["Idle"].Transitions["Start"][0].OnEnteringCallbackName = "EnterCallback";
@@ -334,7 +334,7 @@ public class StateMachineTests
     {
         var config = CreateSimpleConfig();
         var callbackRegistry = new CallbackRegistry();
-        var callbackExecuted = false;
+        bool callbackExecuted = false;
 
         callbackRegistry.Register("EnteredCallback", new TestCallback(() => callbackExecuted = true));
         config.States["Idle"].Transitions["Start"][0].OnEnteredCallbackName = "EnteredCallback";
@@ -479,17 +479,17 @@ public class StateMachineTests
         Assert.AreEqual("Value1", capturedContext.Data["Key1"]);
     }
 
-    private class TestGuard : IGuard
+    private class TestGuard(bool allow) : IGuard
     {
-        private readonly bool _allow;
-        public TestGuard(bool allow) => _allow = allow;
+        private readonly bool _allow = allow;
+
         public bool Evaluate(TransitionContext context) => _allow;
     }
 
-    private class TestPermission : IPermission
+    private class TestPermission(bool allow) : IPermission
     {
-        private readonly bool _allow;
-        public TestPermission(bool allow) => _allow = allow;
+        private readonly bool _allow = allow;
+
         public bool IsAllowed(TransitionContext context) => _allow;
     }
 

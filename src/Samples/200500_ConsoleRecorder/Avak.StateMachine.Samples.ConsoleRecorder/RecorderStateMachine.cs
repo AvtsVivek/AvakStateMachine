@@ -36,7 +36,7 @@ public class RecorderStateMachine
 
     private static string GetConfigFilePath()
     {
-        var assemblyPath = AppDomain.CurrentDomain.BaseDirectory;
+        string assemblyPath = AppDomain.CurrentDomain.BaseDirectory;
         return Path.Combine(assemblyPath, "RecorderConfiguration.xml");
     }
 
