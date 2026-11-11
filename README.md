@@ -3,6 +3,9 @@
 A reusable .NET state-machine framework with XML-based configuration, source-aware
 triggers, guards, permissions, and lifecycle callbacks.
 
+## Give a Star! :star:
+If you like or find this project useful for learning, please consider giving it a star. Thanks!
+
 ## Documentation
 
 Start with the [Quick Start](docs/QuickStart.md), or see the [framework
