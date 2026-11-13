@@ -35,12 +35,28 @@ The framework provides three types of extension points, all injected via registr
 - If a permission returns `false`, the transition is denied
 
 #### Lifecycle Callbacks
-- Execute at specific points during a transition:
-  - **OnLeaving**: Before the machine leaves the current state
-  - **OnEntering**: Before the machine enters the target state
-  - **OnEntered**: After the machine has successfully entered the target state
-- If a callback throws an exception, the transition fails and the machine rolls back to the source state
-- Callbacks cannot "catch" a nested request exception to make the outer transition succeed
+Callbacks are named on individual transitions, not attached directly to states.
+They run in this order:
+
+1. **OnLeaving**: work associated with leaving the source state, such as releasing resources.
+2. **OnEntering**: work associated with preparing the target state, such as initializing resources.
+3. The machine changes `CurrentState` to the target state.
+4. **OnEntered**: work associated with having entered the target state, such as notifying observers.
+
+Both `OnLeaving` and `OnEntering` run while the source state is current; they
+separate responsibilities rather than observe different current states.
+`OnEntered` runs while the target state is current, but the transition is
+provisional until the callback returns successfully. There is currently no
+`OnLeft` callback.
+
+If a callback throws, the transition fails and the machine restores its internal
+source state. External side effects from callbacks are not automatically undone;
+avoid irreversible work or provide application-level compensation.
+
+The current implementation rejects a nested request by returning a failed
+result. If the callback ignores that result, the outer transition can still
+succeed. This is a known gap relative to the requirement that a nested request
+must also fail the outer transition.
 
 ### 4. Explicit Failure Handling
 Each transition returns a `TransitionResult` containing:
@@ -191,6 +207,15 @@ Represents a single state and its transitions:
 - `Name`: The state's name
 - `Transitions`: Dictionary of trigger name → list of `TransitionConfiguration` objects
 
+States are represented by names and configuration, not by executable state
+classes. The machine exposes the current state as a string, and behavior is
+supplied by registered guards, permissions, and callbacks. This keeps state
+definitions in XML and does not require a separate class for each state.
+
+The trade-off is that there is no state-level behavior object or callback
+configuration: lifecycle callbacks are named on each transition. Behavior that
+applies to several transitions must therefore be configured for each one.
+
 #### `TransitionConfiguration`
 Represents a single transition rule:
 - `ToState`: Target state (required)
@@ -200,6 +225,17 @@ Represents a single transition rule:
 - `OnLeavingCallbackName`: Callback to execute before leaving (optional)
 - `OnEnteringCallbackName`: Callback to execute before entering (optional)
 - `OnEnteredCallbackName`: Callback to execute after entering (optional)
+
+The XML `trigger` attribute is stored as the key in the containing state's
+`Transitions` dictionary, not as a property of `TransitionConfiguration`. For
+example, a transition with `trigger="Start"` is added to
+`state.Transitions["Start"]`. The machine first looks up that trigger in the
+current state, then selects a transition from the resulting list by source.
+
+Consequently, a `TransitionConfiguration` inspected on its own does not reveal
+its trigger name; inspect its containing dictionary entry to find it. Keeping
+the name only as the key avoids duplicating it in each transition and needing
+to keep the two values consistent.
 
 #### `StateMachine`
 The runtime engine:
@@ -341,12 +377,12 @@ When `machine.Trigger("TriggerName", "SourceValue", data)` is called:
 5. **Permission Evaluation**: If permission exists, invoke it
    - If permission returns `false`, return failure with `TransitionDeniedException`
    - If permission throws, return failure with the exception
-6. **OnLeaving Callback**: If configured, invoke it (with source state still active)
+6. **OnLeaving Callback**: If configured, invoke it (with source state still current)
    - If callback throws, rollback to source state and return failure
-7. **Transition**: Update machine's `CurrentState` to target state
-8. **OnEntering Callback**: If configured, invoke it (with target state now active)
+7. **OnEntering Callback**: If configured, invoke it (with source state still current)
    - If callback throws, rollback to source state and return failure
-9. **OnEntered Callback**: If configured, invoke it
+8. **Transition**: Update machine's `CurrentState` to target state provisionally
+9. **OnEntered Callback**: If configured, invoke it (with target state current)
    - If callback throws, rollback to source state and return failure
 10. **Success**: Return `TransitionResult` with `Success = true`
 

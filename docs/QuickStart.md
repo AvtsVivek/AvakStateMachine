@@ -183,11 +183,12 @@ Console.WriteLine($"Current state: {machine.CurrentState}");
 
 ## Callback Lifecycle
 
-Callbacks are executed in order during a transition:
+Callbacks are configured on transitions and run in this order:
 
-1. **OnLeaving** - Before leaving source state
-2. **OnEntering** - Before entering target state
-3. **OnEntered** - After successfully entering target state
+1. **OnLeaving** - Perform source-state departure work while the source is current.
+2. **OnEntering** - Prepare the target while the source is still current.
+3. The machine changes `CurrentState` to the target.
+4. **OnEntered** - Perform target-entry work while the target is current.
 
 ```xml
 <Transition trigger="Start" to="Running"
@@ -196,7 +197,10 @@ Callbacks are executed in order during a transition:
   onEntered="PostInit" />
 ```
 
-If any callback throws, the transition fails and the machine rolls back to the source state.
+`OnEntered` runs before the transition succeeds. If any callback throws, the
+machine restores its internal source state, but it cannot undo external side
+effects. The framework currently has no `OnLeft` callback. See the
+[framework reference](Framework.md#lifecycle-callbacks) for details.
 
 ## Full Example: Traffic Light
 

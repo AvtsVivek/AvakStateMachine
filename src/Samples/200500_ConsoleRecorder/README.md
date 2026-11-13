@@ -2,14 +2,14 @@
 
 ## Overview
 
-The **Recorder Sample** demonstrates a simple audio recorder state machine using the AvakStateMachine framework. It showcases all key features:
-- XML configuration for state machine definition
-- Source-aware triggers (if extended)
-- Named guards for business logic
-- Lifecycle callbacks for state management
-- Failure handling and validation
+The **Recorder Sample** models a simple recorder lifecycle using XML
+configuration, transition-specific lifecycle callback registrations, and
+invalid-trigger handling. It does not record audio or access a real device.
 
-This sample is minimal but complete—it defines the essential states and transitions for a recorder, making it easy to understand and extend.
+The sample registers placeholder guards and permissions, but its XML does not
+attach them to any transition. It does not currently demonstrate their
+evaluation, or source-aware triggers. Its callback implementations are also
+placeholders.
 
 ## State Diagram
 
@@ -115,7 +115,24 @@ public class RecorderStateMachine
 
 ### Guards and Permissions
 
-Placeholder implementations provided for extension:
+`CheckAudioDeviceAvailable` and `AdminOnly` are registered names for the
+following placeholder implementations. Neither name appears as a `guard` or
+`permission` attribute in the sample XML, so neither is evaluated. Both
+implementations always return `true`: they do not check an audio device or
+authorize an administrator.
+
+To experiment with them, a transition would need to reference the names, for
+example:
+
+```xml
+<Transition trigger="Start" to="Recording"
+  guard="CheckAudioDeviceAvailable" permission="AdminOnly" />
+```
+
+This is an illustrative change, not the current configuration. Even if
+attached, the placeholders would still always allow the transition. The current
+framework also treats an unresolved guard or permission as allowed, so do not
+rely on these placeholders or name resolution as an authorization boundary.
 
 ```csharp
 public class AudioDeviceAvailableGuard : IGuard
@@ -216,9 +233,12 @@ Console.WriteLine($"State: {recorder.Machine.CurrentState}"); // Still "Stopped"
 
 To add actual recording logic:
 
-1. **Update Guards** to check real device state
-2. **Update Permissions** to verify user authorization
-3. **Update Callbacks** to perform actual recording operations
+1. **Update Guards** to check device state and attach their registered names to the appropriate XML transitions.
+2. **Update Permissions** to verify user authorization and attach their registered names to the appropriate XML transitions.
+3. **Update Callbacks** to perform actual recording operations.
+
+The framework's current handling of unresolved permission names must also be
+addressed before relying on these checks for authorization.
 
 Example extension:
 ```csharp
@@ -321,10 +341,10 @@ Passed!  - Failed: 0, Passed: 10, Skipped: 0, Total: 10, Duration: ~100ms
 
 The Recorder Sample demonstrates:
 
-1. **Complete Configuration**: All elements (states, transitions, guards, permissions, callbacks) in one place
-2. **Clean Separation**: Application logic (guards/callbacks) separate from machine definition (XML)
+1. **XML Configuration**: States, transitions, and callback names are defined in XML
+2. **Clean Separation**: Callback implementations are separate from the machine definition
 3. **Explicit Failure Modes**: Invalid transitions are caught cleanly
-4. **Extensibility**: Guards and callbacks are easy to enhance without changing the framework
+4. **Extension Points**: Guard, permission, and callback implementations can be supplied separately
 5. **Testability**: Clear state transitions make testing straightforward
 
 This sample serves as a template for other domain-specific state machines.
