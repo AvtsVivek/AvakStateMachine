@@ -1,8 +1,11 @@
 namespace Avak.StateMachine.Core.Configuration;
 
+using System.Diagnostics;
+
 /// <summary>
 /// Configuration for a single state in the state machine.
 /// </summary>
+[DebuggerDisplay("Name = {Name,nq}, Transitions = {TransitionCount}")]
 public class StateConfiguration
 {
     public string Name { get; set; } = string.Empty;
@@ -11,12 +14,15 @@ public class StateConfiguration
     /// Transitions triggered from this state, keyed by trigger name.
     /// </summary>
     public Dictionary<string, List<TransitionConfiguration>> Transitions { get; set; } = [];
+
+    private int TransitionCount => Transitions.Values.Sum(transitions => transitions.Count);
 }
 
 /// <summary>
 /// Configuration for a state machine transition.
 /// Resolved by: current state, trigger name, and trigger source.
 /// </summary>
+[DebuggerDisplay("{DebuggerDisplay,nq}")]
 public class TransitionConfiguration
 {
     /// <summary>
@@ -55,11 +61,21 @@ public class TransitionConfiguration
     /// Optional callback to invoke when leaving the current state.
     /// </summary>
     public string? OnLeavingCallbackName { get; set; }
+
+    private string DebuggerDisplay =>
+        $"ToState = {ToState}" +
+        (Source is null ? "" : $", Source = {Source}") +
+        (GuardName is null ? "" : $", GuardName = {GuardName}") +
+        (PermissionName is null ? "" : $", PermissionName = {PermissionName}") +
+        (OnLeavingCallbackName is null ? "" : $", OnLeavingCallbackName = {OnLeavingCallbackName}") +
+        (OnEnteringCallbackName is null ? "" : $", OnEnteringCallbackName = {OnEnteringCallbackName}") +
+        (OnEnteredCallbackName is null ? "" : $", OnEnteredCallbackName = {OnEnteredCallbackName}");
 }
 
 /// <summary>
 /// Complete configuration for a state machine, loaded from XML.
 /// </summary>
+[DebuggerDisplay("InitialState = {InitialState,nq}, States = {States.Count}")]
 public class StateMachineConfiguration
 {
     /// <summary>

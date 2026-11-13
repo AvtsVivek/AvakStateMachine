@@ -1,8 +1,11 @@
 namespace Avak.StateMachine.Core.Extensions;
 
+using System.Diagnostics;
+
 /// <summary>
 /// Context passed to guards, permissions, and callbacks.
 /// </summary>
+[DebuggerDisplay("FromState = {FromState,nq}, ToState = {ToState,nq}, TriggerName = {TriggerName,nq}, TriggerSource = {TriggerSource,nq}")]
 public class TransitionContext
 {
     /// <summary>

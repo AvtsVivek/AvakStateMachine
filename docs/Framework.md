@@ -69,6 +69,116 @@ When a transition fails:
 
 ## Architecture
 
+### Core class diagram
+
+The diagram shows the core types and their principal relationships. Names on
+transitions are string references, not direct links to state or extension objects.
+
+```mermaid
+classDiagram
+    class StateMachine {
+        +string CurrentState
+        +Trigger(triggerName, source, data) TransitionResult
+    }
+    class TransitionResult {
+        +bool Success
+        +string ErrorMessage
+        +Exception Exception
+        +string FromState
+        +string ToState
+    }
+    class StateMachineConfiguration {
+        +string InitialState
+        +States
+    }
+    class StateConfiguration {
+        +string Name
+        +Transitions
+    }
+    class TransitionConfiguration {
+        +string ToState
+        +string Source
+        +string GuardName
+        +string PermissionName
+        +string OnLeavingCallbackName
+        +string OnEnteringCallbackName
+        +string OnEnteredCallbackName
+    }
+    class TransitionContext {
+        +string FromState
+        +string ToState
+        +string TriggerName
+        +string TriggerSource
+        +Data
+    }
+    class IConfigurationLoader {
+        <<interface>>
+        +LoadFromXml(xml) StateMachineConfiguration
+        +LoadFromFile(filePath) StateMachineConfiguration
+    }
+    class XmlConfigurationLoader
+    class IGuardRegistry {
+        <<interface>>
+        +Resolve(guardName) IGuard
+    }
+    class IPermissionRegistry {
+        <<interface>>
+        +Resolve(permissionName) IPermission
+    }
+    class ICallbackRegistry {
+        <<interface>>
+        +Resolve(callbackName) ITransitionCallback
+    }
+    class GuardRegistry
+    class PermissionRegistry
+    class CallbackRegistry
+    class IGuard {
+        <<interface>>
+        +Evaluate(context) bool
+    }
+    class IPermission {
+        <<interface>>
+        +IsAllowed(context) bool
+    }
+    class ITransitionCallback {
+        <<interface>>
+        +Execute(context) void
+    }
+    class StateMachineException
+    class TransitionDeniedException
+    class NestedRequestException
+    class CallbackException
+
+    IConfigurationLoader <|.. XmlConfigurationLoader
+    IGuardRegistry <|.. GuardRegistry
+    IPermissionRegistry <|.. PermissionRegistry
+    ICallbackRegistry <|.. CallbackRegistry
+    StateMachineException <|-- TransitionDeniedException
+    StateMachineException <|-- NestedRequestException
+    StateMachineException <|-- CallbackException
+    XmlConfigurationLoader ..> StateMachineConfiguration : loads
+    StateMachine --> StateMachineConfiguration : uses
+    StateMachine --> IGuardRegistry : uses
+    StateMachine --> IPermissionRegistry : uses
+    StateMachine --> ICallbackRegistry : uses
+    StateMachine ..> TransitionContext : creates
+    StateMachine ..> TransitionResult : returns
+    StateMachineConfiguration "1" o-- "0..*" StateConfiguration : states
+    StateConfiguration "1" o-- "0..*" TransitionConfiguration : transitions
+    IGuardRegistry ..> IGuard : resolves
+    IPermissionRegistry ..> IPermission : resolves
+    ICallbackRegistry ..> ITransitionCallback : resolves
+    IGuard ..> TransitionContext : evaluates
+    IPermission ..> TransitionContext : evaluates
+    ITransitionCallback ..> TransitionContext : executes
+    TransitionResult ..> StateMachineException : may contain
+```
+
+In the debugger, the configuration, transition context, result, and machine
+types show their key values. The state configuration's transition count is the
+total number of transitions across all trigger groups. A transition
+configuration displays its target and each optional property that is not null.
+
 ### Core Components
 
 #### `StateMachineConfiguration`

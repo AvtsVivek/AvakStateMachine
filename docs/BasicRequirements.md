@@ -20,4 +20,5 @@
 10. Documentation will be added to the docs folder
 11. We need to add logging to the framework.
 12. Dependency Injection support should be added.
+13. Modules support for large application
 

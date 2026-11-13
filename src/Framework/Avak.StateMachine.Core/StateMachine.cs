@@ -1,11 +1,13 @@
 namespace Avak.StateMachine.Core;
 
+using System.Diagnostics;
 using Configuration;
 using Extensions;
 
 /// <summary>
 /// Transition result indicating success or failure of a state transition.
 /// </summary>
+[DebuggerDisplay("Success = {Success}, FromState = {FromState,nq}, ToState = {ToState,nq}")]
 public class TransitionResult
 {
     public bool Success { get; set; }
@@ -20,6 +22,7 @@ public class TransitionResult
 /// Manages state transitions based on XML configuration, guards, permissions, and callbacks.
 /// Thread-safe is not guaranteed; single-threaded use only in this version.
 /// </summary>
+[DebuggerDisplay("CurrentState = {CurrentState,nq}")]
 public class StateMachine
 {
     private readonly StateMachineConfiguration _config;
