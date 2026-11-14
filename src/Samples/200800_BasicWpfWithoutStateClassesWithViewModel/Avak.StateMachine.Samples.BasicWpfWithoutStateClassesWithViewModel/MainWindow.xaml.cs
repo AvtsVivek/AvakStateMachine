@@ -1,4 +1,4 @@
-namespace Avak.StateMachine.Samples.BasicWpfWithoutStateClasses;
+namespace Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel;
 
 using System.IO;
 using System.Windows;

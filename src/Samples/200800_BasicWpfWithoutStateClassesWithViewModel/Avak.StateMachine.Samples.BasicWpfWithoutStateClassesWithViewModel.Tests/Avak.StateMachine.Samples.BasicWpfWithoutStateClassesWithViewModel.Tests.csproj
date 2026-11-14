@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Avak.StateMachine.Samples.BasicWpfWithoutStateClasses\Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.csproj" />
+    <ProjectReference Include="..\Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel\Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel.csproj" />
   </ItemGroup>
 
   <ItemGroup>

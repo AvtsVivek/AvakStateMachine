@@ -1,7 +1,9 @@
 <Solution>
   <Project Path="200500_ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder.Tests/Avak.StateMachine.Samples.ConsoleRecorder.Tests.csproj" />
   <Project Path="200500_ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder.csproj" />
-  <Project Path="200800_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.csproj" />
-  <Project Path="200800_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests.csproj" />
+  <Project Path="200600_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.csproj" />
+  <Project Path="200600_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests.csproj" />
+  <Project Path="200800_BasicWpfWithoutStateClassesWithViewModel/Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel/Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel.csproj" />
+  <Project Path="200800_BasicWpfWithoutStateClassesWithViewModel/Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel.Tests/Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel.Tests.csproj" />
 </Solution>
 

@@ -1,8 +1,8 @@
-namespace Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests;
+namespace Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel.Tests;
 
 using Avak.StateMachine.Core;
 using Avak.StateMachine.Core.Configuration;
-using Avak.StateMachine.Samples.BasicWpfWithoutStateClasses;
+using Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel;
 
 /// <summary>
 /// Tests WPF sample state interaction without constructing a window or starting an application.
