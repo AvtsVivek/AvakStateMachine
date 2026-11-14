@@ -1,7 +1,7 @@
 <Solution>
   <Project Path="200500_ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder.Tests/Avak.StateMachine.Samples.ConsoleRecorder.Tests.csproj" />
   <Project Path="200500_ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder.csproj" />
-  <Project Path="200800_BasicWpfStateMachineWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses.csproj" />
-  <Project Path="200800_BasicWpfStateMachineWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses.Tests/Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses.Tests.csproj" />
+  <Project Path="200800_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.csproj" />
+  <Project Path="200800_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests.csproj" />
 </Solution>
 

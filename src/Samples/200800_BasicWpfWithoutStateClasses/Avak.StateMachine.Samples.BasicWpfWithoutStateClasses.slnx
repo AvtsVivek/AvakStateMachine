@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests.csproj" />
+  <Project Path="Avak.StateMachine.Samples.BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.csproj" />
+</Solution>
+

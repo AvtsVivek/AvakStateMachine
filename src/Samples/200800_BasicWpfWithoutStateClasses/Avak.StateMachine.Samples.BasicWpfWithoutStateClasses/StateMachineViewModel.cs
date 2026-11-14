@@ -1,4 +1,4 @@
-namespace Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses;
+namespace Avak.StateMachine.Samples.BasicWpfWithoutStateClasses;
 
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

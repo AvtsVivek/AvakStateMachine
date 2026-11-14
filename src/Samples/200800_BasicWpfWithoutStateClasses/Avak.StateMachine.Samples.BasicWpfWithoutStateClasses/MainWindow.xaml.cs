@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows;
 using Avak.StateMachine.Core;
 using Avak.StateMachine.Core.Configuration;
+using Avak.StateMachine.Samples.BasicWpfWithoutStateClasses;
 
 public partial class MainWindow : Window
 {
