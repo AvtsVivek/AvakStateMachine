@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Avak.StateMachine.Core;
 
-public sealed class StateMachineViewModel(StateMachine machine) : INotifyPropertyChanged
+public sealed class MainWindowViewModel(StateMachine machine) : INotifyPropertyChanged
 {
     private string _statusMessage = "Choose Start or Stop to trigger a transition.";
 

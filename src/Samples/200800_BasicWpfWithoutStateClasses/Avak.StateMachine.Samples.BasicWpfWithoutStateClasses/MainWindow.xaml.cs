@@ -8,7 +8,7 @@ using Avak.StateMachine.Samples.BasicWpfWithoutStateClasses;
 
 public partial class MainWindow : Window
 {
-    private readonly StateMachineViewModel _viewModel;
+    private readonly MainWindowViewModel _viewModel;
 
     public MainWindow()
     {
@@ -18,7 +18,7 @@ public partial class MainWindow : Window
         string configurationPath = Path.Combine(AppContext.BaseDirectory, "StateMachineConfiguration.xml");
         var configuration = loader.LoadFromFile(configurationPath);
 
-        _viewModel = new StateMachineViewModel(new StateMachine(configuration));
+        _viewModel = new MainWindowViewModel(new StateMachine(configuration));
         DataContext = _viewModel;
     }
 

@@ -8,7 +8,7 @@ using Avak.StateMachine.Samples.BasicWpfWithoutStateClasses;
 /// Tests WPF sample state interaction without constructing a window or starting an application.
 /// </summary>
 [TestClass]
-public class StateMachineViewModelTests
+public class MainWindowViewModelTests
 {
     [TestMethod]
     public void Start_FromIdle_TransitionsToRunningAndUpdatesBindableProperties()
@@ -24,10 +24,10 @@ public class StateMachineViewModelTests
         Assert.IsFalse(viewModel.CanStart);
         Assert.IsTrue(viewModel.CanStop);
         Assert.AreEqual("Transitioned from Idle to Running.", viewModel.StatusMessage);
-        CollectionAssert.Contains(changedProperties, nameof(StateMachineViewModel.CurrentState));
-        CollectionAssert.Contains(changedProperties, nameof(StateMachineViewModel.CanStart));
-        CollectionAssert.Contains(changedProperties, nameof(StateMachineViewModel.CanStop));
-        CollectionAssert.Contains(changedProperties, nameof(StateMachineViewModel.StatusMessage));
+        CollectionAssert.Contains(changedProperties, nameof(MainWindowViewModel.CurrentState));
+        CollectionAssert.Contains(changedProperties, nameof(MainWindowViewModel.CanStart));
+        CollectionAssert.Contains(changedProperties, nameof(MainWindowViewModel.CanStop));
+        CollectionAssert.Contains(changedProperties, nameof(MainWindowViewModel.StatusMessage));
     }
 
     [TestMethod]
@@ -59,7 +59,7 @@ public class StateMachineViewModelTests
         StringAssert.Contains(viewModel.StatusMessage, "No transition configured");
     }
 
-    private static StateMachineViewModel CreateViewModel()
+    private static MainWindowViewModel CreateViewModel()
     {
         StateMachineConfiguration configuration = new()
         {
@@ -85,6 +85,6 @@ public class StateMachineViewModelTests
             }
         };
 
-        return new StateMachineViewModel(new StateMachine(configuration));
+        return new MainWindowViewModel(new StateMachine(configuration));
     }
 }
