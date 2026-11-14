@@ -1,4 +1,4 @@
-namespace Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses.Tests;
+namespace Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests;
 
 using Avak.StateMachine.Core;
 using Avak.StateMachine.Core.Configuration;

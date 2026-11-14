@@ -19,7 +19,7 @@ The sample has no guards or permissions and does not use real services.
 From the repository root on Windows with the .NET Windows Desktop runtime:
 
 ```shell
-dotnet run --project src/Samples/200800_BasicWpfStateMachineWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses.csproj
+dotnet run --project src/Samples/200800_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.csproj
 ```
 
 The initial state is `Idle`. **Start** transitions to `Running`; **Stop**
