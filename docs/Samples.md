@@ -18,15 +18,15 @@ and preserving state when a trigger is invalid.
 
 ## Basic WPF State Machine Without State Classes
 
-**Location:** `src/Samples/200800_BasicWpfStateMachineWithoutStateClasses/`
+**Location:** `src/Samples/200800_BasicWpfWithoutStateClasses/`
 
 A Windows WPF UI showing `Idle` and `Running` states without defining a C# class
 for each state. It demonstrates XML configuration, UI-sourced triggers, and
 state-dependent button bindings.
 
-- [Sample guide](../src/Samples/200800_BasicWpfStateMachineWithoutStateClasses/README.md)
-- [WPF application](../src/Samples/200800_BasicWpfStateMachineWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses/)
-- [Unit tests](../src/Samples/200800_BasicWpfStateMachineWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfStateMachineWithoutStateClasses.Tests/)
+- [Sample guide](../src/Samples/200800_BasicWpfWithoutStateClasses/README.md)
+- [WPF application](../src/Samples/200800_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses/)
+- [Unit tests](../src/Samples/200800_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests/)
 
 ## Adding a sample
 
