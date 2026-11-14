@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StateMachine initialState="Idle">
+  <States>
+    <State name="Idle">
+      <Transitions>
+        <Transition trigger="Start" source="UI" to="Running" />
+      </Transitions>
+    </State>
+    <State name="Running">
+      <Transitions>
+        <Transition trigger="Stop" source="UI" to="Idle" />
+      </Transitions>
+    </State>
+  </States>
+</StateMachine>
