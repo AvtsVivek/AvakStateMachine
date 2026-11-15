@@ -231,6 +231,53 @@ public class ConfigurationLoaderTests
         Assert.IsNull(transitions[2].Source);
     }
 
+    [TestMethod]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'/><State name='Idle'/></States></StateMachine>", "Duplicate state")]
+    [DataRow("<StateMachine initialState='Idle' typo='x'><States><State name='Idle'/></States></StateMachine>", "typo")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' gaurd='x'/></Transitions></State></States></StateMachine>", "gaurd")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'/><Unexpected/></States></StateMachine>", "Unexpected content")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'/></States><States/></StateMachine>", "Multiple 'States'")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions/><Transitions/></State></States></StateMachine>", "Multiple 'Transitions'")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'>unexpected</State></States></StateMachine>", "Unexpected content")]
+    [DataRow("<StateMachine xmlns='urn:test' initialState='Idle'><States><State name='Idle'/></States></StateMachine>", "Root element")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name=' '/><State name='Idle'/></States></StateMachine>", "State name")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger=' ' to='Idle'/></Transitions></State></States></StateMachine>", "trigger")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' guard=''/></Transitions></State></States></StateMachine>", "guard")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' permission=' '/></Transitions></State></States></StateMachine>", "permission")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' onEntered=''/></Transitions></State></States></StateMachine>", "onEntered")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' source=' '/></Transitions></State></States></StateMachine>", "source")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' source='UI'/><Transition trigger='Start' to='Idle' source='UI'/></Transitions></State></States></StateMachine>", "Duplicate transition")]
+    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle'/><Transition trigger='Start' to='Idle' source=''/></Transitions></State></States></StateMachine>", "Duplicate transition")]
+    public void LoadFromXml_InvalidStructureOrAmbiguousDefinitions_Throws(string xml, string diagnostic)
+    {
+        var exception = Assert.ThrowsExactly<StateMachineException>(() => _loader.LoadFromXml(xml));
+
+        StringAssert.Contains(exception.Message, diagnostic);
+    }
+
+    [TestMethod]
+    public void LoadFromXml_EmptySource_RemainsSourceAgnostic()
+    {
+        string xml = """
+            <StateMachine initialState="Idle">
+              <States>
+                <State name="Idle">
+                  <Transitions>
+                    <Transition trigger="Start" source="" to="Running" />
+                  </Transitions>
+                </State>
+                <State name="Running" />
+              </States>
+            </StateMachine>
+            """;
+
+        var machine = new StateMachine(_loader.LoadFromXml(xml));
+        var result = machine.Trigger("Start", "UI");
+
+        Assert.IsTrue(result.Success);
+        Assert.AreEqual("Running", machine.CurrentState);
+    }
+
     /// <summary>
     /// Verifies that XML containing a DTD declaration is rejected.
     /// </summary>

@@ -67,10 +67,12 @@ If a callback throws, the transition fails and the machine restores its internal
 source state. External side effects from callbacks are not automatically undone;
 avoid irreversible work or provide application-level compensation.
 
-The current implementation rejects a nested request by returning a failed
-result. If the callback ignores that result, the outer transition can still
-succeed. This is a known gap relative to the requirement that a nested request
-must also fail the outer transition.
+A request made while the same machine is processing another request is rejected
+with a failed result containing `NestedRequestException`. The outer transition
+also fails and restores its source state even if the nested result is ignored or
+its exception is caught. This applies to guards, permissions, and callbacks.
+No later transition stages run after the nested attempt is detected. If a
+callback itself throws, its failure is reported as a `CallbackException`.
 
 ### 4. Explicit Failure Handling
 Each transition returns a `TransitionResult` containing:
@@ -94,7 +96,7 @@ When a transition fails:
 
 ### 6. Single-Threaded, Synchronous Design
 - The framework is designed for single-threaded, synchronous use
-- Nested requests (triggers fired from within callbacks) are rejected
+- Nested requests (triggers fired while another request is processing) are rejected
 - No concurrency guarantees in this version
 
 ## Architecture
@@ -369,17 +371,22 @@ Default implementations (`GuardRegistry`, `PermissionRegistry`, `CallbackRegistr
 
 ### Validation Rules
 
-1. `initialState` must reference an existing state
-2. Every `Transition.to` must reference an existing state
-3. No duplicate state names
-4. No duplicate transitions (same state, trigger, source combination)
-5. DTDs are prohibited
+1. `initialState` must be nonblank and reference an existing state.
+2. State names, trigger names, and target state names must be nonblank; each
+   target must reference an existing state.
+3. State names must be unique. For each state and trigger, each source may
+   occur only once. An omitted or empty source represents the same
+   source-agnostic transition.
+4. Configured guard, permission, and callback names must be nonblank.
+5. Unknown elements, attributes, non-whitespace text, duplicate `States` or
+   `Transitions` containers, and XML namespaces are rejected.
+6. DTDs and external entity resolution are prohibited.
 
 ## Transition Execution Flow
 
 When `machine.Trigger("TriggerName", "SourceValue", data)` is called:
 
-1. **Nested Request Check**: If the machine is already processing a transition, return failure with `NestedRequestException`
+1. **Nested Request Check**: If the machine is already processing a transition, return failure with `NestedRequestException`; the outer request also fails and restores its source state
 2. **Trigger Resolution**: Look up transitions in `CurrentState` for matching trigger name
 3. **Transition Selection**: 
    - Prefer source-specific transitions if a matching source exists

@@ -487,36 +487,113 @@ public class StateMachineTests
     }
 
     /// <summary>
-    /// Verifies rejection of a nested Pause request while the outer Start request completes.
+    /// Verifies that an ignored nested request aborts the outer transition at every extension stage.
     /// </summary>
-    /// <remarks>
-    /// The onEntering callback checks that the nested result fails with
-    /// <see cref="NestedRequestException"/>. The outer assertions currently expect success
-    /// and Running. This characterizes existing behavior; it does not verify the required
-    /// contract that a nested request must also cause the outer transition to fail.
-    /// </remarks>
     [TestMethod]
-    public void Trigger_NestedRequest_RejectedAndPreservesState()
+    [DataRow("guard")]
+    [DataRow("permission")]
+    [DataRow("leaving")]
+    [DataRow("entering")]
+    [DataRow("entered")]
+    public void Trigger_NestedRequest_AbortsOuterTransition(string stage)
     {
         var config = CreateSimpleConfig();
+        var transition = config.States["Idle"].Transitions["Start"][0];
+        var guardRegistry = new GuardRegistry();
+        var permissionRegistry = new PermissionRegistry();
         var callbackRegistry = new CallbackRegistry();
-        var machine = new StateMachine(config, callbackRegistry: callbackRegistry);
-
-        TestCallback? nestedCallback = null;
-        nestedCallback = new TestCallback(() =>
+        StateMachine? machine = null;
+        TransitionResult? nestedResult = null;
+        bool attemptNested = true;
+        var executed = new List<string>();
+        void Visit(string currentStage)
         {
-            var result = machine.Trigger("Pause");
-            Assert.IsFalse(result.Success);
-            Assert.IsTrue(result.Exception is NestedRequestException);
-        });
+            executed.Add(currentStage);
+            if (attemptNested && currentStage == stage)
+            {
+                nestedResult = machine!.Trigger("Pause");
+            }
+        }
 
-        callbackRegistry.Register("NestedCallback", nestedCallback);
-        config.States["Idle"].Transitions["Start"][0].OnEnteringCallbackName = "NestedCallback";
+        guardRegistry.Register("Guard", new DelegateGuard(() => { Visit("guard"); return true; }));
+        permissionRegistry.Register("Permission", new DelegatePermission(() => { Visit("permission"); return true; }));
+        callbackRegistry.Register("Leaving", new TestCallback(() => Visit("leaving")));
+        callbackRegistry.Register("Entering", new TestCallback(() => Visit("entering")));
+        callbackRegistry.Register("Entered", new TestCallback(() => Visit("entered")));
+        transition.GuardName = "Guard";
+        transition.PermissionName = "Permission";
+        transition.OnLeavingCallbackName = "Leaving";
+        transition.OnEnteringCallbackName = "Entering";
+        transition.OnEnteredCallbackName = "Entered";
+        machine = new StateMachine(config, guardRegistry, permissionRegistry, callbackRegistry);
 
         var result = machine.Trigger("Start");
 
+        Assert.IsNotNull(nestedResult);
+        Assert.IsFalse(nestedResult.Success);
+        Assert.IsInstanceOfType<NestedRequestException>(nestedResult.Exception);
+        Assert.IsFalse(result.Success);
+        Assert.IsInstanceOfType<NestedRequestException>(result.Exception);
+        Assert.AreEqual("Idle", result.FromState);
+        Assert.AreEqual("Idle", result.ToState);
+        Assert.AreEqual("Idle", machine.CurrentState);
+        CollectionAssert.AreEqual(
+            new[] { "guard", "permission", "leaving", "entering", "entered" }.Take(executed.Count).ToArray(),
+            executed);
+        Assert.AreEqual(stage, executed[^1]);
+
+        attemptNested = false;
+        result = machine.Trigger("Start");
         Assert.IsTrue(result.Success);
         Assert.AreEqual("Running", machine.CurrentState);
+    }
+
+    [TestMethod]
+    public void Trigger_NestedRequestCaughtByCallback_StillFails()
+    {
+        var config = CreateSimpleConfig();
+        var callbacks = new CallbackRegistry();
+        StateMachine? machine = null;
+        callbacks.Register("Nested", new TestCallback(() =>
+        {
+            try
+            {
+                throw machine!.Trigger("Pause").Exception!;
+            }
+            catch (NestedRequestException)
+            {
+            }
+        }));
+        config.States["Idle"].Transitions["Start"][0].OnEnteredCallbackName = "Nested";
+        machine = new StateMachine(config, callbackRegistry: callbacks);
+
+        var result = machine.Trigger("Start");
+
+        Assert.IsFalse(result.Success);
+        Assert.IsInstanceOfType<NestedRequestException>(result.Exception);
+        Assert.AreEqual("Idle", machine.CurrentState);
+    }
+
+    [TestMethod]
+    public void Trigger_CallbackThrowsAfterNestedRequest_ReportsCallbackFailure()
+    {
+        var config = CreateSimpleConfig();
+        var callbacks = new CallbackRegistry();
+        StateMachine? machine = null;
+        callbacks.Register("Nested", new TestCallback(() =>
+        {
+            machine!.Trigger("Pause");
+            throw new InvalidOperationException("Callback failed");
+        }));
+        config.States["Idle"].Transitions["Start"][0].OnEnteredCallbackName = "Nested";
+        machine = new StateMachine(config, callbackRegistry: callbacks);
+
+        var result = machine.Trigger("Start");
+
+        Assert.IsFalse(result.Success);
+        Assert.IsInstanceOfType<CallbackException>(result.Exception);
+        Assert.IsInstanceOfType<InvalidOperationException>(result.Exception.InnerException);
+        Assert.AreEqual("Idle", machine.CurrentState);
     }
 
     /// <summary>
@@ -560,6 +637,16 @@ public class StateMachineTests
         private readonly bool _allow = allow;
 
         public bool IsAllowed(TransitionContext context) => _allow;
+    }
+
+    private class DelegateGuard(Func<bool> evaluate) : IGuard
+    {
+        public bool Evaluate(TransitionContext context) => evaluate();
+    }
+
+    private class DelegatePermission(Func<bool> evaluate) : IPermission
+    {
+        public bool IsAllowed(TransitionContext context) => evaluate();
     }
 
     private class TestCallback : ITransitionCallback

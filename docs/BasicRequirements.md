@@ -11,7 +11,7 @@
 8. Regarding Rollback, the following points needs to kept in mind.
 
 •	A denied guard or permission leaves the machine in the source state and runs no lifecycle callbacks.
-•	A nested request is rejected and does not change the outer transition’s state.
+•	A nested request is rejected and causes the outer transition to fail and restore its source state.
 •	If a lifecycle callback throws, the transition fails and the machine restores its source state.
 •	Any external side effects already performed by callbacks are not automatically undone. Callbacks should avoid irreversible work, or applications must provide explicit compensation if needed.
 

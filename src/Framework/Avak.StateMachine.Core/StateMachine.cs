@@ -33,6 +33,7 @@ public class StateMachine
 
     private string _currentState;
     private bool _isProcessing;
+    private NestedRequestException? _nestedRequest;
 
     public string CurrentState => _currentState;
 
@@ -128,18 +129,26 @@ public class StateMachine
     {
         if (_isProcessing)
         {
+            _nestedRequest ??= new NestedRequestException($"Nested request detected for trigger '{triggerName}'");
             return FailureResult(
                 $"Nested request detected for trigger '{triggerName}' while already processing a transition",
-                new NestedRequestException($"Nested request detected for trigger '{triggerName}'"));
+                _nestedRequest);
         }
 
+        string sourceState = _currentState;
         _isProcessing = true;
         try
         {
             return TriggerInternal(triggerName, source, data);
         }
+        catch (NestedRequestException ex)
+        {
+            _currentState = sourceState;
+            return FailureResult(ex.Message, ex);
+        }
         finally
         {
+            _nestedRequest = null;
             _isProcessing = false;
         }
     }
@@ -169,12 +178,14 @@ public class StateMachine
         };
 
         var guardException = EvaluateGuard(transition, context);
+        ThrowIfNestedRequest();
         if (guardException is not null)
         {
             return FailureResult(guardException.Message, guardException);
         }
 
         var permissionException = EvaluatePermission(transition, context);
+        ThrowIfNestedRequest();
         if (permissionException is not null)
         {
             return FailureResult(permissionException.Message, permissionException);
@@ -185,11 +196,14 @@ public class StateMachine
         try
         {
             ExecuteCallback(transition.OnLeavingCallbackName, context);
+            ThrowIfNestedRequest();
             ExecuteCallback(transition.OnEnteringCallbackName, context);
+            ThrowIfNestedRequest();
 
             _currentState = transition.ToState;
 
             ExecuteCallback(transition.OnEnteredCallbackName, context);
+            ThrowIfNestedRequest();
 
             return new TransitionResult
             {
@@ -201,6 +215,11 @@ public class StateMachine
         catch (Exception ex)
         {
             _currentState = sourceState;
+
+            if (ex is NestedRequestException)
+            {
+                return FailureResult(ex.Message, ex);
+            }
 
             if (ex is CallbackException)
             {
@@ -231,6 +250,7 @@ public class StateMachine
         }
 
         var guard = _guardRegistry.Resolve(transition.GuardName);
+        ThrowIfNestedRequest();
         if (guard is null)
         {
             return CreateUnresolvedExtensionException("guard", transition.GuardName, context);
@@ -260,6 +280,7 @@ public class StateMachine
         }
 
         var permission = _permissionRegistry.Resolve(transition.PermissionName);
+        ThrowIfNestedRequest();
         if (permission is null)
         {
             return CreateUnresolvedExtensionException("permission", transition.PermissionName, context);
@@ -288,8 +309,12 @@ public class StateMachine
             return;
         }
 
-        var callback = _callbackRegistry.Resolve(callbackName)
-            ?? throw CreateUnresolvedExtensionException("callback", callbackName, context);
+        var callback = _callbackRegistry.Resolve(callbackName);
+        ThrowIfNestedRequest();
+        if (callback is null)
+        {
+            throw CreateUnresolvedExtensionException("callback", callbackName, context);
+        }
 
         try
         {
@@ -298,6 +323,14 @@ public class StateMachine
         catch (Exception ex)
         {
             throw new CallbackException($"Callback '{callbackName}' failed", callbackName, ex);
+        }
+    }
+
+    private void ThrowIfNestedRequest()
+    {
+        if (_nestedRequest is not null)
+        {
+            throw _nestedRequest;
         }
     }
 

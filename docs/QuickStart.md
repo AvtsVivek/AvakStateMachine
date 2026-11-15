@@ -340,6 +340,8 @@ public class ConditionalCallback : ITransitionCallback
 - Check XML syntax (must be valid XML)
 - Verify `initialState` references an existing state
 - All transition `to` attributes must reference existing states
+- Remove unknown attributes/elements and duplicate states or transitions with
+  the same state, trigger, and source
 - Verify every configured guard, permission, and callback name is registered
   before constructing the `StateMachine`. An unresolved name throws
   `UnresolvedExtensionException` during construction.

@@ -156,7 +156,7 @@
 - Guard denial → immediate failure, state unchanged
 - Permission denial → immediate failure, state unchanged
 - Callback exception → rollback to source state
-- Nested request → immediate rejection with `NestedRequestException`
+- Nested request → rejection with `NestedRequestException`; the outer transition also fails and restores its source state
 - `TransitionResult` provides explicit error information
 
 ### Requirement 5: Synchronous, Flat, Single-Threaded
