@@ -340,16 +340,26 @@ public class ConditionalCallback : ITransitionCallback
 - Check XML syntax (must be valid XML)
 - Verify `initialState` references an existing state
 - All transition `to` attributes must reference existing states
+- Verify every configured guard, permission, and callback name is registered
+  before constructing the `StateMachine`. An unresolved name throws
+  `UnresolvedExtensionException` during construction.
 
 ### Guard Not Working
 - Verify guard name in XML matches registration name
+- Register the guard before constructing the machine
 - Check that `IGuard.Evaluate()` returns `false` (not throws exception)
 - Guard returns `false` = transition denied
+
+### Permission Not Working
+- Verify permission name in XML matches registration name
+- Register the permission before constructing the machine
+- A missing permission is an error, not an implicit allow
 
 ### Callback Not Executing
 - Verify callback name in XML matches registration name
 - Check callback is registered before creating the machine
 - Remember: if any callback throws, entire transition fails
+- A missing callback is an error, not a no-op
 
 ### State Didn't Change
 - Check `TransitionResult.Success` - transition may have failed

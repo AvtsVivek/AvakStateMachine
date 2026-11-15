@@ -11,6 +11,24 @@ public class StateMachineException : Exception
 }
 
 /// <summary>
+/// Thrown when a configured guard, permission, or callback name cannot be resolved.
+/// </summary>
+public class UnresolvedExtensionException(
+    string extensionType,
+    string extensionName,
+    string stateName,
+    string triggerName)
+    : StateMachineException(
+        $"Configured {extensionType} '{extensionName}' could not be resolved for transition " +
+        $"from state '{stateName}' with trigger '{triggerName}'")
+{
+    public string ExtensionType { get; } = extensionType;
+    public string ExtensionName { get; } = extensionName;
+    public string StateName { get; } = stateName;
+    public string TriggerName { get; } = triggerName;
+}
+
+/// <summary>
 /// Thrown when a guard or permission denies a transition.
 /// </summary>
 public class TransitionDeniedException(string message, string reason) : StateMachineException(message)

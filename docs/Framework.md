@@ -34,6 +34,20 @@ The framework provides three types of extension points, all injected via registr
 - Similar to guards but semantically represent "does the caller have permission?"
 - If a permission returns `false`, the transition is denied
 
+#### Resolving configured names
+Guard, permission, and callback names are optional, but every non-null name in the
+configuration must resolve through its corresponding registry when the
+`StateMachine` is constructed. Register implementations before construction.
+An unresolved name throws `UnresolvedExtensionException` with the extension
+type, name, state, and trigger; a present but blank name is invalid. If no
+registry is supplied, the framework uses an empty registry, so construction
+succeeds only when the configuration does not reference names in that registry.
+
+Registries are consulted again when a transition runs. If a custom registry
+later stops resolving a previously registered name, the transition fails
+explicitly; missing guards and permissions never allow a transition, and
+missing callbacks are never silently skipped.
+
 #### Lifecycle Callbacks
 Callbacks are named on individual transitions, not attached directly to states.
 They run in this order:

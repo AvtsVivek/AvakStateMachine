@@ -9,7 +9,7 @@ public interface IGuardRegistry
     /// <summary>
     /// Resolves a guard by name.
     /// </summary>
-    /// <returns>The guard implementation, or null if not found (treat as allow).</returns>
+    /// <returns>The guard implementation, or null if not found. A configured name that resolves to null is an error.</returns>
     IGuard? Resolve(string guardName);
 }
 
@@ -22,7 +22,7 @@ public interface IPermissionRegistry
     /// <summary>
     /// Resolves a permission by name.
     /// </summary>
-    /// <returns>The permission implementation, or null if not found (treat as allow).</returns>
+    /// <returns>The permission implementation, or null if not found. A configured name that resolves to null is an error.</returns>
     IPermission? Resolve(string permissionName);
 }
 
@@ -35,7 +35,7 @@ public interface ICallbackRegistry
     /// <summary>
     /// Resolves a callback by name.
     /// </summary>
-    /// <returns>The callback implementation, or null if not found (no-op).</returns>
+    /// <returns>The callback implementation, or null if not found. A configured name that resolves to null is an error.</returns>
     ITransitionCallback? Resolve(string callbackName);
 }
 

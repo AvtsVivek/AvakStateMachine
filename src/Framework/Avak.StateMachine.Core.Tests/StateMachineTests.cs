@@ -85,6 +85,75 @@ public class StateMachineTests
     }
 
     /// <summary>
+    /// Verifies that a configured guard must be registered before the machine is created.
+    /// </summary>
+    [TestMethod]
+    public void Constructor_UnresolvedGuard_Throws()
+    {
+        var config = CreateSimpleConfig();
+        config.States["Idle"].Transitions["Start"][0].GuardName = "MissingGuard";
+
+        var exception = Assert.ThrowsExactly<UnresolvedExtensionException>(
+            () => new StateMachine(config));
+
+        Assert.AreEqual("guard", exception.ExtensionType);
+        Assert.AreEqual("MissingGuard", exception.ExtensionName);
+        Assert.AreEqual("Idle", exception.StateName);
+        Assert.AreEqual("Start", exception.TriggerName);
+    }
+
+    /// <summary>
+    /// Verifies that permissions on any configured transition are resolved during construction.
+    /// </summary>
+    [TestMethod]
+    public void Constructor_UnresolvedPermissionOnNonInitialState_Throws()
+    {
+        var config = CreateSimpleConfig();
+        config.States["Running"].Transitions["Pause"][0].PermissionName = "MissingPermission";
+
+        var exception = Assert.ThrowsExactly<UnresolvedExtensionException>(
+            () => new StateMachine(config));
+
+        Assert.AreEqual("permission", exception.ExtensionType);
+        Assert.AreEqual("MissingPermission", exception.ExtensionName);
+        Assert.AreEqual("Running", exception.StateName);
+        Assert.AreEqual("Pause", exception.TriggerName);
+    }
+
+    /// <summary>
+    /// Verifies that a configured lifecycle callback must be registered before machine creation.
+    /// </summary>
+    [TestMethod]
+    public void Constructor_UnresolvedCallback_Throws()
+    {
+        var config = CreateSimpleConfig();
+        config.States["Idle"].Transitions["Start"][0].OnEnteredCallbackName = "MissingCallback";
+
+        var exception = Assert.ThrowsExactly<UnresolvedExtensionException>(
+            () => new StateMachine(config));
+
+        Assert.AreEqual("callback", exception.ExtensionType);
+        Assert.AreEqual("MissingCallback", exception.ExtensionName);
+        Assert.AreEqual("Idle", exception.StateName);
+        Assert.AreEqual("Start", exception.TriggerName);
+    }
+
+    /// <summary>
+    /// Verifies that a present but blank extension name is rejected instead of treated as optional.
+    /// </summary>
+    [TestMethod]
+    public void Constructor_BlankGuardName_Throws()
+    {
+        var config = CreateSimpleConfig();
+        config.States["Idle"].Transitions["Start"][0].GuardName = " ";
+
+        var exception = Assert.ThrowsExactly<StateMachineException>(
+            () => new StateMachine(config));
+
+        StringAssert.Contains(exception.Message, "guard name cannot be empty");
+    }
+
+    /// <summary>
     /// Verifies that Start moves Idle to Running and returns matching transition endpoints.
     /// </summary>
     /// <remarks>

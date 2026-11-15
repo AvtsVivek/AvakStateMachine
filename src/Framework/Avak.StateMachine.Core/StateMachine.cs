@@ -20,6 +20,7 @@ public class TransitionResult
 /// <summary>
 /// The core state machine engine.
 /// Manages state transitions based on XML configuration, guards, permissions, and callbacks.
+/// All configured extension names must resolve during construction.
 /// Thread-safe is not guaranteed; single-threaded use only in this version.
 /// </summary>
 [DebuggerDisplay("CurrentState = {CurrentState,nq}")]
@@ -46,8 +47,78 @@ public class StateMachine
         _permissionRegistry = permissionRegistry ?? new PermissionRegistry();
         _callbackRegistry = callbackRegistry ?? new CallbackRegistry();
 
+        ValidateConfiguredExtensions();
         _currentState = _config.InitialState;
         _isProcessing = false;
+    }
+
+    private void ValidateConfiguredExtensions()
+    {
+        foreach (var state in _config.States.Values)
+        {
+            foreach (var (triggerName, transitions) in state.Transitions)
+            {
+                foreach (var transition in transitions)
+                {
+                    ValidateExtension(
+                        transition.GuardName,
+                        _guardRegistry.Resolve,
+                        "guard",
+                        state.Name,
+                        triggerName);
+                    ValidateExtension(
+                        transition.PermissionName,
+                        _permissionRegistry.Resolve,
+                        "permission",
+                        state.Name,
+                        triggerName);
+                    ValidateExtension(
+                        transition.OnLeavingCallbackName,
+                        _callbackRegistry.Resolve,
+                        "callback",
+                        state.Name,
+                        triggerName);
+                    ValidateExtension(
+                        transition.OnEnteringCallbackName,
+                        _callbackRegistry.Resolve,
+                        "callback",
+                        state.Name,
+                        triggerName);
+                    ValidateExtension(
+                        transition.OnEnteredCallbackName,
+                        _callbackRegistry.Resolve,
+                        "callback",
+                        state.Name,
+                        triggerName);
+                }
+            }
+        }
+    }
+
+    private static void ValidateExtension<T>(
+        string? name,
+        Func<string, T?> resolve,
+        string extensionType,
+        string stateName,
+        string triggerName)
+        where T : class
+    {
+        if (name is null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new StateMachineException(
+                $"Configured {extensionType} name cannot be empty for transition " +
+                $"from state '{stateName}' with trigger '{triggerName}'");
+        }
+
+        if (resolve(name) is null)
+        {
+            throw new UnresolvedExtensionException(extensionType, name, stateName, triggerName);
+        }
     }
 
     /// <summary>
@@ -97,14 +168,16 @@ public class StateMachine
             Data = data ?? new Dictionary<string, object?>()
         };
 
-        if (!EvaluateGuard(transition, context, out string? guardError))
+        var guardException = EvaluateGuard(transition, context);
+        if (guardException is not null)
         {
-            return FailureResult(guardError!, new TransitionDeniedException(guardError!, "Guard denied transition"));
+            return FailureResult(guardException.Message, guardException);
         }
 
-        if (!EvaluatePermission(transition, context, out string? permissionError))
+        var permissionException = EvaluatePermission(transition, context);
+        if (permissionException is not null)
         {
-            return FailureResult(permissionError!, new TransitionDeniedException(permissionError!, "Permission denied transition"));
+            return FailureResult(permissionException.Message, permissionException);
         }
 
         string sourceState = _currentState;
@@ -150,80 +223,73 @@ public class StateMachine
         return anySource;
     }
 
-    private bool EvaluateGuard(TransitionConfiguration transition, TransitionContext context, out string? error)
+    private Exception? EvaluateGuard(TransitionConfiguration transition, TransitionContext context)
     {
-        error = null;
-
-        if (string.IsNullOrEmpty(transition.GuardName))
+        if (transition.GuardName is null)
         {
-            return true;
+            return null;
         }
 
         var guard = _guardRegistry.Resolve(transition.GuardName);
-        if (guard == null)
+        if (guard is null)
         {
-            return true;
+            return CreateUnresolvedExtensionException("guard", transition.GuardName, context);
         }
 
         try
         {
             if (!guard.Evaluate(context))
             {
-                error = $"Guard '{transition.GuardName}' denied transition from '{context.FromState}' to '{context.ToState}'";
-                return false;
+                string message = $"Guard '{transition.GuardName}' denied transition from '{context.FromState}' to '{context.ToState}'";
+                return new TransitionDeniedException(message, "Guard denied transition");
             }
-            return true;
+            return null;
         }
         catch (Exception ex)
         {
-            error = $"Guard '{transition.GuardName}' threw exception: {ex.Message}";
-            return false;
+            string message = $"Guard '{transition.GuardName}' threw exception: {ex.Message}";
+            return new TransitionDeniedException(message, "Guard denied transition");
         }
     }
 
-    private bool EvaluatePermission(TransitionConfiguration transition, TransitionContext context, out string? error)
+    private Exception? EvaluatePermission(TransitionConfiguration transition, TransitionContext context)
     {
-        error = null;
-
-        if (string.IsNullOrEmpty(transition.PermissionName))
+        if (transition.PermissionName is null)
         {
-            return true;
+            return null;
         }
 
         var permission = _permissionRegistry.Resolve(transition.PermissionName);
-        if (permission == null)
+        if (permission is null)
         {
-            return true;
+            return CreateUnresolvedExtensionException("permission", transition.PermissionName, context);
         }
 
         try
         {
             if (!permission.IsAllowed(context))
             {
-                error = $"Permission '{transition.PermissionName}' denied transition from '{context.FromState}' to '{context.ToState}'";
-                return false;
+                string message = $"Permission '{transition.PermissionName}' denied transition from '{context.FromState}' to '{context.ToState}'";
+                return new TransitionDeniedException(message, "Permission denied transition");
             }
-            return true;
+            return null;
         }
         catch (Exception ex)
         {
-            error = $"Permission '{transition.PermissionName}' threw exception: {ex.Message}";
-            return false;
+            string message = $"Permission '{transition.PermissionName}' threw exception: {ex.Message}";
+            return new TransitionDeniedException(message, "Permission denied transition");
         }
     }
 
     private void ExecuteCallback(string? callbackName, TransitionContext context)
     {
-        if (string.IsNullOrEmpty(callbackName))
+        if (callbackName is null)
         {
             return;
         }
 
-        var callback = _callbackRegistry.Resolve(callbackName);
-        if (callback == null)
-        {
-            return;
-        }
+        var callback = _callbackRegistry.Resolve(callbackName)
+            ?? throw CreateUnresolvedExtensionException("callback", callbackName, context);
 
         try
         {
@@ -233,6 +299,18 @@ public class StateMachine
         {
             throw new CallbackException($"Callback '{callbackName}' failed", callbackName, ex);
         }
+    }
+
+    private static UnresolvedExtensionException CreateUnresolvedExtensionException(
+        string extensionType,
+        string extensionName,
+        TransitionContext context)
+    {
+        return new UnresolvedExtensionException(
+            extensionType,
+            extensionName,
+            context.FromState,
+            context.TriggerName);
     }
 
     private TransitionResult FailureResult(string message, Exception? ex)
