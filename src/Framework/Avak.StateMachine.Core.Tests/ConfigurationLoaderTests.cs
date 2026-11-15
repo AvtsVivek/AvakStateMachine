@@ -231,30 +231,49 @@ public class ConfigurationLoaderTests
         Assert.IsNull(transitions[2].Source);
     }
 
+    /// <summary>
+    /// Verifies that invalid XML structures and ambiguous definitions are rejected.
+    /// </summary>
+    /// <remarks>
+    /// Each case supplies an invalid configuration and its expected diagnostic.
+    /// The assertions check that loading throws <see cref="StateMachineException"/>
+    /// and that its message identifies the problem.
+    /// </remarks>
+    /// <param name="testId">Identifies the case in test results and assertion failures.</param>
+    /// <param name="xml">The invalid XML configuration to load.</param>
+    /// <param name="diagnostic">Text expected in the exception message.</param>
     [TestMethod]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'/><State name='Idle'/></States></StateMachine>", "Duplicate state")]
-    [DataRow("<StateMachine initialState='Idle' typo='x'><States><State name='Idle'/></States></StateMachine>", "typo")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' gaurd='x'/></Transitions></State></States></StateMachine>", "gaurd")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'/><Unexpected/></States></StateMachine>", "Unexpected content")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'/></States><States/></StateMachine>", "Multiple 'States'")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions/><Transitions/></State></States></StateMachine>", "Multiple 'Transitions'")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'>unexpected</State></States></StateMachine>", "Unexpected content")]
-    [DataRow("<StateMachine xmlns='urn:test' initialState='Idle'><States><State name='Idle'/></States></StateMachine>", "Root element")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name=' '/><State name='Idle'/></States></StateMachine>", "State name")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger=' ' to='Idle'/></Transitions></State></States></StateMachine>", "trigger")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' guard=''/></Transitions></State></States></StateMachine>", "guard")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' permission=' '/></Transitions></State></States></StateMachine>", "permission")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' onEntered=''/></Transitions></State></States></StateMachine>", "onEntered")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' source=' '/></Transitions></State></States></StateMachine>", "source")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' source='UI'/><Transition trigger='Start' to='Idle' source='UI'/></Transitions></State></States></StateMachine>", "Duplicate transition")]
-    [DataRow("<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle'/><Transition trigger='Start' to='Idle' source=''/></Transitions></State></States></StateMachine>", "Duplicate transition")]
-    public void LoadFromXml_InvalidStructureOrAmbiguousDefinitions_Throws(string xml, string diagnostic)
+    [DataRow("TC-01: Duplicate state", "<StateMachine initialState='Idle'><States><State name='Idle'/><State name='Idle'/></States></StateMachine>", "Duplicate state")]
+    [DataRow("TC-02: Unknown root attribute", "<StateMachine initialState='Idle' typo='x'><States><State name='Idle'/></States></StateMachine>", "typo")]
+    [DataRow("TC-03: Misspelled guard attribute", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' gaurd='x'/></Transitions></State></States></StateMachine>", "gaurd")]
+    [DataRow("TC-04: Unknown element", "<StateMachine initialState='Idle'><States><State name='Idle'/><Unexpected/></States></StateMachine>", "Unexpected content")]
+    [DataRow("TC-05: Duplicate States containers", "<StateMachine initialState='Idle'><States><State name='Idle'/></States><States/></StateMachine>", "Multiple 'States'")]
+    [DataRow("TC-06: Duplicate Transitions containers", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions/><Transitions/></State></States></StateMachine>", "Multiple 'Transitions'")]
+    [DataRow("TC-07: Unexpected text", "<StateMachine initialState='Idle'><States><State name='Idle'>unexpected</State></States></StateMachine>", "Unexpected content")]
+    [DataRow("TC-08: XML namespace", "<StateMachine xmlns='urn:test' initialState='Idle'><States><State name='Idle'/></States></StateMachine>", "Root element")]
+    [DataRow("TC-09: Blank state name", "<StateMachine initialState='Idle'><States><State name=' '/><State name='Idle'/></States></StateMachine>", "State name")]
+    [DataRow("TC-10: Blank trigger", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger=' ' to='Idle'/></Transitions></State></States></StateMachine>", "trigger")]
+    [DataRow("TC-11: Empty guard", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' guard=''/></Transitions></State></States></StateMachine>", "guard")]
+    [DataRow("TC-12: Blank permission", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' permission=' '/></Transitions></State></States></StateMachine>", "permission")]
+    [DataRow("TC-13: Empty callback", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' onEntered=''/></Transitions></State></States></StateMachine>", "onEntered")]
+    [DataRow("TC-14: Whitespace-only source", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' source=' '/></Transitions></State></States></StateMachine>", "source")]
+    [DataRow("TC-15: Duplicate source-specific transition", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle' source='UI'/><Transition trigger='Start' to='Idle' source='UI'/></Transitions></State></States></StateMachine>", "Duplicate transition")]
+    [DataRow("TC-16: Duplicate source-agnostic transition", "<StateMachine initialState='Idle'><States><State name='Idle'><Transitions><Transition trigger='Start' to='Idle'/><Transition trigger='Start' to='Idle' source=''/></Transitions></State></States></StateMachine>", "Duplicate transition")]
+    public void LoadFromXml_InvalidStructureOrAmbiguousDefinitions_Throws(string testId, string xml, string diagnostic)
     {
-        var exception = Assert.ThrowsExactly<StateMachineException>(() => _loader.LoadFromXml(xml));
+        var exception = Assert.ThrowsExactly<StateMachineException>(
+            () => _loader.LoadFromXml(xml), $"Failed on test case: {testId}");
 
-        StringAssert.Contains(exception.Message, diagnostic);
+        StringAssert.Contains(exception.Message, diagnostic, $"Failed on test case: {testId}");
     }
 
+    /// <summary>
+    /// Verifies that an explicitly empty source acts as a source-agnostic transition.
+    /// </summary>
+    /// <remarks>
+    /// Start is configured with an empty source and triggered from UI.
+    /// Assertions check that the transition succeeds and reaches Running.
+    /// </remarks>
     [TestMethod]
     public void LoadFromXml_EmptySource_RemainsSourceAgnostic()
     {

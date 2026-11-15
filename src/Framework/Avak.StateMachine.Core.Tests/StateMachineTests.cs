@@ -87,6 +87,10 @@ public class StateMachineTests
     /// <summary>
     /// Verifies that a configured guard must be registered before the machine is created.
     /// </summary>
+    /// <remarks>
+    /// Start names an unregistered guard. The exception must identify its type, name,
+    /// source state, and trigger.
+    /// </remarks>
     [TestMethod]
     public void Constructor_UnresolvedGuard_Throws()
     {
@@ -105,6 +109,10 @@ public class StateMachineTests
     /// <summary>
     /// Verifies that permissions on any configured transition are resolved during construction.
     /// </summary>
+    /// <remarks>
+    /// Pause on the non-initial Running state names an unregistered permission.
+    /// The exception must identify its type, name, source state, and trigger.
+    /// </remarks>
     [TestMethod]
     public void Constructor_UnresolvedPermissionOnNonInitialState_Throws()
     {
@@ -123,6 +131,10 @@ public class StateMachineTests
     /// <summary>
     /// Verifies that a configured lifecycle callback must be registered before machine creation.
     /// </summary>
+    /// <remarks>
+    /// Start names an unregistered onEntered callback. The exception must identify
+    /// its type, name, source state, and trigger.
+    /// </remarks>
     [TestMethod]
     public void Constructor_UnresolvedCallback_Throws()
     {
@@ -141,6 +153,10 @@ public class StateMachineTests
     /// <summary>
     /// Verifies that a present but blank extension name is rejected instead of treated as optional.
     /// </summary>
+    /// <remarks>
+    /// Start names a whitespace-only guard. Construction must throw a
+    /// <see cref="StateMachineException"/> with a diagnostic about the blank name.
+    /// </remarks>
     [TestMethod]
     public void Constructor_BlankGuardName_Throws()
     {
@@ -489,6 +505,12 @@ public class StateMachineTests
     /// <summary>
     /// Verifies that an ignored nested request aborts the outer transition at every extension stage.
     /// </summary>
+    /// <remarks>
+    /// Each case attempts Pause during one stage of Start and ignores the nested result.
+    /// Assertions check both failures, the restored Idle state, and that no later stages run.
+    /// A subsequent Start without nesting must succeed.
+    /// </remarks>
+    /// <param name="stage">The guard, permission, or callback stage that attempts the nested request.</param>
     [TestMethod]
     [DataRow("guard")]
     [DataRow("permission")]
@@ -548,6 +570,13 @@ public class StateMachineTests
         Assert.AreEqual("Running", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that catching a nested-request exception does not allow the outer transition to succeed.
+    /// </summary>
+    /// <remarks>
+    /// The onEntered callback throws and catches the exception from its nested Pause result.
+    /// Start must still fail with <see cref="NestedRequestException"/> and restore Idle.
+    /// </remarks>
     [TestMethod]
     public void Trigger_NestedRequestCaughtByCallback_StillFails()
     {
@@ -574,6 +603,14 @@ public class StateMachineTests
         Assert.AreEqual("Idle", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that a callback exception is reported when the callback also attempts a nested request.
+    /// </summary>
+    /// <remarks>
+    /// The onEntered callback attempts Pause and then throws <see cref="InvalidOperationException"/>.
+    /// Start must fail with a <see cref="CallbackException"/> containing that exception
+    /// and restore Idle.
+    /// </remarks>
     [TestMethod]
     public void Trigger_CallbackThrowsAfterNestedRequest_ReportsCallbackFailure()
     {
