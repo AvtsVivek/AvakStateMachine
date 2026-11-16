@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="200500_ConsoleRecorder/ConsoleRecorder.Tests/ConsoleRecorder.Tests.csproj" />
+  <Project Path="200500_ConsoleRecorder/ConsoleRecorder/ConsoleRecorder.csproj" />
+  <Project Path="200600_BasicWpfWithNamedStates/BasicWpfWithNamedStates/BasicWpfWithNamedStates.csproj" />
+  <Project Path="200600_BasicWpfWithNamedStates/BasicWpfWithNamedStates.Tests/BasicWpfWithNamedStates.Tests.csproj" />
+  <Project Path="200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel.csproj" />
+  <Project Path="200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel.Tests/BasicWpfWithNamedStatesAndViewModel.Tests.csproj" />
+</Solution>
+

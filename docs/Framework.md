@@ -211,6 +211,27 @@ types show their key values. The state configuration's transition count is the
 total number of transitions across all trigger groups. A transition
 configuration displays its target and each optional property that is not null.
 
+### State Representation
+
+The current framework uses a named-state model. Each XML `<State name="...">`
+defines a state, and the machine stores and exposes its current state as a
+string. The framework does not create per-state C# objects or provide a
+state-class base type or interface.
+
+Guards, permissions, and callbacks are C# extension points, but they do not
+make states class-based: they are registered behaviors referenced by name.
+Likewise, an application view model is a UI-layer pattern, not a state class.
+A state-class model would require explicit framework support for defining and
+using state-specific types; it is not part of the current API. Such support
+could use a base class, an interface, or another contract—the current named
+state model does not prescribe that design.
+
+With named states, state definitions stay in XML and do not require a separate
+class for each state. The trade-off is that there is no state-level behavior
+object or callback configuration: lifecycle callbacks are named on each
+transition. Behavior that applies to several transitions must therefore be
+configured for each one.
+
 ### Core Components
 
 #### `StateMachineConfiguration`
@@ -222,15 +243,6 @@ The parsed representation of an XML state machine definition. Contains:
 Represents a single state and its transitions:
 - `Name`: The state's name
 - `Transitions`: Dictionary of trigger name → list of `TransitionConfiguration` objects
-
-States are represented by names and configuration, not by executable state
-classes. The machine exposes the current state as a string, and behavior is
-supplied by registered guards, permissions, and callbacks. This keeps state
-definitions in XML and does not require a separate class for each state.
-
-The trade-off is that there is no state-level behavior object or callback
-configuration: lifecycle callbacks are named on each transition. Behavior that
-applies to several transitions must therefore be configured for each one.
 
 #### `TransitionConfiguration`
 Represents a single transition rule:
@@ -558,15 +570,15 @@ Located in `src/Framework/Avak.StateMachine.Core.Tests/`:
 
 **All tests are deterministic** and avoid external dependencies.
 
-### Sample Tests (`Avak.StateMachine.Samples.Recorder.Tests`)
-Located in `src/Samples/Avak.StateMachine.Samples.Recorder.Tests/`:
+### Sample Tests (`ConsoleRecorder.Tests`)
+Located in `src/Samples/200500_ConsoleRecorder/ConsoleRecorder.Tests/`:
 - End-to-end recorder state machine scenarios
 - Valid transitions and invalid trigger handling
 - Multi-step workflows (Start → Pause → Resume → Stop)
 
 Each sample includes:
-- Sample library project (e.g., `Avak.StateMachine.Samples.Recorder`)
-- Sample tests (e.g., `Avak.StateMachine.Samples.Recorder.Tests`)
+- Sample project (e.g., `ConsoleRecorder`)
+- Sample tests (e.g., `ConsoleRecorder.Tests`)
 - Configuration XML file
 - Guard/Permission/Callback implementations
 
@@ -582,8 +594,8 @@ dotnet test Avak.StateMachine.slnx --logger:console --verbosity normal
 ### Samples Solution
 ```bash
 cd src/Samples
-dotnet build Avak.StateMachine.Samples.slnx -v minimal
-dotnet test Avak.StateMachine.Samples.slnx --logger:console --verbosity normal
+dotnet build Samples.slnx -v minimal
+dotnet test Samples.slnx --logger:console --verbosity normal
 ```
 
 ## API Stability

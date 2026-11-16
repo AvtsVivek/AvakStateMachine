@@ -20,7 +20,7 @@ Considering a contribution? See the [contribution guide](docs/CONTRIBUTING.md).
 ## Solutions
 
 - Framework and framework tests: `src/Framework/Avak.StateMachine.slnx`
-- Samples and sample tests: `src/Samples/Avak.StateMachine.Samples.slnx`
+- Samples and sample tests: `src/Samples/Samples.slnx`
 
 ## Code style
 

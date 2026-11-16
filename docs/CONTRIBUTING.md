@@ -17,7 +17,7 @@ describes the project structure and the checks to run before submitting changes.
 - `src/Framework/Avak.StateMachine.Core.Tests/` contains framework guarantee
   tests. These belong to `src/Framework/Avak.StateMachine.slnx`.
 - `src/Samples/` contains usage examples and their unit tests. Sample projects
-  and tests belong to `src/Samples/Avak.StateMachine.Samples.slnx`.
+  and tests belong to `src/Samples/Samples.slnx`.
 - `docs/` contains framework and contributor documentation. Each sample also
   has its own README beside the sample.
 
@@ -57,15 +57,15 @@ Run both solutions from the repository root before submitting:
 ```shell
 dotnet build src/Framework/Avak.StateMachine.slnx
 dotnet test src/Framework/Avak.StateMachine.slnx
-dotnet build src/Samples/Avak.StateMachine.Samples.slnx
-dotnet test src/Samples/Avak.StateMachine.Samples.slnx
+dotnet build src/Samples/Samples.slnx
+dotnet test src/Samples/Samples.slnx
 ```
 
 Check C# style without modifying files:
 
 ```shell
 dotnet format style src/Framework/Avak.StateMachine.slnx --severity info --verify-no-changes
-dotnet format style src/Samples/Avak.StateMachine.Samples.slnx --severity info --verify-no-changes
+dotnet format style src/Samples/Samples.slnx --severity info --verify-no-changes
 ```
 
 If a command fails, investigate and report the failure rather than claiming the

@@ -329,7 +329,7 @@ Distinguish between UI-initiated and API-initiated recordings:
 
 ```bash
 cd src/Samples
-dotnet test Avak.StateMachine.Samples.slnx --logger:console
+dotnet test Samples.slnx --logger:console
 ```
 
 Expected output:

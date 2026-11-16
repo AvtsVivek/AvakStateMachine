@@ -15,7 +15,7 @@
 •	If a lifecycle callback throws, the transition fails and the machine restores its source state.
 •	Any external side effects already performed by callbacks are not automatically undone. Callbacks should avoid irreversible work, or applications must provide explicit compensation if needed.
 
-9. Samples will be added as we go along. Each sample will have unit tests. The samples should help in understanding the framework and its use cases. The solution file will be C:\Trials\AvakStateMachine\src\Samples\Avak.StateMachine.Samples.slnx
+9. Samples will be added as we go along. Each sample will have unit tests. The samples should help in understanding the framework and its use cases. The solution file is `src/Samples/Samples.slnx`.
 
 10. Documentation will be added to the docs folder
 11. We need to add logging to the framework.

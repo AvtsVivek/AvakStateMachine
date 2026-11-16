@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="BasicWpfWithNamedStatesAndViewModel.Tests/BasicWpfWithNamedStatesAndViewModel.Tests.csproj" />
+  <Project Path="BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel.csproj" />
+</Solution>
+

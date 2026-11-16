@@ -59,7 +59,7 @@
 
 **Duration:** ~45 ms
 
-### 3. Recorder Sample (`Avak.StateMachine.Samples.Recorder`)
+### 3. Recorder Sample (`ConsoleRecorder`)
 
 **Components:**
 - `RecorderStateMachine`: Wrapper class for state machine setup
@@ -79,7 +79,7 @@
 
 **Lines of Code:** ~150 (sample)
 
-### 4. Recorder Sample Tests (`Avak.StateMachine.Samples.Recorder.Tests`)
+### 4. Recorder Sample Tests (`ConsoleRecorder.Tests`)
 
 **Test Class:** `RecorderStateMachineTests` (10 tests)
 - Initialization
@@ -192,12 +192,12 @@ Time: ~300ms
 
 ### Samples Solution
 ```
-Command: dotnet build src/Samples/Avak.StateMachine.Samples.slnx -v minimal
+Command: dotnet build src/Samples/Samples.slnx -v minimal
 
 Result: ✅ BUILD SUCCEEDED
 Projects: 2
-  - Avak.StateMachine.Samples.Recorder (net10.0)
-  - Avak.StateMachine.Samples.Recorder.Tests (net10.0-windows)
+  - ConsoleRecorder (net10.0)
+  - ConsoleRecorder.Tests (net10.0-windows)
 Errors: 0
 Warnings: 0
 Time: ~400ms
@@ -218,7 +218,7 @@ Duration: 45 ms
 
 ### Sample Tests
 ```
-Command: dotnet test src/Samples/Avak.StateMachine.Samples.slnx
+Command: dotnet test src/Samples/Samples.slnx
 
 Result: ✅ ALL PASSED
 Tests: 10
@@ -258,14 +258,15 @@ C:\Trials\AvakStateMachine/
 │   │       ├── StateMachineTests.cs
 │   │       └── TestData/
 │   └── Samples/
-│       ├── Avak.StateMachine.Samples.slnx ← Samples solution
-│       ├── Avak.StateMachine.Samples.Recorder/
-│       │   ├── Avak.StateMachine.Samples.Recorder.csproj
-│       │   ├── RecorderStateMachine.cs
-│       │   └── RecorderConfiguration.xml
-│       └── Avak.StateMachine.Samples.Recorder.Tests/
-│           ├── Avak.StateMachine.Samples.Recorder.Tests.csproj
-│           └── RecorderStateMachineTests.cs
+│       ├── Samples.slnx ← Samples solution
+│       ├── 200500_ConsoleRecorder/
+│       │   ├── ConsoleRecorder/
+│       │   │   ├── ConsoleRecorder.csproj
+│       │   │   ├── RecorderStateMachine.cs
+│       │   │   └── RecorderConfiguration.xml
+│       │   └── ConsoleRecorder.Tests/
+│       │       ├── ConsoleRecorder.Tests.csproj
+│       │       └── RecorderStateMachineTests.cs
 ```
 
 ## Key Design Decisions

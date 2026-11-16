@@ -2,7 +2,9 @@
 
 This page summarizes the examples included with AvakStateMachine. It will be
 updated as new samples are added. Each sample has its own guide and unit tests;
-the samples solution is `src/Samples/Avak.StateMachine.Samples.slnx`.
+the samples solution is `src/Samples/Samples.slnx`. The framework currently
+uses named states rather than per-state C# classes; see
+[State Representation](Framework.md#state-representation).
 
 ## Console Recorder
 
@@ -13,31 +15,31 @@ states. It demonstrates XML configuration, transitions, lifecycle callbacks,
 and preserving state when a trigger is invalid.
 
 - [Sample guide and state graph](../src/Samples/200500_ConsoleRecorder/README.md)
-- [Sample project](../src/Samples/200500_ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder/)
-- [Unit tests](../src/Samples/200500_ConsoleRecorder/Avak.StateMachine.Samples.ConsoleRecorder.Tests/)
+- [Sample project](../src/Samples/200500_ConsoleRecorder/ConsoleRecorder/)
+- [Unit tests](../src/Samples/200500_ConsoleRecorder/ConsoleRecorder.Tests/)
 
-## Basic WPF State Machine Without State Classes
+## Basic WPF State Machine With Named States
 
-**Location:** `src/Samples/200600_BasicWpfWithoutStateClasses/`
+**Location:** `src/Samples/200600_BasicWpfWithNamedStates/`
 
 A Windows WPF UI showing `Idle` and `Running` states without defining a C# class
 for each state or using a view model. The window code-behind loads the XML,
 triggers the machine, and updates the controls directly.
 
-- [Sample guide](../src/Samples/200600_BasicWpfWithoutStateClasses/README.md)
-- [WPF application](../src/Samples/200600_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses/)
-- [Unit tests](../src/Samples/200600_BasicWpfWithoutStateClasses/Avak.StateMachine.Samples.BasicWpfWithoutStateClasses.Tests/)
+- [Sample guide](../src/Samples/200600_BasicWpfWithNamedStates/README.md)
+- [WPF application](../src/Samples/200600_BasicWpfWithNamedStates/BasicWpfWithNamedStates/)
+- [Unit tests](../src/Samples/200600_BasicWpfWithNamedStates/BasicWpfWithNamedStates.Tests/)
 
-## Basic WPF State Machine Without State Classes, With ViewModel
+## Basic WPF State Machine With Named States and ViewModel
 
-**Location:** `src/Samples/200800_BasicWpfWithoutStateClassesWithViewModel/`
+**Location:** `src/Samples/200800_BasicWpfWithNamedStatesAndViewModel/`
 
 The same `Idle`/`Running` example using a small view model and WPF data
 bindings. Its tests exercise the view model without launching a WPF window.
 
-- [Sample guide](../src/Samples/200800_BasicWpfWithoutStateClassesWithViewModel/README.md)
-- [WPF application](../src/Samples/200800_BasicWpfWithoutStateClassesWithViewModel/Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel/)
-- [Unit tests](../src/Samples/200800_BasicWpfWithoutStateClassesWithViewModel/Avak.StateMachine.Samples.BasicWpfWithoutStateClassesWithViewModel.Tests/)
+- [Sample guide](../src/Samples/200800_BasicWpfWithNamedStatesAndViewModel/README.md)
+- [WPF application](../src/Samples/200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel/)
+- [Unit tests](../src/Samples/200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel.Tests/)
 
 ## Adding a sample
 

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BasicWpfWithNamedStates.Tests/BasicWpfWithNamedStates.Tests.csproj" />
+  <Project Path="BasicWpfWithNamedStates/BasicWpfWithNamedStates.csproj" />
+</Solution>
