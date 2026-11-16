@@ -10,6 +10,16 @@ The framework is available in:
 - Framework library: `Avak.StateMachine.Core` (in `src/Framework/Avak.StateMachine.Core`)
 - Reference this project from your application
 
+To build the .NET 10 preview package locally from the repository root:
+
+```powershell
+dotnet pack src\Framework\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj -c Release
+```
+
+The package is written to the project's `bin\Release` directory. Add that
+directory as a local NuGet source to test `Avak.StateMachine.Core` version
+`0.1.0-preview.1`. The package has not been published to NuGet.org.
+
 ## 5-Minute Setup
 
 ### Step 1: Define State Machine (XML)

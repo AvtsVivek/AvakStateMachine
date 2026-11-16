@@ -4,10 +4,25 @@
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PackageId>Avak.StateMachine.Core</PackageId>
+    <Version>0.1.0-preview.1</Version>
+    <Authors>Vivekanand Koppula</Authors>
+    <Description>A synchronous, XML-configured .NET state machine with source-aware triggers, guards, permissions, and lifecycle callbacks.</Description>
+    <PackageTags>state-machine;xml;dotnet</PackageTags>
+    <PackageProjectUrl>https://github.com/AvtsVivek/AvakStateMachine</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/AvtsVivek/AvakStateMachine</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>PackageREADME.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Avak.StateMachine.Core.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\docs\PackageREADME.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\..\LICENSE" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>
