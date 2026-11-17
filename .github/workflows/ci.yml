@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore framework
+        run: dotnet restore src\Framework\Avak.StateMachine.slnx
+
+      - name: Build framework
+        run: dotnet build src\Framework\Avak.StateMachine.slnx --configuration Release --no-restore
+
+      - name: Test framework
+        run: dotnet test src\Framework\Avak.StateMachine.slnx --configuration Release --no-build
+
+      - name: Restore samples
+        run: dotnet restore src\Samples\Samples.slnx
+
+      - name: Build samples
+        run: dotnet build src\Samples\Samples.slnx --configuration Release --no-restore
+
+      - name: Test samples
+        run: dotnet test src\Samples\Samples.slnx --configuration Release --no-build

@@ -52,6 +52,11 @@ Git-managed text files use LF line endings as specified in
 
 ## Build and test
 
+The [CI workflow](../.github/workflows/ci.yml) runs on pushes and pull requests.
+It uses a Windows runner with the .NET 10 SDK to restore, build in Release,
+and test both solutions. Windows is required for the WPF samples and
+Windows-targeted tests. This workflow does not publish NuGet packages.
+
 Run both solutions from the repository root before submitting:
 
 ```shell

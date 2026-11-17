@@ -6,19 +6,16 @@ AvakStateMachine is a .NET framework for building state machines from XML config
 
 ## Installation
 
-The framework is available in:
-- Framework library: `Avak.StateMachine.Core` (in `src/Framework/Avak.StateMachine.Core`)
-- Reference this project from your application
+The framework is published on NuGet.org as [`Avak.StateMachine.Core`](https://www.nuget.org/packages/Avak.StateMachine.Core). Install
+the current preview in your application project with:
 
-To build the .NET 10 preview package locally from the repository root:
-
-```powershell
-dotnet pack src\Framework\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj -c Release
+```shell
+dotnet add package Avak.StateMachine.Core --version 0.1.0-preview.1
 ```
 
-The package is written to the project's `bin\Release` directory. Add that
-directory as a local NuGet source to test `Avak.StateMachine.Core` version
-`0.1.0-preview.1`. The package has not been published to NuGet.org.
+The package targets .NET 10. When working on the framework in this repository,
+you can reference the project at
+`src/Framework/Avak.StateMachine.Core/Avak.StateMachine.Core.csproj` instead.
 
 ## 5-Minute Setup
 
