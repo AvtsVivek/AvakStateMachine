@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ConsoleWithDependencyInjection/ConsoleWithDependencyInjection.csproj" />
+  <Project Path="ConsoleWithDependencyInjection.Tests/ConsoleWithDependencyInjection.Tests.csproj" />
+</Solution>

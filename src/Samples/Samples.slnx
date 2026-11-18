@@ -5,5 +5,7 @@
   <Project Path="200600_BasicWpfWithNamedStates/BasicWpfWithNamedStates.Tests/BasicWpfWithNamedStates.Tests.csproj" />
   <Project Path="200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel.csproj" />
   <Project Path="200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel.Tests/BasicWpfWithNamedStatesAndViewModel.Tests.csproj" />
+  <Project Path="200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection/ConsoleWithDependencyInjection.csproj" />
+  <Project Path="200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection.Tests/ConsoleWithDependencyInjection.Tests.csproj" />
 </Solution>
 

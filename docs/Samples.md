@@ -41,6 +41,18 @@ bindings. Its tests exercise the view model without launching a WPF window.
 - [WPF application](../src/Samples/200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel/)
 - [Unit tests](../src/Samples/200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel.Tests/)
 
+## Console With Dependency Injection
+
+**Location:** `src/Samples/200900_ConsoleWithDependencyInjection/`
+
+A console application using .NET dependency injection to construct a scoped
+machine and its guard and callback dependencies. Its tests demonstrate guard
+denial, callback execution, and isolation between scopes.
+
+- [Sample guide](../src/Samples/200900_ConsoleWithDependencyInjection/README.md)
+- [Console application](../src/Samples/200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection/)
+- [Unit tests](../src/Samples/200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection.Tests/)
+
 ## Adding a sample
 
 When adding a sample, include its project and unit tests in the samples
