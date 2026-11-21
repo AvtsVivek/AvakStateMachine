@@ -3,6 +3,8 @@ namespace Avak.StateMachine.Core;
 using System.Diagnostics;
 using Configuration;
 using Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 /// <summary>
 /// Transition result indicating success or failure of a state transition.
@@ -30,10 +32,12 @@ public class StateMachine
     private readonly IGuardRegistry _guardRegistry;
     private readonly IPermissionRegistry _permissionRegistry;
     private readonly ICallbackRegistry _callbackRegistry;
+    private readonly ILogger<StateMachine> _logger;
 
     private string _currentState;
     private bool _isProcessing;
     private NestedRequestException? _nestedRequest;
+    private Exception? _nestedRequestLoggingFailure;
 
     public string CurrentState => _currentState;
 
@@ -41,12 +45,14 @@ public class StateMachine
         StateMachineConfiguration config,
         IGuardRegistry? guardRegistry = null,
         IPermissionRegistry? permissionRegistry = null,
-        ICallbackRegistry? callbackRegistry = null)
+        ICallbackRegistry? callbackRegistry = null,
+        ILogger<StateMachine>? logger = null)
     {
         _config = config ?? throw new ArgumentNullException(nameof(config));
         _guardRegistry = guardRegistry ?? new GuardRegistry();
         _permissionRegistry = permissionRegistry ?? new PermissionRegistry();
         _callbackRegistry = callbackRegistry ?? new CallbackRegistry();
+        _logger = logger ?? NullLogger<StateMachine>.Instance;
 
         ValidateConfiguredExtensions();
         _currentState = _config.InitialState;
@@ -129,7 +135,13 @@ public class StateMachine
     {
         if (_isProcessing)
         {
-            _nestedRequest ??= new NestedRequestException($"Nested request detected for trigger '{triggerName}'");
+            if (_nestedRequest is null)
+            {
+                _nestedRequest = new NestedRequestException(
+                    $"Nested request detected for trigger '{triggerName}'");
+                LogNestedRequest(triggerName, source, _currentState, _nestedRequest);
+            }
+
             return FailureResult(
                 $"Nested request detected for trigger '{triggerName}' while already processing a transition",
                 _nestedRequest);
@@ -139,17 +151,95 @@ public class StateMachine
         _isProcessing = true;
         try
         {
-            return TriggerInternal(triggerName, source, data);
+            TransitionResult result;
+            try
+            {
+                result = TriggerInternal(triggerName, source, data);
+            }
+            catch (NestedRequestException ex)
+            {
+                _currentState = sourceState;
+                result = FailureResult(ex.Message, ex);
+            }
+
+            if (_nestedRequestLoggingFailure is not null)
+            {
+                throw _nestedRequestLoggingFailure;
+            }
+
+            if (result.Exception is not NestedRequestException)
+            {
+                LogResult(result, triggerName, source);
+            }
+
+            if (result.Success)
+            {
+                ThrowIfNestedRequest();
+            }
+            return result;
         }
-        catch (NestedRequestException ex)
+        catch
         {
             _currentState = sourceState;
-            return FailureResult(ex.Message, ex);
+            throw;
         }
         finally
         {
             _nestedRequest = null;
+            _nestedRequestLoggingFailure = null;
             _isProcessing = false;
+        }
+    }
+
+    private void LogNestedRequest(
+        string triggerName,
+        string? source,
+        string currentState,
+        NestedRequestException exception)
+    {
+        const LogLevel level = LogLevel.Warning;
+        if (!_logger.IsEnabled(level))
+        {
+            return;
+        }
+
+        try
+        {
+            _logger.Log(level, new EventId(102, "NestedRequestDetected"), exception,
+                "Nested trigger {TriggerName} with source {TriggerSource} was rejected while the machine was in {CurrentState}",
+                triggerName, source, currentState);
+        }
+        catch (Exception ex)
+        {
+            _nestedRequestLoggingFailure = ex;
+        }
+    }
+
+    private void LogResult(TransitionResult result, string triggerName, string? source)
+    {
+        LogLevel level;
+        EventId eventId;
+        if (result.Success)
+        {
+            level = LogLevel.Information;
+            eventId = new EventId(100, "TransitionSucceeded");
+        }
+        else if (result.Exception is null or TransitionDeniedException)
+        {
+            level = LogLevel.Debug;
+            eventId = new EventId(101, "TransitionRejected");
+        }
+        else
+        {
+            level = LogLevel.Error;
+            eventId = new EventId(103, "TransitionFailed");
+        }
+
+        if (_logger.IsEnabled(level))
+        {
+            _logger.Log(level, eventId, result.Exception,
+                "Transition {TriggerName} from {FromState} ended in {ToState} with source {TriggerSource}: {Success}",
+                triggerName, result.FromState, result.ToState, source, result.Success);
         }
     }
 
