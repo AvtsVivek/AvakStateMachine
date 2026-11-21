@@ -42,30 +42,53 @@ public class TrafficLightDependencyInjectionTests
     }
 
     /// <summary>
-    /// Verifies that the operational guard rejects Next when the signal is marked unavailable.
+    /// Verifies that the operational guard rejects Next from each traffic-light state when the signal is unavailable.
     /// </summary>
     /// <remarks>
-    /// The test changes the scoped operational flag through the view model,
-    /// invokes Next from Red, and checks the denial message, preserved state,
-    /// inactive-state presentation, and empty callback history.
+    /// Each data row advances an operational signal to Red, Green, or Yellow,
+    /// then marks the scoped session unavailable and attempts Next. Assertions
+    /// check denial, preservation of the current state and light presentation,
+    /// and that the callback does not record an event for the denied transition.
     /// </remarks>
+    /// <param name="expectedState">The state from which the denied trigger is attempted.</param>
+    /// <param name="successfulTransitions">The number of operational Next triggers needed to reach that state.</param>
+    /// <param name="expectedRedOpacity">Expected opacity of the red light after denial.</param>
+    /// <param name="expectedYellowOpacity">Expected opacity of the yellow light after denial.</param>
+    /// <param name="expectedGreenOpacity">Expected opacity of the green light after denial.</param>
     [TestMethod]
-    public void Next_WhenSignalNotOperational_IsDeniedWithoutChangingState()
+    [DataRow("Red", 0, 1.0, 0.25, 0.25)]
+    [DataRow("Green", 1, 0.25, 0.25, 1.0)]
+    [DataRow("Yellow", 2, 0.25, 1.0, 0.25)]
+    public void Next_WhenSignalNotOperational_IsDeniedWithoutChangingState(
+        string expectedState,
+        int successfulTransitions,
+        double expectedRedOpacity,
+        double expectedYellowOpacity,
+        double expectedGreenOpacity)
     {
         using var provider = CreateProvider();
         using var scope = provider.CreateScope();
         var viewModel = scope.ServiceProvider.GetRequiredService<MainWindowViewModel>();
         var session = scope.ServiceProvider.GetRequiredService<TrafficLightSession>();
+
+        for (int i = 0; i < successfulTransitions; i++)
+        {
+            Assert.IsTrue(viewModel.Next().Success);
+        }
+
+        Assert.AreEqual(expectedState, viewModel.CurrentState);
+        int recordedTransitionsBeforeDenial = session.TransitionHistory.Count;
         viewModel.IsOperational = false;
 
         var result = viewModel.Next();
 
         Assert.IsFalse(result.Success);
         Assert.IsInstanceOfType<TransitionDeniedException>(result.Exception);
-        Assert.AreEqual("Red", viewModel.CurrentState);
-        Assert.AreEqual(1, viewModel.RedOpacity);
-        Assert.AreEqual(0.25, viewModel.GreenOpacity);
-        Assert.AreEqual(0, session.TransitionHistory.Count);
+        Assert.AreEqual(expectedState, viewModel.CurrentState);
+        Assert.AreEqual(expectedRedOpacity, viewModel.RedOpacity);
+        Assert.AreEqual(expectedYellowOpacity, viewModel.YellowOpacity);
+        Assert.AreEqual(expectedGreenOpacity, viewModel.GreenOpacity);
+        Assert.AreEqual(recordedTransitionsBeforeDenial, session.TransitionHistory.Count);
     }
 
     /// <summary>
