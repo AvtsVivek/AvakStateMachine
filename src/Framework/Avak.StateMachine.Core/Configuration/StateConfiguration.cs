@@ -9,6 +9,9 @@ using System.Diagnostics;
 public class StateConfiguration
 {
     public string Name { get; set; } = string.Empty;
+
+    /// <summary>Optional registry name of the state object for this state.</summary>
+    public string? StateClassName { get; set; }
     
     /// <summary>
     /// Transitions triggered from this state, keyed by trigger name.

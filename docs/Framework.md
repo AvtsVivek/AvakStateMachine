@@ -49,8 +49,8 @@ explicitly; missing guards and permissions never allow a transition, and
 missing callbacks are never silently skipped.
 
 #### Lifecycle Callbacks
-Callbacks are named on individual transitions, not attached directly to states.
-They run in this order:
+Callbacks are named on individual transitions. With named-only states, they run
+in this order:
 
 1. **OnLeaving**: work associated with leaving the source state, such as releasing resources.
 2. **OnEntering**: work associated with preparing the target state, such as initializing resources.
@@ -213,24 +213,75 @@ configuration displays its target and each optional property that is not null.
 
 ### State Representation
 
-The current framework uses a named-state model. Each XML `<State name="...">`
-defines a state, and the machine stores and exposes its current state as a
-string. The framework does not create per-state C# objects or provide a
-state-class base type or interface.
+Each XML `<State name="...">` defines a named state, and the machine exposes
+its current state as a string. A state may optionally specify `stateClass` to
+associate it with an application-supplied object derived from `State`. Both
+representations use the same transition engine and can be mixed in one machine.
+Existing named-only configurations require no state objects.
 
-Guards, permissions, and callbacks are C# extension points, but they do not
-make states class-based: they are registered behaviors referenced by name.
-Likewise, an application view model is a UI-layer pattern, not a state class.
-A state-class model would require explicit framework support for defining and
-using state-specific types; it is not part of the current API. Such support
-could use a base class, an interface, or another contract—the current named
-state model does not prescribe that design.
+`State` provides virtual `CanEnter` and `CanExit` methods that default to
+`true`, and `Enter` and `Exit` methods that default to no-ops. Override only
+the behavior needed. State checks are intended for state-specific rules;
+transition guards and permissions remain appropriate for transition-specific
+conditions and authorization. This distinction is guidance, not a security
+boundary enforced by the framework.
 
-With named states, state definitions stay in XML and do not require a separate
-class for each state. The trade-off is that there is no state-level behavior
-object or callback configuration: lifecycle callbacks are named on each
-transition. Behavior that applies to several transitions must therefore be
-configured for each one.
+```xml
+<State name="InReview" stateClass="ReviewState">
+  <Transitions>
+    <Transition trigger="Approve" to="Approved" />
+  </Transitions>
+</State>
+```
+
+```csharp
+using Avak.StateMachine.Core;
+using Avak.StateMachine.Core.Extensions;
+
+public sealed class ReviewState : State
+{
+    public override bool CanEnter(StateContext context) => true;
+    public override void Enter(StateContext context) { /* application behavior */ }
+}
+
+var states = new StateRegistry();
+states.Register("ReviewState", new ReviewState());
+var machine = new StateMachine(configuration, null, null, null, null, states);
+```
+
+The six-argument constructor accepts guard, permission, and callback registries,
+an optional logger, and the state registry in that order. Pass the application's
+registries in place of `null` when the XML names those extensions. The original
+constructor remains available; it uses an empty state registry and therefore
+rejects configurations that reference a state class.
+
+The XML value is a registry key, not a CLR type name: no reflection or dynamic
+type loading is performed. Every configured key must be nonblank and resolve
+before initial entry, otherwise construction fails explicitly. The machine
+resolves and retains each configured object at construction; later registry
+changes do not replace it. The application owns the objects and their lifetime:
+the framework does not create or dispose them. Use separate instances per
+machine when state objects hold mutable data. Do not mutate the configuration
+after construction.
+
+For a class-backed initial state, construction calls `CanEnter` and then
+`Enter`. A denied check throws `TransitionDeniedException`; a method exception
+throws `StateExecutionException` with the original exception as its inner
+exception. No usable machine is returned on failure, and transition callbacks
+do not run for initialization. Initial entry can produce external side effects
+even if construction later fails; they are not automatically undone.
+
+State methods receive a `StateContext`: `FromState`, `ToState`, `TriggerName`,
+`TriggerSource`, `Data`, and `IsInitialization`. During initialization,
+`FromState`, `TriggerName`, and `TriggerSource` are null, `ToState` is the
+initial state, and `Data` starts empty. For a trigger, context values describe
+the transition and `Data` is the same dictionary supplied to transition
+callbacks. Self-transitions invoke both source and target methods, subject to
+earlier checks and methods succeeding. See [Transition Execution Flow](#transition-execution-flow)
+for ordering and failure behavior.
+
+This feature is newer than the published `0.1.0-preview.1` package; use a
+project reference until a package containing it is released.
 
 ### Core Components
 
@@ -242,6 +293,7 @@ The parsed representation of an XML state machine definition. Contains:
 #### `StateConfiguration`
 Represents a single state and its transitions:
 - `Name`: The state's name
+- `StateClassName`: Optional registry key for a state object
 - `Transitions`: Dictionary of trigger name → list of `TransitionConfiguration` objects
 
 #### `TransitionConfiguration`
@@ -336,8 +388,7 @@ public interface ITransitionCallback
 
 ## Optional Logging
 
-The source API accepts an optional `ILogger<StateMachine>` as the final
-constructor argument:
+The source API accepts an optional `ILogger<StateMachine>` constructor argument:
 
 ```csharp
 var machine = new StateMachine(configuration, logger: logger);
@@ -423,6 +474,7 @@ Default implementations (`GuardRegistry`, `PermissionRegistry`, `CallbackRegistr
 |-----------|----------|------|-------------|
 | `initialState` | Yes (on `StateMachine`) | String | Name of the starting state |
 | `name` | Yes (on `State`) | String | Unique state name |
+| `stateClass` | No (on `State`) | String | Registry key for an optional state object |
 | `trigger` | Yes (on `Transition`) | String | Trigger identifier |
 | `to` | Yes (on `Transition`) | String | Target state name |
 | `source` | No | String | Trigger source filter |
@@ -440,7 +492,8 @@ Default implementations (`GuardRegistry`, `PermissionRegistry`, `CallbackRegistr
 3. State names must be unique. For each state and trigger, each source may
    occur only once. An omitted or empty source represents the same
    source-agnostic transition.
-4. Configured guard, permission, and callback names must be nonblank.
+4. Configured state-class, guard, permission, and callback names must be nonblank.
+   State-class keys must resolve during machine construction.
 5. Unknown elements, attributes, non-whitespace text, duplicate `States` or
    `Transitions` containers, and XML namespaces are rejected.
 6. DTDs and external entity resolution are prohibited.
@@ -461,20 +514,80 @@ When `machine.Trigger("TriggerName", "SourceValue", data)` is called:
 5. **Permission Evaluation**: If permission exists, invoke it
    - If permission returns `false`, return failure with `TransitionDeniedException`
    - If permission throws, return failure with the exception
-6. **OnLeaving Callback**: If configured, invoke it (with source state still current)
-   - If callback throws, rollback to source state and return failure
-7. **OnEntering Callback**: If configured, invoke it (with source state still current)
-   - If callback throws, rollback to source state and return failure
-8. **Transition**: Update machine's `CurrentState` to target state provisionally
-9. **OnEntered Callback**: If configured, invoke it (with target state current)
-   - If callback throws, rollback to source state and return failure
-10. **Success**: Return `TransitionResult` with `Success = true`
+6. **State checks**: Call the source object's `CanExit`, then the target
+   object's `CanEnter`, when configured. A `false` result returns a
+   `TransitionDeniedException`; an exception returns `StateExecutionException`
+   with the original exception as its inner exception.
+7. **Leaving**: Invoke `OnLeaving`, then source `Exit`, while the source is current.
+8. **Entering**: Invoke `OnEntering`, while the source is still current.
+9. **Transition**: Update `CurrentState` to the target provisionally.
+10. **Entry**: Invoke target `Enter`, then `OnEntered`, while the target is current.
+11. **Success**: Return `TransitionResult` with `Success = true`.
+
+The following diagram shows the successful path. Optional stages run only when
+their guard, permission, callback, or state object is configured.
+
+```mermaid
+sequenceDiagram
+    participant Caller
+    participant Machine as StateMachine
+    participant Checks as Guard and permission
+    participant Source as Source state object
+    participant Target as Target state object
+    participant Callbacks as Transition callbacks
+
+    Caller->>Machine: Trigger(name, source, data)
+    Machine->>Machine: Check for nested request and resolve transition
+    Note over Machine: Source state is current
+    opt Guard configured
+        Machine->>Checks: Evaluate guard
+    end
+    opt Permission configured
+        Machine->>Checks: Evaluate permission
+    end
+    opt Source state object configured
+        Machine->>Source: CanExit(context)
+    end
+    opt Target state object configured
+        Machine->>Target: CanEnter(context)
+    end
+    opt OnLeaving configured
+        Machine->>Callbacks: OnLeaving(context)
+    end
+    opt Source state object configured
+        Machine->>Source: Exit(context)
+    end
+    opt OnEntering configured
+        Machine->>Callbacks: OnEntering(context)
+    end
+    Machine->>Machine: Set current state to target provisionally
+    Note over Machine: Target state is current
+    opt Target state object configured
+        Machine->>Target: Enter(context)
+    end
+    opt OnEntered configured
+        Machine->>Callbacks: OnEntered(context)
+    end
+    Machine-->>Caller: Successful TransitionResult
+```
+
+An unmatched trigger, denial, exception, or nested request stops the successful
+path. For a failed transition, the machine restores its internal source state
+and returns a failure result; external side effects are not undone. Exceptions
+that escape trigger processing, such as a throwing logger, propagate instead.
+
+Each stage runs only if earlier stages succeeded. On a state method or callback
+exception, the machine restores its internal source state and returns a failed
+result. A nested request inside a state method is rejected and causes the outer
+request to fail even if ignored or caught. If that method also throws, its
+failure is reported as `StateExecutionException`.
 
 ## Rollback Behavior
 
 When a transition fails at any point:
 - The machine's `CurrentState` is restored to the state before the transition attempt
 - Callbacks already executed (before the failure) are **not** rolled back
+- Changes to state objects made by lifecycle methods are **not** rolled back
 - External side effects (file writes, API calls, etc.) performed by callbacks are **not** automatically undone
 
 ### Recommendation for Callbacks with Side Effects

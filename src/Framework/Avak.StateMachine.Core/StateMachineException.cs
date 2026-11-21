@@ -51,3 +51,11 @@ public class CallbackException(string message, string callbackName, Exception in
 {
     public string CallbackName { get; } = callbackName;
 }
+
+/// <summary>Thrown when a state lifecycle method throws an exception.</summary>
+public class StateExecutionException(string stateName, string methodName, Exception innerException)
+    : StateMachineException($"State '{stateName}' method '{methodName}' failed", innerException)
+{
+    public string StateName { get; } = stateName;
+    public string MethodName { get; } = methodName;
+}

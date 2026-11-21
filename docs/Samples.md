@@ -2,8 +2,9 @@
 
 This page summarizes the examples included with AvakStateMachine. It will be
 updated as new samples are added. Each sample has its own guide and unit tests;
-the samples solution is `src/Samples/Samples.slnx`. The framework currently
-uses named states rather than per-state C# classes; see
+the samples solution is `src/Samples/Samples.slnx`. These samples use named
+states without per-state C# classes; the framework also supports optional
+state objects. See
 [State Representation](Framework.md#state-representation).
 
 ## Console Recorder
