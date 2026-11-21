@@ -33,6 +33,7 @@ public class StateMachine
     private readonly IPermissionRegistry _permissionRegistry;
     private readonly ICallbackRegistry _callbackRegistry;
     private readonly ILogger<StateMachine> _logger;
+    private readonly Dictionary<string, State> _states = [];
 
     private string _currentState;
     private bool _isProcessing;
@@ -47,16 +48,68 @@ public class StateMachine
         IPermissionRegistry? permissionRegistry = null,
         ICallbackRegistry? callbackRegistry = null,
         ILogger<StateMachine>? logger = null)
+        : this(config, guardRegistry, permissionRegistry, callbackRegistry, logger, new StateRegistry())
+    {
+    }
+
+    public StateMachine(
+        StateMachineConfiguration config,
+        IGuardRegistry? guardRegistry,
+        IPermissionRegistry? permissionRegistry,
+        ICallbackRegistry? callbackRegistry,
+        ILogger<StateMachine>? logger,
+        IStateRegistry stateRegistry)
     {
         _config = config ?? throw new ArgumentNullException(nameof(config));
+        ArgumentNullException.ThrowIfNull(stateRegistry);
         _guardRegistry = guardRegistry ?? new GuardRegistry();
         _permissionRegistry = permissionRegistry ?? new PermissionRegistry();
         _callbackRegistry = callbackRegistry ?? new CallbackRegistry();
         _logger = logger ?? NullLogger<StateMachine>.Instance;
 
         ValidateConfiguredExtensions();
+        foreach (var (name, stateConfig) in _config.States)
+        {
+            if (stateConfig.StateClassName is null)
+            {
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(stateConfig.StateClassName))
+            {
+                throw new StateMachineException($"Configured state class name cannot be empty for state '{name}'");
+            }
+
+            _states[name] = stateRegistry.Resolve(stateConfig.StateClassName)
+                ?? throw new StateMachineException(
+                    $"Configured state class '{stateConfig.StateClassName}' could not be resolved for state '{name}'");
+        }
+
         _currentState = _config.InitialState;
-        _isProcessing = false;
+        if (_states.TryGetValue(_currentState, out var initialState))
+        {
+            _isProcessing = true;
+            try
+            {
+                var context = new StateContext(null, _currentState, null, null, new Dictionary<string, object?>());
+                if (!ExecuteStateCheck(_currentState, nameof(State.CanEnter), () => initialState.CanEnter(context)))
+                {
+                    throw new TransitionDeniedException($"Initial state '{_currentState}' denied entry", "State denied entry");
+                }
+
+                ExecuteStateAction(_currentState, nameof(State.Enter), () => initialState.Enter(context));
+                if (_nestedRequestLoggingFailure is not null)
+                {
+                    throw _nestedRequestLoggingFailure;
+                }
+            }
+            finally
+            {
+                _isProcessing = false;
+                _nestedRequest = null;
+                _nestedRequestLoggingFailure = null;
+            }
+        }
     }
 
     private void ValidateConfiguredExtensions()
@@ -285,13 +338,35 @@ public class StateMachine
 
         try
         {
+            _states.TryGetValue(sourceState, out var sourceObject);
+            _states.TryGetValue(transition.ToState, out var targetObject);
+            var stateContext = new StateContext(sourceState, transition.ToState, triggerName, source, context.Data);
+            if (sourceObject is not null &&
+                !ExecuteStateCheck(sourceState, nameof(State.CanExit), () => sourceObject.CanExit(stateContext)))
+            {
+                throw new TransitionDeniedException($"State '{sourceState}' denied exit", "State denied exit");
+            }
+            if (targetObject is not null &&
+                !ExecuteStateCheck(transition.ToState, nameof(State.CanEnter), () => targetObject.CanEnter(stateContext)))
+            {
+                throw new TransitionDeniedException($"State '{transition.ToState}' denied entry", "State denied entry");
+            }
+
             ExecuteCallback(transition.OnLeavingCallbackName, context);
             ThrowIfNestedRequest();
+            if (sourceObject is not null)
+            {
+                ExecuteStateAction(sourceState, nameof(State.Exit), () => sourceObject.Exit(stateContext));
+            }
             ExecuteCallback(transition.OnEnteringCallbackName, context);
             ThrowIfNestedRequest();
 
             _currentState = transition.ToState;
 
+            if (targetObject is not null)
+            {
+                ExecuteStateAction(transition.ToState, nameof(State.Enter), () => targetObject.Enter(stateContext));
+            }
             ExecuteCallback(transition.OnEnteredCallbackName, context);
             ThrowIfNestedRequest();
 
@@ -316,8 +391,41 @@ public class StateMachine
                 return FailureResult(ex.Message, ex);
             }
 
+            if (ex is StateExecutionException or TransitionDeniedException)
+            {
+                return FailureResult(ex.Message, ex);
+            }
+
             return FailureResult($"Transition failed: {ex.Message}", ex);
         }
+    }
+
+    private bool ExecuteStateCheck(string stateName, string methodName, Func<bool> execute)
+    {
+        bool result;
+        try
+        {
+            result = execute();
+        }
+        catch (Exception ex)
+        {
+            throw new StateExecutionException(stateName, methodName, ex);
+        }
+        ThrowIfNestedRequest();
+        return result;
+    }
+
+    private void ExecuteStateAction(string stateName, string methodName, Action execute)
+    {
+        try
+        {
+            execute();
+        }
+        catch (Exception ex)
+        {
+            throw new StateExecutionException(stateName, methodName, ex);
+        }
+        ThrowIfNestedRequest();
     }
 
     private static TransitionConfiguration? ResolveTransition(List<TransitionConfiguration> transitions, string? source)
@@ -418,6 +526,11 @@ public class StateMachine
 
     private void ThrowIfNestedRequest()
     {
+        if (_nestedRequestLoggingFailure is not null)
+        {
+            throw _nestedRequestLoggingFailure;
+        }
+
         if (_nestedRequest is not null)
         {
             throw _nestedRequest;

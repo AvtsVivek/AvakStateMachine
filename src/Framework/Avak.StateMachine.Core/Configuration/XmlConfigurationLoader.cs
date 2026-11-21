@@ -69,7 +69,7 @@ public class XmlConfigurationLoader : IConfigurationLoader
 
         foreach (var stateElement in statesElement.Elements("State"))
         {
-            ValidateElement(stateElement, ["name"], "Transitions", allowMultipleChildren: false);
+            ValidateElement(stateElement, ["name", "stateClass"], "Transitions", allowMultipleChildren: false);
             string stateName = stateElement.Attribute("name")?.Value
                 ?? throw new StateMachineException("State element missing 'name' attribute");
             if (string.IsNullOrWhiteSpace(stateName))
@@ -81,7 +81,13 @@ public class XmlConfigurationLoader : IConfigurationLoader
                 throw new StateMachineException($"Duplicate state '{stateName}'");
             }
 
-            var stateConfig = new StateConfiguration { Name = stateName };
+            string? stateClassName = stateElement.Attribute("stateClass")?.Value;
+            if (stateClassName is not null && string.IsNullOrWhiteSpace(stateClassName))
+            {
+                throw new StateMachineException($"State attribute 'stateClass' cannot be empty in state '{stateName}'");
+            }
+
+            var stateConfig = new StateConfiguration { Name = stateName, StateClassName = stateClassName };
 
             var transitionsElement = stateElement.Element("Transitions");
             if (transitionsElement != null)

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WinFormsSelfTransitionNetworkConnection/WinFormsSelfTransitionNetworkConnection.csproj" />
+  <Project Path="WinFormsSelfTransitionNetworkConnection.Tests/WinFormsSelfTransitionNetworkConnection.Tests.csproj" />
+</Solution>
