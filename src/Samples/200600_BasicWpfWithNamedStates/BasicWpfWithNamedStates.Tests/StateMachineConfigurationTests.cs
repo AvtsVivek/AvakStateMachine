@@ -9,6 +9,13 @@ using Avak.StateMachine.Core.Configuration;
 [TestClass]
 public class StateMachineConfigurationTests
 {
+    /// <summary>
+    /// Verifies that the UI-sourced Start trigger moves the configured machine from Idle to Running.
+    /// </summary>
+    /// <remarks>
+    /// The sample XML is loaded without constructing a WPF window. The assertions
+    /// check the trigger result and the machine's resulting state.
+    /// </remarks>
     [TestMethod]
     public void Start_FromIdle_TransitionsToRunning()
     {
@@ -20,6 +27,13 @@ public class StateMachineConfigurationTests
         Assert.AreEqual("Running", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that Stop returns the machine to Idle after it has entered Running.
+    /// </summary>
+    /// <remarks>
+    /// The test first performs the configured UI-sourced Start transition, then
+    /// checks that UI-sourced Stop succeeds and restores the Idle state.
+    /// </remarks>
     [TestMethod]
     public void Stop_FromRunning_TransitionsToIdle()
     {
@@ -32,6 +46,13 @@ public class StateMachineConfigurationTests
         Assert.AreEqual("Idle", machine.CurrentState);
     }
 
+    /// <summary>
+    /// Verifies that Stop is rejected from Idle without changing the current state.
+    /// </summary>
+    /// <remarks>
+    /// The test issues Stop on a freshly configured machine, where no such
+    /// transition exists, and checks both the failed result and preserved Idle state.
+    /// </remarks>
     [TestMethod]
     public void Stop_FromIdle_IsRejectedWithoutChangingState()
     {

@@ -3,9 +3,24 @@ namespace ConsoleWithDependencyInjection.Tests;
 using Avak.StateMachine.Core;
 using Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Tests the dependency-injection sample's guard, callback, and scoped-service behavior.
+/// </summary>
+/// <remarks>
+/// Each test builds an isolated service provider using the sample registrations.
+/// No console process, network service, or external device is required.
+/// </remarks>
 [TestClass]
 public class DependencyInjectionTests
 {
+    /// <summary>
+    /// Verifies that the registered guard denies Start when the scoped session is not ready.
+    /// </summary>
+    /// <remarks>
+    /// The test resolves the machine and session data from one scope without
+    /// setting <see cref="SessionData.IsReady"/>. It checks the denial result,
+    /// unchanged Idle state, and absence of callback-recorded events.
+    /// </remarks>
     [TestMethod]
     public void Start_WhenNotReady_IsDeniedWithoutRecordingAnEvent()
     {
@@ -22,6 +37,14 @@ public class DependencyInjectionTests
         Assert.AreEqual(0, session.Events.Count);
     }
 
+    /// <summary>
+    /// Verifies that a ready scoped session allows Start and shares its data with the callback.
+    /// </summary>
+    /// <remarks>
+    /// The test marks the scope's session ready, triggers Start, and checks the
+    /// Running state and the transition event recorded by the callback in that
+    /// same session's event list.
+    /// </remarks>
     [TestMethod]
     public void Start_WhenReady_UsesTheScopedGuardAndCallback()
     {
@@ -38,6 +61,15 @@ public class DependencyInjectionTests
         CollectionAssert.AreEqual(new[] { "Idle -> Running" }, session.Events);
     }
 
+    /// <summary>
+    /// Verifies that separate DI scopes receive independent machines and session data.
+    /// </summary>
+    /// <remarks>
+    /// Only the first scope's session is marked ready. The first machine must
+    /// transition and record an event while the second remains Idle without
+    /// events. The test also checks repeated resolution returns the same machine
+    /// instance within a scope.
+    /// </remarks>
     [TestMethod]
     public void SeparateScopes_HaveIndependentMachinesAndSessionData()
     {
