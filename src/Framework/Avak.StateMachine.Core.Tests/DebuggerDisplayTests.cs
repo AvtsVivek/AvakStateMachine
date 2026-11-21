@@ -11,6 +11,14 @@ using Extensions;
 [TestClass]
 public class DebuggerDisplayTests
 {
+    /// <summary>
+    /// Verifies that simple debugger displays reference the intended public properties.
+    /// </summary>
+    /// <remarks>
+    /// The test inspects the attributes on the configuration, transition context,
+    /// result, and machine types. For each type, it checks that every listed
+    /// property appears in the display expression, including the nested state count.
+    /// </remarks>
     [TestMethod]
     public void SimpleDisplays_ReferenceRequestedProperties()
     {
@@ -35,6 +43,14 @@ public class DebuggerDisplayTests
         }
     }
 
+    /// <summary>
+    /// Verifies that a state's debugger display count includes transitions in all trigger groups.
+    /// </summary>
+    /// <remarks>
+    /// The test creates two trigger groups containing three transitions total,
+    /// reads the internal calculated transition-count property, then removes the
+    /// transitions in one group and checks that the count updates to one.
+    /// </remarks>
     [TestMethod]
     public void StateDisplay_CountsTransitionsAcrossTriggerGroups()
     {
@@ -59,6 +75,15 @@ public class DebuggerDisplayTests
         Assert.AreEqual(1, countProperty.GetValue(state));
     }
 
+    /// <summary>
+    /// Verifies that the transition debugger display includes non-null optional properties only.
+    /// </summary>
+    /// <remarks>
+    /// The test first checks the display for a transition with only a target.
+    /// It then sets each optional field and verifies its rendered value, including
+    /// an explicitly empty source, before clearing selected fields and confirming
+    /// null-valued properties are omitted.
+    /// </remarks>
     [TestMethod]
     public void TransitionDisplay_IncludesOnlyNonNullOptionalProperties()
     {
