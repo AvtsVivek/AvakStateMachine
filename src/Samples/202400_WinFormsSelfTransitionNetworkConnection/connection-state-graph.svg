@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" role="img" aria-labelledby="title description">
+  <title id="title">Fake connection state graph</title>
+  <desc id="description">The connection starts Disconnected. Connect moves to Connected; Disconnect returns to Disconnected. Refresh is a self-transition from Connected to Connected. A connection availability check can deny Connect or Refresh.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 10 4 L 0 8 z" fill="#334155" />
+    </marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #172033; }
+      .edge { fill: none; stroke: #334155; stroke-width: 2.5; marker-end: url(#arrow); }
+      .state { fill: #eff6ff; stroke: #2563eb; stroke-width: 2.5; }
+      .state-name { font-size: 19px; font-weight: 600; text-anchor: middle; dominant-baseline: central; }
+      .label { font-size: 16px; font-weight: 600; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+      .detail { font-size: 14px; fill: #475569; text-anchor: middle; }
+    </style>
+  </defs>
+  <text class="detail" x="30" y="175">Initial</text>
+  <path class="edge" d="M 42 190 L 79 190" />
+  <path class="edge" d="M 231 167 C 290 130 386 130 447 167" />
+  <text class="label" x="340" y="125">Connect (UI)</text>
+  <path class="edge" d="M 447 214 C 385 258 289 258 231 214" />
+  <text class="label" x="340" y="263">Disconnect (UI)</text>
+  <path class="edge" d="M 475 129 C 440 48 610 48 575 129" />
+  <text class="label" x="525" y="50">Refresh (UI)</text>
+  <circle class="state" cx="160" cy="190" r="80" />
+  <text class="state-name" x="160" y="190">Disconnected</text>
+  <circle class="state" cx="520" cy="190" r="76" />
+  <text class="state-name" x="520" y="190">Connected</text>
+  <text class="detail" x="380" y="324">Refresh exits and re-enters Connected, closing and reopening the fake connection.</text>
+  <text class="detail" x="380" y="349">If entry is denied, the current state and existing connection remain unchanged.</text>
+</svg>

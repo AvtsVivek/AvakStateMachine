@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StateMachine initialState="Draft">
+  <States>
+    <State name="Draft" stateClass="DraftState">
+      <Transitions>
+        <Transition trigger="Submit" source="Author" to="InReview" />
+      </Transitions>
+    </State>
+    <State name="InReview" stateClass="InReviewState">
+      <Transitions>
+        <Transition trigger="Approve" source="Reviewer" to="Approved" permission="Reviewer" />
+        <Transition trigger="Reject" source="Reviewer" to="Rejected" permission="Reviewer" />
+      </Transitions>
+    </State>
+    <State name="Approved" stateClass="ApprovedState" />
+    <State name="Rejected" stateClass="RejectedState" />
+  </States>
+</StateMachine>

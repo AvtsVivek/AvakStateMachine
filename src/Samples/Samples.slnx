@@ -9,5 +9,9 @@
   <Project Path="200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection.Tests/ConsoleWithDependencyInjection.Tests.csproj" />
   <Project Path="201500_WpfTrafficLightWithDI/WpfTrafficLightWithDI/WpfTrafficLightWithDI.csproj" />
   <Project Path="201500_WpfTrafficLightWithDI/WpfTrafficLightWithDI.Tests/WpfTrafficLightWithDI.Tests.csproj" />
+  <Project Path="201900_ConsoleDocumentWorkflow/ConsoleDocumentWorkflow/ConsoleDocumentWorkflow.csproj" />
+  <Project Path="201900_ConsoleDocumentWorkflow/ConsoleDocumentWorkflow.Tests/ConsoleDocumentWorkflow.Tests.csproj" />
+  <Project Path="202400_WinFormsSelfTransitionNetworkConnection/WinFormsSelfTransitionNetworkConnection/WinFormsSelfTransitionNetworkConnection.csproj" />
+  <Project Path="202400_WinFormsSelfTransitionNetworkConnection/WinFormsSelfTransitionNetworkConnection.Tests/WinFormsSelfTransitionNetworkConnection.Tests.csproj" />
 </Solution>
 

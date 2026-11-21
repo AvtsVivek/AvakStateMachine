@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 470" role="img" aria-labelledby="title description">
+  <title id="title">Document approval workflow state graph</title>
+  <desc id="description">A document starts in Draft. Submit from the Author source moves it to InReview if the document has non-whitespace content. From InReview, Approve or Reject from the Reviewer source moves it to Approved or Rejected when the reviewer permission allows the request. Rejected requests leave the current state unchanged.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="strokeWidth">
+      <path d="M 0 0 L 10 4 L 0 8 z" fill="#334155" />
+    </marker>
+    <style>
+      text { font-family: "Segoe UI", Arial, sans-serif; fill: #172033; }
+      .edge { fill: none; stroke: #334155; stroke-width: 2.5; marker-end: url(#arrow); }
+      .state { fill: #eff6ff; stroke: #2563eb; stroke-width: 2.5; }
+      .state-name { font-size: 20px; font-weight: 600; text-anchor: middle; dominant-baseline: central; }
+      .label { font-size: 16px; font-weight: 600; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+      .detail { font-size: 14px; fill: #475569; text-anchor: middle; }
+      .initial-label { font-size: 14px; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <text class="initial-label" x="30" y="214">Initial</text>
+  <path class="edge" d="M 40 230 L 92 230" />
+
+  <path class="edge" d="M 228 230 L 367 230" />
+  <text class="label" x="297" y="209">Submit (Author)</text>
+  <text class="detail" x="297" y="257">Content required</text>
+
+  <path class="edge" d="M 503 198 L 718 131" />
+  <text class="label" x="600" y="140">Approve (Reviewer)</text>
+
+  <path class="edge" d="M 503 262 L 718 329" />
+  <text class="label" x="600" y="329">Reject (Reviewer)</text>
+
+  <circle class="state" cx="160" cy="230" r="68" />
+  <text class="state-name" x="160" y="230">Draft</text>
+
+  <circle class="state" cx="435" cy="230" r="72" />
+  <text class="state-name" x="435" y="230">InReview</text>
+
+  <circle class="state" cx="785" cy="110" r="70" />
+  <text class="state-name" x="785" y="110">Approved</text>
+
+  <circle class="state" cx="785" cy="350" r="70" />
+  <text class="state-name" x="785" y="350">Rejected</text>
+
+  <text class="detail" x="490" y="422">Approval and rejection require reviewer permission.</text>
+  <text class="detail" x="490" y="447">Denied or unmatched requests leave the current state unchanged.</text>
+</svg>

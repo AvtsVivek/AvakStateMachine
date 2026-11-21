@@ -2,9 +2,8 @@
 
 This page summarizes the examples included with AvakStateMachine. It will be
 updated as new samples are added. Each sample has its own guide and unit tests;
-the samples solution is `src/Samples/Samples.slnx`. These samples use named
-states without per-state C# classes; the framework also supports optional
-state objects. See
+the samples solution is `src/Samples/Samples.slnx`. The framework supports named
+states with optional C# state objects. See
 [State Representation](Framework.md#state-representation).
 
 ## Console Recorder
@@ -65,6 +64,29 @@ denial, while tests cover the light cycle and scope isolation.
 - [Sample guide and state graph](../src/Samples/201500_WpfTrafficLightWithDI/README.md)
 - [WPF application](../src/Samples/201500_WpfTrafficLightWithDI/WpfTrafficLightWithDI/)
 - [Unit tests](../src/Samples/201500_WpfTrafficLightWithDI/WpfTrafficLightWithDI.Tests/)
+
+## Console Document Workflow
+
+**Location:** `src/Samples/201900_ConsoleDocumentWorkflow/`
+
+A document approval workflow demonstrating registered C# state classes,
+source-aware transitions, reviewer permissions, and an in-memory audit.
+
+- [Sample guide and state graph](../src/Samples/201900_ConsoleDocumentWorkflow/README.md)
+- [Console application](../src/Samples/201900_ConsoleDocumentWorkflow/ConsoleDocumentWorkflow/)
+- [Unit tests](../src/Samples/201900_ConsoleDocumentWorkflow/ConsoleDocumentWorkflow.Tests/)
+
+## Windows Forms Self-Transition: Network Connection
+
+**Location:** `src/Samples/202400_WinFormsSelfTransitionNetworkConnection/`
+
+A Windows Forms application demonstrating a `Connected` self-transition with
+a fake network connection and a visible lifecycle trace. Tests run without a
+form or real network access.
+
+- [Sample guide and state graph](../src/Samples/202400_WinFormsSelfTransitionNetworkConnection/README.md)
+- [Windows Forms application](../src/Samples/202400_WinFormsSelfTransitionNetworkConnection/WinFormsSelfTransitionNetworkConnection/)
+- [Unit tests](../src/Samples/202400_WinFormsSelfTransitionNetworkConnection/WinFormsSelfTransitionNetworkConnection.Tests/)
 
 ## Adding a sample
 

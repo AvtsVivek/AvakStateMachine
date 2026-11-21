@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <RootNamespace>WinFormsSelfTransitionNetworkConnection</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Framework\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
+    <None Update="ConnectionWorkflow.xml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

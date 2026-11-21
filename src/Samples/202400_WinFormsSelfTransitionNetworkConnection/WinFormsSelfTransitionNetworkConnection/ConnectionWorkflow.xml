@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StateMachine initialState="Disconnected">
+  <States>
+    <State name="Disconnected">
+      <Transitions>
+        <Transition trigger="Connect" source="UI" to="Connected" />
+      </Transitions>
+    </State>
+    <State name="Connected" stateClass="ConnectedState">
+      <Transitions>
+        <Transition trigger="Refresh" source="UI" to="Connected" />
+        <Transition trigger="Disconnect" source="UI" to="Disconnected" />
+      </Transitions>
+    </State>
+  </States>
+</StateMachine>

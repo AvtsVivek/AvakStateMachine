@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ConsoleDocumentWorkflow/ConsoleDocumentWorkflow.csproj" />
+  <Project Path="ConsoleDocumentWorkflow.Tests/ConsoleDocumentWorkflow.Tests.csproj" />
+</Solution>
