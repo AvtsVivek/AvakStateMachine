@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="WpfTrafficLightWithDI.Tests/WpfTrafficLightWithDI.Tests.csproj" />
+  <Project Path="WpfTrafficLightWithDI/WpfTrafficLightWithDI.csproj" />
+</Solution>

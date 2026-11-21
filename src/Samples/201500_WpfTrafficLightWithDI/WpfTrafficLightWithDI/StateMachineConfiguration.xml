@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<StateMachine initialState="Red">
+  <States>
+    <State name="Red">
+      <Transitions>
+        <Transition trigger="Next" source="UI" to="Green"
+                    guard="SignalOperational" onEntered="RecordTransition" />
+      </Transitions>
+    </State>
+    <State name="Green">
+      <Transitions>
+        <Transition trigger="Next" source="UI" to="Yellow"
+                    guard="SignalOperational" onEntered="RecordTransition" />
+      </Transitions>
+    </State>
+    <State name="Yellow">
+      <Transitions>
+        <Transition trigger="Next" source="UI" to="Red"
+                    guard="SignalOperational" onEntered="RecordTransition" />
+      </Transitions>
+    </State>
+  </States>
+</StateMachine>
