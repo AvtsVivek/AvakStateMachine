@@ -280,8 +280,8 @@ callbacks. Self-transitions invoke both source and target methods, subject to
 earlier checks and methods succeeding. See [Transition Execution Flow](#transition-execution-flow)
 for ordering and failure behavior.
 
-This feature is newer than the published `0.1.0-preview.1` package; use a
-project reference until a package containing it is released.
+State classes are included starting with `0.1.0-preview.2`; until that version
+is published, use a project reference to try them.
 
 ### Core Components
 
@@ -433,8 +433,8 @@ the request-processing flag is cleared. Already executed callbacks or emitted
 logs cannot be undone. Construction/validation exceptions and exceptions
 that escape trigger processing are surfaced directly, not automatically logged.
 
-This feature is newer than the published `0.1.0-preview.1` package; use a project
-reference until a package containing it is released.
+Optional logging is included starting with `0.1.0-preview.2`; until that version
+is published, use a project reference to try it.
 
 Default implementations (`GuardRegistry`, `PermissionRegistry`, `CallbackRegistry`) are provided for simple in-memory registration.
 
