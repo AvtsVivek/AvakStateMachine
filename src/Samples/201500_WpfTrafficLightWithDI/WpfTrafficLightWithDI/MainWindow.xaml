@@ -1,0 +1,62 @@
+<Window x:Class="WpfTrafficLightWithDI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WPF Traffic Light With Dependency Injection"
+        Height="660"
+        Width="420"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen">
+  <Grid Margin="24">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <TextBlock FontSize="22" FontWeight="SemiBold" Text="Traffic light state machine" />
+
+    <Border Grid.Row="1"
+            Margin="0,20"
+            Padding="24"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="#202938"
+            CornerRadius="24">
+      <StackPanel>
+        <Ellipse Width="82" Height="82" Margin="0,8"
+                 Fill="#EF4444" Opacity="{Binding RedOpacity}" />
+        <Ellipse Width="82" Height="82" Margin="0,8"
+                 Fill="#FBBF24" Opacity="{Binding YellowOpacity}" />
+        <Ellipse Width="82" Height="82" Margin="0,8"
+                 Fill="#22C55E" Opacity="{Binding GreenOpacity}" />
+      </StackPanel>
+    </Border>
+
+    <StackPanel Grid.Row="2" HorizontalAlignment="Center">
+      <TextBlock HorizontalAlignment="Center"
+                 FontSize="20"
+                 FontWeight="SemiBold"
+                 Text="{Binding CurrentState}" />
+      <TextBlock Margin="0,6,0,14"
+                 HorizontalAlignment="Center"
+                 Foreground="DimGray"
+                 Text="{Binding StatusMessage}"
+                 TextWrapping="Wrap" />
+    </StackPanel>
+
+    <CheckBox Grid.Row="3"
+              Margin="0,0,0,14"
+              HorizontalAlignment="Center"
+              Content="Signal is operational"
+              IsChecked="{Binding IsOperational, Mode=TwoWay}" />
+
+    <Button Grid.Row="4"
+            Width="150"
+            Padding="14,9"
+            HorizontalAlignment="Center"
+            Click="Next_Click"
+            Content="Next light" />
+  </Grid>
+</Window>

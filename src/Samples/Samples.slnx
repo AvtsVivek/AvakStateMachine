@@ -7,5 +7,7 @@
   <Project Path="200800_BasicWpfWithNamedStatesAndViewModel/BasicWpfWithNamedStatesAndViewModel.Tests/BasicWpfWithNamedStatesAndViewModel.Tests.csproj" />
   <Project Path="200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection/ConsoleWithDependencyInjection.csproj" />
   <Project Path="200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection.Tests/ConsoleWithDependencyInjection.Tests.csproj" />
+  <Project Path="201500_WpfTrafficLightWithDI/WpfTrafficLightWithDI/WpfTrafficLightWithDI.csproj" />
+  <Project Path="201500_WpfTrafficLightWithDI/WpfTrafficLightWithDI.Tests/WpfTrafficLightWithDI.Tests.csproj" />
 </Solution>
 

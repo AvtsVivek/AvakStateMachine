@@ -53,6 +53,18 @@ denial, callback execution, and isolation between scopes.
 - [Console application](../src/Samples/200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection/)
 - [Unit tests](../src/Samples/200900_ConsoleWithDependencyInjection/ConsoleWithDependencyInjection.Tests/)
 
+## WPF Traffic Light With Dependency Injection
+
+**Location:** `src/Samples/201500_WpfTrafficLightWithDI/`
+
+A WPF traffic-light application using DI to construct a scoped state machine,
+guard, callback, and view model. The operational checkbox demonstrates guard
+denial, while tests cover the light cycle and scope isolation.
+
+- [Sample guide and state graph](../src/Samples/201500_WpfTrafficLightWithDI/README.md)
+- [WPF application](../src/Samples/201500_WpfTrafficLightWithDI/WpfTrafficLightWithDI/)
+- [Unit tests](../src/Samples/201500_WpfTrafficLightWithDI/WpfTrafficLightWithDI.Tests/)
+
 ## Adding a sample
 
 When adding a sample, include its project and unit tests in the samples
