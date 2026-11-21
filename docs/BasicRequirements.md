@@ -18,7 +18,23 @@
 9. Samples will be added as we go along. Each sample will have unit tests. The samples should help in understanding the framework and its use cases. The solution file is `src/Samples/Samples.slnx`.
 
 10. Documentation will be added to the docs folder
-11. We need to add logging to the framework.
-12. Dependency Injection support should be added.
+11. Optional logging is supported by the framework through `ILogger<StateMachine>`.
+    Applications select their own logging provider.
+12. Dependency injection is demonstrated in samples. The core framework remains
+    independent of a DI container.
 13. Modules support for large application
+14. Future sample ideas:
+    •	Document approval workflow (`Draft` → `InReview` → `Approved`/`Rejected`)
+        to demonstrate permissions, source-aware triggers, and in-memory auditing.
+    •	Order fulfillment (`Created` → `Confirmed` → `Packed` → `Shipped` →
+        `Delivered`) to demonstrate guards and cancellation rules.
+    •	Background job lifecycle (`Queued` → `Running` → `Paused` →
+        `Completed`/`Failed`) to demonstrate retry and cancellation transitions;
+        model state changes only, without adding asynchronous execution.
+    •	Turnstile/access gate (`Locked` ↔ `Unlocked`) as a compact beginner example
+        for accepted and rejected triggers.
+
+    The document approval workflow is the suggested next sample. Keep future
+    sample tests deterministic, using in-memory fakes rather than networks,
+    clocks, devices, or external services.
 
