@@ -31,8 +31,8 @@ in-memory fake, not an actual network connection.
 If a later action throws after exit has already closed a connection, the
 framework restores only its internal state; it cannot reopen the connection
 or undo other external side effects. Applications must arrange compensation
-or recovery when needed. The sample uses a framework project reference because
-the published `0.1.0-preview.1` package does not include state classes.
+or recovery when needed. The sample uses a framework project reference; state
+classes are included starting with `0.1.0-preview.2` once that package is published.
 
 ## Run and test
 
