@@ -34,6 +34,14 @@ Sample-specific tests are listed with each entry in the
 [samples overview](../Samples.md). The samples solution runs the complete set.
 ## Building and Testing
 
+From the repository root, run solution's tests with:
+
+```powershell
+dotnet test src\Samples\Samples.slnx
+dotnet test src\Framework\Avak.StateMachine.slnx
+dotnet test src\VSExt\Avak.StateMachine.VisualStudio.slnx
+```
+
 ### Framework Solution
 ```bash
 cd src/Framework

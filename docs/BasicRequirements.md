@@ -38,3 +38,52 @@
     sample tests deterministic, using in-memory fakes rather than networks,
     clocks, devices, or external services.
 
+15. Visual Studio extension
+
+    A separate Visual Studio extension will help application developers author,
+    understand, and validate AvakStateMachine configuration. Keep its solution
+    separate from the framework and samples at
+    `src/VSExt/Avak.StateMachine.VisualStudio.slnx`.
+
+    Initial capabilities:
+    • Provide XML IntelliSense, snippets, and AvakStateMachine-specific
+      validation feedback.
+    • Display a read-only visual graph of states and transitions, including
+      trigger sources, guards, permissions, callbacks, and self-transitions.
+      Selecting a graph item should navigate to its XML configuration.
+    • Report configuration errors and offer quick fixes when a correction is
+      unambiguous. Reuse the framework parser and validation rules rather than
+      maintaining a separate implementation.
+    • Provide guided editing for adding states and transitions, validating the
+      resulting XML before saving.
+    • Where possible, navigate from configured extension names (guards,
+      permissions, callbacks, and state classes) to their C# implementations
+      and registrations.
+
+    Possible later capabilities:
+    • Static analysis for unreachable states, states without outgoing
+      transitions, and extension registrations that appear unused.
+    • Generate C# skeletons or registration snippets for guards, permissions,
+      callbacks, and state classes.
+    • Generate starter tests and export state graphs as SVG or Mermaid.
+
+    Prioritize IntelliSense, validation, and a read-only graph for the first
+    usable version. Defer graph-based editing until synchronization between the
+    visual editor and XML can be made reliable. The extension must not execute
+    application callbacks merely to render or validate a graph.
+
+    Graph visualization options:
+
+    | Option | Best fit | Tradeoff |
+    | --- | --- | --- |
+    | [MSAGL](https://github.com/microsoft/automatic-graph-layout) | .NET graph layout and WPF viewing | Its WPF viewer cannot be embedded directly in VisualStudio.Extensibility Remote UI; the current prototype uses MSAGL for layout. |
+    | [GraphX](https://github.com/panthernet/GraphX) | Interactive WPF graph control; Apache 2.0 | Check maintenance and Visual Studio hosting compatibility. |
+    | [Graphviz](https://graphviz.org/) | Automatic layout and SVG export | Interactive selection and XML navigation require additional UI work. |
+    | [Cytoscape.js](https://js.cytoscape.org/) | Interactive, customizable graphs; MIT | Requires a web-based UI and integration with Visual Studio. |
+    | [Mermaid](https://mermaid.js.org/syntax/stateDiagram.html) | Simple state diagrams and documentation | Less suited to a rich interactive IDE designer. |
+    | Commercial diagramming library | Polished editing and vendor support | Licensing cost and dependency on a vendor. |
+
+    Evaluate graph options against self-transitions, multiple edges, labels,
+    and click-to-XML navigation, as well as the chosen Visual Studio hosting
+    model. The current MSAGL layout prototype does not yet include a viewer
+    or XML navigation.

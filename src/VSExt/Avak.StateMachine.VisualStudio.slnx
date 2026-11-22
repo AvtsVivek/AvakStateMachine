@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Avak.StateMachine.VisualStudio/Avak.StateMachine.VisualStudio.csproj" />
+  <Project Path="Avak.StateMachine.VisualStudio.Tests/Avak.StateMachine.VisualStudio.Tests.csproj" />
+</Solution>
