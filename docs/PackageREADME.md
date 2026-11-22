@@ -13,6 +13,6 @@ provider; existing constructor calls work without a logger.
 
 This is a preview package; its API and behavior may change.
 
-See the [Quick Start](https://github.com/AvtsVivek/AvakStateMachine/blob/main/docs/QuickStart.md)
-and [framework reference](https://github.com/AvtsVivek/AvakStateMachine/blob/main/docs/Framework.md)
+See the [Quick Start](https://github.com/AvtsVivek/AvakStateMachine/blob/main/docs/QuickStart/QuickStart.md)
+and [framework reference](https://github.com/AvtsVivek/AvakStateMachine/blob/main/docs/Framework/Framework.md)
 for configuration, usage, and rollback behavior.
