@@ -1,0 +1,4 @@
+{
+  "AvakStateMachine.OpenStateGraph.DisplayName": "Open Avak State Graph",
+  "AvakStateMachine.OpenStateGraph.TooltipText": "Visualize an Avak State Machine XML configuration."
+}
