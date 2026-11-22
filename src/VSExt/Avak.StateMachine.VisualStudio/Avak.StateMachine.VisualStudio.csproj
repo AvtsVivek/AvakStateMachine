@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.VisualStudio.Sdk.Build/18.11.1098">
+  <PropertyGroup>
+    <TargetFrameworks>vs18_11</TargetFrameworks>
+    <ExtensionType>VisualStudio.Extensibility</ExtensionType>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Framework\Avak.StateMachine.Core\Avak.StateMachine.Core.csproj" />
+    <PackageReference Include="MessagePack" Version="2.5.305" />
+    <PackageReference Include="Msagl.Drawing" Version="1.2.1" />
+    <InternalsVisibleTo Include="Avak.StateMachine.VisualStudio.Tests" />
+  </ItemGroup>
+</Project>

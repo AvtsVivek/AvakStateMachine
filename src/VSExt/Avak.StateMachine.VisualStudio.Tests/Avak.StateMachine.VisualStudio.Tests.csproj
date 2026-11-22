@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="4.2.2" />
+    <ProjectReference Include="..\Avak.StateMachine.VisualStudio\Avak.StateMachine.VisualStudio.csproj" AdditionalProperties="TargetFramework=vs18_11" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Samples\201500_WpfTrafficLightWithDI\WpfTrafficLightWithDI\StateMachineConfiguration.xml" Link="TrafficLight.xml" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\Samples\202400_WinFormsSelfTransitionNetworkConnection\WinFormsSelfTransitionNetworkConnection\ConnectionWorkflow.xml" Link="ConnectionWorkflow.xml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
