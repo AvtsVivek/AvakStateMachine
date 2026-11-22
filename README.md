@@ -8,10 +8,10 @@ If you like or find this project useful for learning, please consider giving it 
 
 ## Documentation
 
-Start with the [Quick Start](docs/QuickStart.md), or see the [framework
-reference](docs/Framework.md) for API and configuration details. The original
-[basic requirements](docs/BasicRequirements.md) and
-[implementation summary](docs/IMPLEMENTATION_SUMMARY.md) are also available.
+Start with the [Quick Start](docs/QuickStart/QuickStart.md), or see the
+[framework reference](docs/Framework/Framework.md) for API and configuration
+details. The original [basic requirements](docs/BasicRequirements.md) are also
+available.
 
 Browse the [samples overview](docs/Samples.md) for a summary of available examples and links to their guides and tests.
 

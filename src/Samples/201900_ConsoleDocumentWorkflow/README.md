@@ -25,10 +25,11 @@ Audit entries are in memory for illustration, not durable audit records. The
 framework restores its internal state on failure but cannot undo changes made
 by state objects or external side effects.
 
-The sample uses a project reference to the framework. State classes are included
-starting with `0.1.0-preview.2` once that package is published. The application supplies
-the document and owns its lifetime; use a separate document per independent
-workflow. Each machine must be used single-threadedly.
+The sample uses a project reference to the framework so it exercises the source
+in this repository. State classes are also available in the published
+`0.1.0-preview.2` package. The application supplies the document and owns its
+lifetime; use a separate document per independent workflow. Each machine must
+be used single-threadedly.
 
 ## Run and test
 
